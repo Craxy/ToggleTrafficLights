@@ -1,7 +1,7 @@
 Toggle Traffic Lights
 =====================
 Mod for Cities:Skylines
--> [on Steam Workshop](http://steamcommunity.com/app/255710/workshop/) //TODO: insert url
+-> [on Steam Workshop](http://steamcommunity.com/sharedfiles/filedetails/?id=411833858)
 
 Tool to **remove or add traffic lights at intersection**. Traffic lights can be added and removed at any kind of road intersection including highways and their off- and on-ramps.
 ![Same intersection with and without traffic lights](./docs/files/img/TrafficLightsVsNoTrafficLights.png)
@@ -34,4 +34,4 @@ This mod is currently a very early version! Toggling the traffic lights works al
 
 ## Release Notes
 ### 0.1.0 (2015-03-22)
-* Initial release
+* Initial Release
