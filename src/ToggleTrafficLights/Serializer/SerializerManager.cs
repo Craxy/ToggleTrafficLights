@@ -35,15 +35,17 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Serializer
         {
             if (!serializableDataManager.EnumerateData().Contains(Id))
             {
+                DebugLog.Message("Save does not contain data with id {0}", Id);
                 return;
             }
 
             var data = serializableDataManager.LoadData(Id);
 
+            DebugLog.Message("Read {0} bytes for Id {1}", data.Length, Id);
+
             const int versionLength = 4;
-
             Debug.Assert(data.Length > versionLength);
-
+            
             var version = BitConverter.ToUInt32(data.Take(versionLength).ToArray(), 0);
             DebugLog.Message("Deserializer version {0}", version);
 

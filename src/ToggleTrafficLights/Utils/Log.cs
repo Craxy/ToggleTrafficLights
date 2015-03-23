@@ -15,7 +15,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
             DebugOutputPanel.AddMessage(messageType, msg);
 
 #if DEBUG
-//            CODebugBase<LogChannel>.Warn(LogChannel.Modding, string.Format("ToggleTrafficLights: {0}: {1}", messageType.ToString("G"), msg));
+            CODebugBase<LogChannel>.Warn(LogChannel.Modding, string.Format("ToggleTrafficLights: {0}: {1}", messageType.ToString("G"), msg));
 #endif
         }
 
@@ -48,6 +48,15 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
         public static void Message(string format, params object[] args)
         {
             Message(string.Format(format, args));
+        }
+        public static void Info(string text)
+        {
+            Generic(PluginManager.MessageType.Message, text);
+        }
+        [StringFormatMethod("format")]
+        public static void Info(string format, params object[] args)
+        {
+            Info(string.Format(format, args));
         }
     }
 
@@ -91,6 +100,17 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
         public static void Message(string format, params object[] args)
         {
             Message(string.Format(format, args));
+        }
+        [Conditional("DEBUG")]
+        public static void Info(string text)
+        {
+            Generic(PluginManager.MessageType.Message, text);
+        }
+        [Conditional("DEBUG")]
+        [StringFormatMethod("format")]
+        public static void Info(string format, params object[] args)
+        {
+            Info(string.Format(format, args));
         }
     }
 

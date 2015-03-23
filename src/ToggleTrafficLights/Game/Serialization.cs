@@ -22,7 +22,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
         {
             base.OnCreated(serializableData);
 
-            DebugLog.Warning("Serialization: Created v.{0} at {1}", Assembly.GetExecutingAssembly().GetName().Version, DateTime.Now);
+            DebugLog.Message("Serialization: Created v.{0} at {1}", Assembly.GetExecutingAssembly().GetName().Version, DateTime.Now);
 
         }
 
@@ -30,14 +30,15 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
         {
             base.OnReleased();
 
-            DebugLog.Warning("Serialization: Released v.{0}", Assembly.GetExecutingAssembly().GetName().Version);
+            DebugLog.Message("Serialization: Released v.{0}", Assembly.GetExecutingAssembly().GetName().Version);
         }
 
         public override void OnLoadData()
         {
             base.OnLoadData();
 
-            DebugLog.Message("OnLoadData: Data Ids: {0}", string.Join(", ", this.serializableDataManager.EnumerateData()));
+//            DebugLog.Message("OnLoadData: Data Ids: {0}", string.Join(", ", this.serializableDataManager.EnumerateData()));
+            DebugLog.Message("OnLoadData");
 
             if (managers.loading.IsGameMode())
             {
@@ -53,7 +54,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
         {
             base.OnSaveData();
 
-            DebugLog.Message("OnSaveData: Data Ids: {0}", string.Join(", ", this.serializableDataManager.EnumerateData()));
+//            DebugLog.Message("OnSaveData: Data Ids: {0}", string.Join(", ", this.serializableDataManager.EnumerateData()));
+            DebugLog.Message("OnSaveData");
 
             //save netnode flags
             //TODO: sollte eigentlich automaitsch serialisert und deserialisiert werden (->NetManager). Warum wird das überschrieben?
