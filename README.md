@@ -11,13 +11,13 @@ In game the tool can be activate via **Ctrl+T**. When you hover over an intersec
 
 **Note**: The existence of traffic lights will be added to new savegames (the savegame size increases by a couple of kB (~33kB) -- I think that's negligible). The savegame can be loaded without the mod enabled but in this case the traffic lights will be reset to it's original statuses (see [this table](https://www.reddit.com/r/CitiesSkylines/comments/2zp61z/i_made_a_table_chart_of_which_intersections/) for the default statuses).
 
-**Note**: **It's currently not recommended to use this tool in the editors!** I haven't tested it inside the editors -- it might have an unwanted effect (or most likely: no effect at all). So **best disable the mod while creating an asset or a map**.
-
 Note: If you append or remove a road to/from an intersection the traffic lights will be recalculated by the game and placed according to the used road types. You must then retoggle the traffic lights via this tool.
 
+Note: The tool is now disabled in the editors. It does not have to be disable in the editors anymore.
 
 ## Known Issues & Further Work
 This mod is currently a very early version! Toggling the traffic lights works already but there are some issues and further work:
+See: https://github.com/Craxy/ToggleTrafficLights/issues
 * There is currently no button to activate this tool. You need to use Ctrl+T. A button below the road options is planned.
 * On some intersections it's quite hard to find the right point to click (especially on on- and off-ramps). I'm using the integrated detection of NetNode, so the detection will most likely remain the way it is. Just fiddle around a bit until the ToolTip shows up.
 * The current ToolTip to indicate an intersection is more or less an interim solution. For later version it's planned to use the same highlighting as the usual selection or bulldozer tools.
@@ -27,11 +27,11 @@ This mod is currently a very early version! Toggling the traffic lights works al
 * It's currently possible to add traffic lights at intersections even if it doesn't make sense -- like just one ingoing road and the remaining ones are just outgoing. The idea for further version is to only allow traffic lights if there are at least two incoming roads present. However this is of very low priority and just might or might not be implemented. At those junctions traffic lights will be most likely always be green, so there is no harm in keeping this.
 
 
-* The tool can be activated and used in the editors. But I have not tested the effect. Depending on how the tool behaves inside the editors and what gets saved in assets and maps this mod will either support an editor or will be disable while using the editor. But for now: best disable the mod while using any of the editors!
-
-
-
-
 ## Release Notes
 ### 0.1.0 (2015-03-22)
 * Initial Release
+
+### 0.2.0 (2015-03-23)
+* Ctrl+T now toggle the tool on/of (returns to the previous selected tool)
+* Disabled tool inside the editors
+* Traffic lights outside the buildable area cannot be toggled anymore
