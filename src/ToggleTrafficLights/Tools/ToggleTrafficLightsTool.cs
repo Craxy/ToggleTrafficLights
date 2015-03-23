@@ -65,8 +65,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
                 RaycastOutput output;
                 if (!RayCast(input, out output))
                 {
-                    DebugLog.Error("Not a valid Raycast!");
-                    //TODO: Fehlerbehandlung?
                     _currentNetNodeIdx = 0;
                     _hitPosition = Vector3.zero;
                     return;
