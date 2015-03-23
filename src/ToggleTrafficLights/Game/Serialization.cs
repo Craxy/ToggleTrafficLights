@@ -1,32 +1,28 @@
 ﻿using System;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using ColossalFramework;
-using ColossalFramework.Steamworks;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Serializer;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
+using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions;
 using ICities;
 
-namespace Craxy.CitiesSkylines.ToggleTrafficLights
+namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
 {
-    public sealed class SerializableDataExtension : SerializableDataExtensionBase
+    public class Serialization : SerializableDataExtensionBase
     {
         private static readonly SerializerManager SerializerManager = new SerializerManager
         {
             Serializers =
             {
-                //dammit....c# does not have a proper tuple...
+                //dammit....c# does not have proper tuples...
                 {1, new Serializer.Serializer(SerializerV1.SerializeData, SerializerV1.DeserializeData)}
             }
         };
-
 
         public override void OnCreated(ISerializableData serializableData)
         {
             base.OnCreated(serializableData);
 
-            DebugLog.Warning("Serializable: Created v.{0} at {1}", Assembly.GetExecutingAssembly().GetName().Version, DateTime.Now);
+            DebugLog.Warning("Serialization: Created v.{0} at {1}", Assembly.GetExecutingAssembly().GetName().Version, DateTime.Now);
 
         }
 
@@ -34,7 +30,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights
         {
             base.OnReleased();
 
-            DebugLog.Warning("Serializable: Released v.{0}", Assembly.GetExecutingAssembly().GetName().Version);
+            DebugLog.Warning("Serialization: Released v.{0}", Assembly.GetExecutingAssembly().GetName().Version);
         }
 
         public override void OnLoadData()
@@ -43,9 +39,14 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights
 
             DebugLog.Message("OnLoadData: Data Ids: {0}", string.Join(", ", this.serializableDataManager.EnumerateData()));
 
-            //TODO: erase data after usage?
-
-            SerializerManager.Deserialize(serializableDataManager);
+            if (managers.loading.IsGameMode())
+            {
+                SerializerManager.Deserialize(serializableDataManager);
+            }
+            else
+            {
+                DebugLog.Message("No Loading - in editor");
+            }
         }
 
         public override void OnSaveData()
@@ -55,9 +56,16 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights
             DebugLog.Message("OnSaveData: Data Ids: {0}", string.Join(", ", this.serializableDataManager.EnumerateData()));
 
             //save netnode flags
-            //TODO: sollte eigentlich serialisert und deserialisiert werden (->NetManager). Warum wird das überschrieben?
-
-            SerializerManager.Serialize(serializableDataManager);
+            //TODO: sollte eigentlich automaitsch serialisert und deserialisiert werden (->NetManager). Warum wird das überschrieben?
+            if (managers.loading.IsGameMode())
+            {
+                SerializerManager.Serialize(serializableDataManager);
+            }
+            else
+            {
+                DebugLog.Message("No Saving - in editor");
+            }
+            
         }
     }
 }

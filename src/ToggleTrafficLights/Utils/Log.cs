@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using ColossalFramework;
 using ColossalFramework.Plugins;
 using JetBrains.Annotations;
 
@@ -12,6 +13,10 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
         {
             var msg = string.Format("[{0}] {1}", Prefix, text);
             DebugOutputPanel.AddMessage(messageType, msg);
+
+#if DEBUG
+//            CODebugBase<LogChannel>.Warn(LogChannel.Modding, string.Format("ToggleTrafficLights: {0}: {1}", messageType.ToString("G"), msg));
+#endif
         }
 
         public static void Error(string text)

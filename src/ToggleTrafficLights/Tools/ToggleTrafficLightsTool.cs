@@ -3,11 +3,22 @@ using ColossalFramework.UI;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using UnityEngine;
 
-namespace Craxy.CitiesSkylines.ToggleTrafficLights
+namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 {
-    public sealed class ToggleTrafficLightsTool : ToolBase //TODO: auf DefaultTool upgrade?
+    public class ToggleTrafficLightsTool : ToolBase
     {
-        private ushort _currentNetNodeIdx;
+        protected override void Awake()
+        {
+            base.Awake();
+            DebugLog.Message("ToggleTrafficLightsTool awake");
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+
+            DebugLog.Message("ToggleTrafficLightsTool destroyed");
+        }
 
         protected override void OnEnable()
         {
@@ -21,11 +32,18 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights
             base.OnDisable();
 
             Log.Message("ToggleTrafficLightsTool disabled");
+
         }
+
+        #region members
+        private ushort _currentNetNodeIdx = 0;
+        private Vector3 _hitPosition = Vector3.zero;
+        #endregion
 
         public override void SimulationStep()
         {
             base.SimulationStep();
+
             //DefaultTool does not detect NetNodes
             //-> I'm using code from DefaultTool but keep NetNode
 
@@ -50,9 +68,19 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights
                     DebugLog.Error("Not a valid Raycast!");
                     //TODO: Fehlerbehandlung?
                     _currentNetNodeIdx = 0;
+                    _hitPosition = Vector3.zero;
                     return;
                 }
 
+                _hitPosition = output.m_hitPos;
+
+                //check if inside buildable area
+                if (Singleton<GameAreaManager>.instance.PointOutOfArea(_hitPosition))
+                {
+                    _currentNetNodeIdx = 0;
+                    return;
+                }
+                
                 //test for intersection
                 var node = GetNetNode(output.m_netNode);
                 if ((node.m_flags & NetNode.Flags.Junction) == NetNode.Flags.Junction)
@@ -63,10 +91,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights
                 {
                     _currentNetNodeIdx = 0;
                 }
-
             }
         }
-
         protected override void OnToolUpdate()
         {
             base.OnToolUpdate();
@@ -84,6 +110,11 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights
             {
                 ShowToolInfo(false, null, Vector3.zero);
             }
+        }
+
+        protected override void OnToolLateUpdate()
+        {
+            base.OnToolLateUpdate();
         }
 
         protected override void OnToolGUI()
@@ -113,7 +144,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights
         }
 
         #region Status
-
         private bool IsOverNetNode()
         {
             return _currentNetNodeIdx != 0;
@@ -121,7 +151,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights
         #endregion
 
         #region Helper
-
         private NetNode GetCurrentNetNode()
         {
             return GetNetNode(_currentNetNodeIdx);
@@ -148,12 +177,12 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights
             if (HasTrafficLights(node.m_flags))
             {
                 node.m_flags &= ~NetNode.Flags.TrafficLights;
-                DebugLog.Message("Traffic lights enabled");
+                DebugLog.Message("Traffic lights disabled");
             }
             else
             {
                 node.m_flags |= NetNode.Flags.TrafficLights;
-                DebugLog.Message("Traffic lights disabled");
+                DebugLog.Message("Traffic lights enabled");
             }
 
             SetNetNode(index, node);
