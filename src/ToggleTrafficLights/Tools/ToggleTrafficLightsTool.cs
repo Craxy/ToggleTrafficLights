@@ -1,17 +1,21 @@
-﻿using ColossalFramework;
-using ColossalFramework.UI;
+﻿using System;
+using ColossalFramework;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
+using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions;
 using UnityEngine;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 {
-    public class ToggleTrafficLightsTool : ToolBase
+//    public class ToggleTrafficLightsTool : DefaultToolWithNetNodeDetection { }
+
+    public class ToggleTrafficLightsTool : DefaultToolWithNetNodeDetection
     {
-        protected override void Awake()
+        #region Start/End
+        private void Start()
         {
-            base.Awake();
-            DebugLog.Message("ToggleTrafficLightsTool awake");
+            DebugLog.Message("ToggleTrafficLightsTool start");
         }
+
 
         protected override void OnDestroy()
         {
@@ -24,83 +28,30 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
         {
             base.OnEnable();
 
-            Log.Message("ToggleTrafficLightsTool enabled");
+            DebugLog.Message("ToggleTrafficLightsTool enabled");
         }
 
         protected override void OnDisable()
         {
             base.OnDisable();
 
-            Log.Message("ToggleTrafficLightsTool disabled");
-
+            DebugLog.Message("ToggleTrafficLightsTool disabled");
         }
-
-        #region members
-        private ushort _currentNetNodeIdx = 0;
-        private Vector3 _hitPosition = Vector3.zero;
         #endregion
 
-        public override void SimulationStep()
-        {
-            base.SimulationStep();
+        #region game loop
 
-            //DefaultTool does not detect NetNodes
-            //-> I'm using code from DefaultTool but keep NetNode
-
-            var mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-            var mouseRayLength = Camera.main.farClipPlane;
-            var rayRight = Camera.main.transform.TransformDirection(Vector3.right);
-            var mouseRayValid = !UIView.IsInsideUI() && Cursor.visible;
-
-            if (mouseRayValid)
-            {
-                var defaultService = new ToolBase.RaycastService(ItemClass.Service.None, ItemClass.SubService.None, ItemClass.Layer.Default);
-                var input = new ToolBase.RaycastInput(mouseRay, mouseRayLength)
-                {
-                    m_rayRight = rayRight,
-                    m_netService = defaultService,
-                    m_ignoreNodeFlags = NetNode.Flags.None
-                    //other flags and services unnecessary -- I'm only interested in NetNodes
-                };
-                RaycastOutput output;
-                if (!RayCast(input, out output))
-                {
-                    _currentNetNodeIdx = 0;
-                    _hitPosition = Vector3.zero;
-                    return;
-                }
-
-                _hitPosition = output.m_hitPos;
-
-                //check if inside buildable area
-                if (Singleton<GameAreaManager>.instance.PointOutOfArea(_hitPosition))
-                {
-                    _currentNetNodeIdx = 0;
-                    return;
-                }
-                
-                //test for intersection
-                var node = GetNetNode(output.m_netNode);
-                if ((node.m_flags & NetNode.Flags.Junction) == NetNode.Flags.Junction)
-                {
-                    _currentNetNodeIdx = output.m_netNode;
-                }
-                else
-                {
-                    _currentNetNodeIdx = 0;
-                }
-            }
-        }
         protected override void OnToolUpdate()
         {
             base.OnToolUpdate();
 
-            if (!m_toolController.IsInsideUI && Cursor.visible && IsOverNetNode())
+            if (!m_toolController.IsInsideUI && Cursor.visible && IsValidNetNode())
             {
-                var node = GetCurrentNetNode();
-                var txt = string.Format("Traffic lights: {0}", HasTrafficLights(node.m_flags));
+                var node = GetNetNode();
+                var hasTrafficLight = CitiesHelper.HasTrafficLights(node.m_flags);
+                var txt = string.Format("Traffic lights: {0}", hasTrafficLight);
 #if DEBUG
-                txt = string.Format("{0}\nNode: {1}", txt, _currentNetNodeIdx);
+                txt = string.Format("{0}\nNode: {1}", txt, m_hoverInstance.NetNode);
 #endif
                 ShowToolInfo(true, txt, node.m_position);
             }
@@ -109,82 +60,147 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
                 ShowToolInfo(false, null, Vector3.zero);
             }
         }
-
-        protected override void OnToolLateUpdate()
-        {
-            base.OnToolLateUpdate();
-        }
-
         protected override void OnToolGUI()
         {
             base.OnToolGUI();
 
-            if (m_toolController.IsInsideUI)
+            if (!m_toolController.IsInsideUI && Cursor.visible && IsValidNetNode())
             {
-                return;
-            }
-
-            var current = Event.current;
-            if (current.type == EventType.MouseDown)
-            {
-                if (current.button != 0)
+                var current = Event.current;
+                //button=0 -> left click
+                if (current.type == EventType.MouseDown && current.button == 0)
                 {
-                    return;
+                    ToggleTrafficLights();
                 }
-
-                if (!IsOverNetNode())
-                {
-                    return;
-                }
-
-                ToggleTrafficLights(_currentNetNodeIdx);
             }
         }
+        #endregion
 
-        #region Status
-        private bool IsOverNetNode()
+        #region Node
+        private bool IsValidNetNode()
         {
-            return _currentNetNodeIdx != 0;
+            return m_hoverInstance.NetNode != 0;
+        }
+
+        private int GetNetNodeId()
+        {
+            return m_hoverInstance.NetNode;
+        }
+
+        private NetNode GetNetNode()
+        {
+            if (!IsValidNetNode())
+            {
+                throw new InvalidOperationException("Not a valid NetNode");
+            }
+
+            return Singleton<NetManager>.instance.m_nodes.m_buffer[GetNetNodeId()];
         }
         #endregion
 
         #region Helper
-        private NetNode GetCurrentNetNode()
-        {
-            return GetNetNode(_currentNetNodeIdx);
-        }
-        private static NetNode GetNetNode(ushort index)
-        {
-            return Singleton<NetManager>.instance.m_nodes.m_buffer[index];
-        }
-
-        private static void SetNetNode(ushort index, NetNode node)
-        {
-            Singleton<NetManager>.instance.m_nodes.m_buffer[index] = node;
-        }
-
         public static bool HasTrafficLights(NetNode.Flags flags)
         {
             return (flags & NetNode.Flags.TrafficLights) == NetNode.Flags.TrafficLights;
         }
 
-        private static void ToggleTrafficLights(ushort index)
+        private static NetNode.Flags ToggleTrafficLights(NetNode.Flags flags)
         {
-            var node = GetNetNode(index);
-
-            if (HasTrafficLights(node.m_flags))
+            if (HasTrafficLights(flags))
             {
-                node.m_flags &= ~NetNode.Flags.TrafficLights;
+                flags &= ~NetNode.Flags.TrafficLights;
                 DebugLog.Message("Traffic lights disabled");
             }
             else
             {
-                node.m_flags |= NetNode.Flags.TrafficLights;
+                flags |= NetNode.Flags.TrafficLights;
                 DebugLog.Message("Traffic lights enabled");
             }
+            return flags;
+        }
+        private void ToggleTrafficLights()
+        {
+            var node = GetNetNode();
 
-            SetNetNode(index, node);
+            node.m_flags = ToggleTrafficLights(node.m_flags);
+//            if (HasTrafficLights(node.m_flags))
+//            {
+//                node.m_flags &= ~NetNode.Flags.TrafficLights;
+//                DebugLog.Message("Traffic lights disabled");
+//            }
+//            else
+//            {
+//                node.m_flags |= NetNode.Flags.TrafficLights;
+//                DebugLog.Message("Traffic lights enabled");
+//            }
+
+            Singleton<NetManager>.instance.m_nodes.m_buffer[GetNetNodeId()] = node;
+        }
+        #endregion
+
+        #region Ignore Flags
+
+        public override NetNode.Flags GetNodeIncludeFlags()
+        {
+            return NetNode.Flags.Junction;
+        }
+
+        public override NetNode.Flags GetNodeIgnoreFlags()
+        {
+            //just ~Junction is not enough: roads have usually other flags to -> get ignored
+            return NetNode.Flags.None;
+        }
+
+        public override NetSegment.Flags GetSegmentIgnoreFlags()
+        {
+            return NetSegment.Flags.All;
+        }
+
+        public override Building.Flags GetBuildingIgnoreFlags()
+        {
+            return Building.Flags.All;
+        }
+
+        public override TreeInstance.Flags GetTreeIgnoreFlags()
+        {
+            return TreeInstance.Flags.All;
+        }
+
+        public override PropInstance.Flags GetPropIgnoreFlags()
+        {
+            return PropInstance.Flags.All;
+        }
+
+        public override Vehicle.Flags GetVehicleIgnoreFlags()
+        {
+            return Vehicle.Flags.All;
+        }
+
+        public override VehicleParked.Flags GetParkedVehicleIgnoreFlags()
+        {
+            return VehicleParked.Flags.All;
+        }
+
+        public override CitizenInstance.Flags GetCitizenIgnoreFlags()
+        {
+            return CitizenInstance.Flags.All;
+        }
+
+        public override TransportLine.Flags GetTransportIgnoreFlags()
+        {
+            return TransportLine.Flags.All;
+        }
+
+        public override District.Flags GetDistrictIgnoreFlags()
+        {
+            return District.Flags.All;
+        }
+
+        public override bool GetTerrainIgnore()
+        {
+            return true;
         }
         #endregion
     }
+
 }

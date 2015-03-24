@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ColossalFramework;
-using Craxy.CitiesSkylines.ToggleTrafficLights.Tools;
+using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Serializer
 {
@@ -11,7 +11,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Serializer
         public static IEnumerable<byte> SerializeData()
         {
             return Singleton<NetManager>.instance.m_nodes.m_buffer
-                .Select(n => ToggleTrafficLightsTool.HasTrafficLights(n.m_flags))
+                .Select(n => CitiesHelper.HasTrafficLights(n.m_flags))
                 .Select(Convert.ToByte);
         }
 
@@ -27,7 +27,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Serializer
                 if (hasLights)
                 {
                     //this if is utterly unnecessary...
-                    if (!ToggleTrafficLightsTool.HasTrafficLights(node.m_flags))
+                    if (!CitiesHelper.HasTrafficLights(node.m_flags))
                     {
                         node.m_flags |= NetNode.Flags.TrafficLights;
                     }
@@ -35,7 +35,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Serializer
                 else //(!hasLights)
                 {
                     //"
-                    if (ToggleTrafficLightsTool.HasTrafficLights(node.m_flags))
+                    if (CitiesHelper.HasTrafficLights(node.m_flags))
                     {
                         node.m_flags &= ~NetNode.Flags.TrafficLights;
                     }

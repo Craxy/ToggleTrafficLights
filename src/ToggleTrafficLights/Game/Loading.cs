@@ -16,7 +16,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
 //            Configuration.CurrentMode = loading.currentMode;
 
             DebugLog.Message("Created v.{0} at {1}", Assembly.GetExecutingAssembly().GetName().Version, DateTime.Now);
-
         }
 
         public override void OnReleased()

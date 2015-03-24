@@ -14,10 +14,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToggleTrafficLights", "src\
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug without Serialize|Any CPU = Debug without Serialize|Any CPU
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E1DEBC88-68E3-4525-9044-3F102A300D2B}.Debug without Serialize|Any CPU.ActiveCfg = Debug without Serialize|Any CPU
+		{E1DEBC88-68E3-4525-9044-3F102A300D2B}.Debug without Serialize|Any CPU.Build.0 = Debug without Serialize|Any CPU
 		{E1DEBC88-68E3-4525-9044-3F102A300D2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E1DEBC88-68E3-4525-9044-3F102A300D2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E1DEBC88-68E3-4525-9044-3F102A300D2B}.Release|Any CPU.ActiveCfg = Release|Any CPU

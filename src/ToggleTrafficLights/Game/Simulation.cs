@@ -1,4 +1,7 @@
-﻿using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
+﻿using System;
+using System.Threading;
+using Craxy.CitiesSkylines.ToggleTrafficLights.Tools;
+using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions;
 using ICities;
 using UnityEngine;
@@ -37,7 +40,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
             var controller = ToolsModifierControl.toolController;
 
             var currentTool = controller.CurrentTool;
-            var ttltool = GetTrafficLightsTool();
+            var ttltool = GetTrafficLightsTool<ToggleTrafficLightsTool>();
 
             if (currentTool == ttltool)
             {
@@ -70,13 +73,27 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
             }
         }
 
-        private ToolBase GetTrafficLightsTool()
+
+        private ToolBase GetTrafficLightsTool<T>() where T : ToolBase 
         {
-            var tool = ToolsModifierControl.toolController.gameObject.GetComponent<Tools.ToggleTrafficLightsTool>();
+            T tool = null;
+            try
+            {
+                tool = ToolsModifierControl.toolController.gameObject.GetComponent<T>();
+            }
+            catch (Exception e)
+            {
+                Log.Warning("GetComponent null: {0}", e.ToString());
+            }
             if (tool == null)
             {
-                tool = ToolsModifierControl.toolController.gameObject.AddComponent<Tools.ToggleTrafficLightsTool>();
+                tool = ToolsModifierControl.toolController.gameObject.AddComponent<T>();
                 DebugLog.Message("Simulation: ToggleTrafficLightsTool created");
+            }
+
+            if (tool == null)
+            {
+                Log.Error("Tool is still null...");
             }
 
             System.Diagnostics.Debug.Assert(tool != null);
