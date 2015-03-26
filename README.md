@@ -35,3 +35,8 @@ See: https://github.com/Craxy/ToggleTrafficLights/issues
 * Ctrl+T now toggle the tool on/of (returns to the previous selected tool)
 * Disabled tool inside the editors
 * Traffic lights outside the buildable area cannot be toggled anymore
+
+
+
+### Additional Infos
+* Some code is taken from or inspired by the mod "Extended Road Upgrade" by viakmaky: https://github.com/viakmaky/Skylines-ExtendedRoadUpgrade (MIT licence)

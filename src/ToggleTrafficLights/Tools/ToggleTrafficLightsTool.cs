@@ -6,8 +6,6 @@ using UnityEngine;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 {
-//    public class ToggleTrafficLightsTool : DefaultToolWithNetNodeDetection { }
-
     public class ToggleTrafficLightsTool : DefaultToolWithNetNodeDetection
     {
         #region Start/End
@@ -40,7 +38,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
         #endregion
 
         #region game loop
-
         protected override void OnToolUpdate()
         {
             base.OnToolUpdate();

@@ -60,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Game\Serialization.cs" />
+    <Compile Include="Game\UI\SelectToolButton.cs" />
     <Compile Include="Mod.cs" />
     <Compile Include="Game\Loading.cs" />
     <Compile Include="Game\Simulation.cs" />
@@ -68,11 +69,12 @@
     <Compile Include="Serializer\SerializerV1.cs" />
     <Compile Include="Tools\DefaultToolWithNetNodeDetection.cs" />
     <Compile Include="Tools\ToggleTrafficLightsTool.cs" />
+    <Compile Include="Utils\CitiesHelper.cs" />
     <Compile Include="Utils\Extensions\ArrayExtensions.cs" />
     <Compile Include="Utils\Extensions\CitiesExtensions.cs" />
-    <Compile Include="Utils\Extensions\CitiesHelper.cs" />
     <Compile Include="Utils\Extensions\StringBuilderExtensions.cs" />
     <Compile Include="Utils\Log.cs" />
+    <Compile Include="Utils\UiHelper.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

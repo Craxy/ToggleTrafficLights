@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Threading;
+using ColossalFramework.UI;
+using Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Tools;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions;
@@ -13,6 +15,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
         #region members
 
         private ToolBase _previousTool = null;
+        private SelectToolButton _selectToolButton = null;
         #endregion
 
         public override void OnCreated(IThreading threading)
@@ -23,16 +26,40 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
         public override void OnReleased()
         {
             base.OnReleased();
+
+            if (_selectToolButton != null)
+            {
+                _selectToolButton.Destroy();
+                _selectToolButton = null;
+            }
         }
 
         public override void OnUpdate(float realTimeDelta, float simulationTimeDelta)
         {
             base.OnUpdate(realTimeDelta, simulationTimeDelta);
 
-            if (managers.loading.IsGameMode() && Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.T))
+            if (managers.loading.IsGameMode())
             {
-                ToggleToggleTrafficLightsTool();
+                if (_selectToolButton == null)
+                {
+                    _selectToolButton = new SelectToolButton();
+                    DebugLog.Info("SelectToolButton created");
+                }
+                if (!_selectToolButton.Initialized)
+                {
+                    if (_selectToolButton.Initialize())
+                    {
+                        DebugLog.Info("SelectToolButton initialized");
+                    }
+                }
+
+                if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.T))
+                {
+                    ToggleToggleTrafficLightsTool();
+                }
             }
+
+
         }
 
         private void ToggleToggleTrafficLightsTool()
@@ -72,7 +99,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
                 System.Diagnostics.Debug.Assert(_previousTool != null);
             }
         }
-
 
         private ToolBase GetTrafficLightsTool<T>() where T : ToolBase 
         {
