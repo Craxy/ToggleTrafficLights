@@ -60,7 +60,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Game\Serialization.cs" />
+    <Compile Include="Game\UI\SelectToggleTrafficLightsToolMultiStateButton.cs" />
+    <Compile Include="Game\UI\SelectToolBase.cs" />
     <Compile Include="Game\UI\SelectToolButton.cs" />
+    <Compile Include="Game\UI\SelectToggleTrafficLightsToolButton.cs" />
     <Compile Include="Mod.cs" />
     <Compile Include="Game\Loading.cs" />
     <Compile Include="Game\Simulation.cs" />
@@ -70,13 +73,26 @@
     <Compile Include="Tools\DefaultToolWithNetNodeDetection.cs" />
     <Compile Include="Tools\ToggleTrafficLightsTool.cs" />
     <Compile Include="Utils\CitiesHelper.cs" />
+    <Compile Include="Utils\EventArgs.cs" />
     <Compile Include="Utils\Extensions\ArrayExtensions.cs" />
     <Compile Include="Utils\Extensions\CitiesExtensions.cs" />
     <Compile Include="Utils\Extensions\StringBuilderExtensions.cs" />
     <Compile Include="Utils\Log.cs" />
     <Compile Include="Utils\UiHelper.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\icons.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\orig\Icon_Selected.png" />
+    <None Include="Assets\orig\Icon_Unselected.png" />
+    <None Include="Assets\orig\Selected.png" />
+    <None Include="Assets\orig\Unselected.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\orig\TrafficLightsIcon.design" />
+    <None Include="Assets\orig\Unselected.pdn" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>mkdir "%25LOCALAPPDATA%25\Colossal Order\Cities_Skylines\Addons\Mods\$(SolutionName)"

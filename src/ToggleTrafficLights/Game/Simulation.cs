@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Threading;
-using ColossalFramework.UI;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Tools;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions;
 using ICities;
-using UnityEngine;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
 {
@@ -15,7 +12,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
         #region members
 
         private ToolBase _previousTool = null;
-        private SelectToolButton _selectToolButton = null;
+        private SelectToggleTrafficLightsToolButton _selectToolMultiStateButton = null;
         #endregion
 
         public override void OnCreated(IThreading threading)
@@ -27,10 +24,10 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
         {
             base.OnReleased();
 
-            if (_selectToolButton != null)
+            if (_selectToolMultiStateButton != null)
             {
-                _selectToolButton.Destroy();
-                _selectToolButton = null;
+                _selectToolMultiStateButton.Destroy();
+                _selectToolMultiStateButton = null;
             }
         }
 
@@ -40,23 +37,22 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
 
             if (managers.loading.IsGameMode())
             {
-                if (_selectToolButton == null)
+                if (_selectToolMultiStateButton == null)
                 {
-                    _selectToolButton = new SelectToolButton();
+                    _selectToolMultiStateButton = new SelectToggleTrafficLightsToolButton();
                     DebugLog.Info("SelectToolButton created");
                 }
-                if (!_selectToolButton.Initialized)
+                if (!_selectToolMultiStateButton.Initialized)
                 {
-                    if (_selectToolButton.Initialize())
+                    if (_selectToolMultiStateButton.Initialize())
                     {
                         DebugLog.Info("SelectToolButton initialized");
                     }
                 }
-
-                if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.T))
-                {
-                    ToggleToggleTrafficLightsTool();
-                }
+//                if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.T))
+//                {
+//                    ToggleToggleTrafficLightsTool();
+//                }
             }
 
 

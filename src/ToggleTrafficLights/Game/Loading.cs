@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Reflection;
-using Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions;
 using ICities;
@@ -26,7 +25,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
             DebugLog.Message("Released v.{0}", Assembly.GetExecutingAssembly().GetName().Version);
         }
 
-        private SelectToolButton _selectToolButton = null;
 
         public override void OnLevelLoaded(LoadMode mode)
         {
@@ -36,10 +34,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
             if (managers.loading.IsGameMode())
             {
                 DebugLog.Message("Level loaded");
-                
-//                //add button
-//                _selectToolButton = new SelectToolButton();
-//                _selectToolButton.Initialize();
             }
             else
             {
@@ -50,11 +44,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
         public override void OnLevelUnloading()
         {
             base.OnLevelUnloading();
-
-            if (_selectToolButton != null)
-            {
-                _selectToolButton.Destroy();
-            }
 
             DebugLog.Message("Level unloaded");
         }

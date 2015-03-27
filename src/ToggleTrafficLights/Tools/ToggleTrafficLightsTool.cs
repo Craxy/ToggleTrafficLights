@@ -26,12 +26,16 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
         {
             base.OnEnable();
 
+            OnOnEnabledChanged(true);
+
             DebugLog.Message("ToggleTrafficLightsTool enabled");
         }
 
         protected override void OnDisable()
         {
             base.OnDisable();
+
+            OnOnEnabledChanged(false);
 
             DebugLog.Message("ToggleTrafficLightsTool disabled");
         }
@@ -71,6 +75,20 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
                 }
             }
         }
+        #endregion
+
+        #region Events
+
+        public event EventHandler<EventArgs<bool>> OnEnabledChanged;
+        protected virtual void OnOnEnabledChanged(bool isEnabled)
+        {
+            var handler = OnEnabledChanged;
+            if (handler != null)
+            {
+                handler(this, new EventArgs<bool>(isEnabled));
+            }
+        }
+
         #endregion
 
         #region Node
