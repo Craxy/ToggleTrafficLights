@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using ColossalFramework.UI;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Tools;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
@@ -16,8 +14,9 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI
         #region members
         //        public static readonly string ButtonName = "TogggleTrafficLightsToolButton";
         private UIButton _btn = null;
-        //        private ToolBase _previousTool = null;
+        private ToolBase _previousTool = null;
         private ToggleTrafficLightsTool _trafficLightsTool = null;
+        private Tab _previousTab = null;
         #endregion 
 
         #region properties
@@ -111,7 +110,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI
             btn.playAudioEvents = true;
             btn.relativePosition = new Vector3(100, 40);
 
-            RegisterToInterferingTabstrips();
+            RegisterToInterferingUis();
 
             btn.StartCoroutine(RegisterButtonEvents(btn));
 
@@ -126,7 +125,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI
         }
         public void Destroy()
         {
-            DeregisterFromInterferingTabstrip();
+            DeregisterFromInterferingUis();
 
             if (_btn != null)
             {
@@ -236,7 +235,14 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI
         public void Activate()
         {
             SetActiveStateSprites(_btn);
-            UiHelper.FindComponent<UITabstrip>("ToolMode").selectedIndex = -1;
+
+            //Select currently selected tab (or default to first tab tool (straight road)
+            RememberCurrentActiveTab();
+
+            //deselect all other roads option panel tools
+            GetInterferingTabstrips()
+                .Where(ts => ts.selectedIndex >= 0)
+                .ForEach(ts => ts.selectedIndex = -1);
 
             if (IsToolActivated())
             {
@@ -244,8 +250,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI
             }
 
             //TODO: RoadsPanel öffnen wenn nicht offen
-            //TODO: save previous tool?
-
+            SetPreviousTool(ToolsModifierControl.toolController.CurrentTool); //TODO: previous tool is TrafficLightsTool
             ToolsModifierControl.toolController.CurrentTool = GetTrafficLightsTool();
         }
 
@@ -253,13 +258,80 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI
         {
             SetDeactivateStateSprites(_btn); 
 
+            //Select previous tab tool
+            //this is only necessary, if another tool outside the road panel is activated (like other build tab or close roadpanel)
+            if (GetInterferingTabstrips().All(t => t.selectedIndex < 0))
+            {
+                RestorePreviousActiveTab();
+            }
+
             if (!IsToolActivated())
             {
                 return;
             }
 
+            DebugLog.Info("Deactivate and go to tool {0}", _previousTool == null ? "null" : _previousTool.GetType().ToString());
+
+            //TODO: problem beim schließen von road panel: erst wird traffic tools disabled registriert -> back to nettool, dann registriert schließen -> NetTool bleibt aktiviert obwohl eigentlich select tool!
+
+            if (_previousTool == null)
+            {
+                //set to default tool
+                ToolsModifierControl.SetTool<DefaultTool>();
+            }
+            else if (_previousTool is NetTool)
+            {
+                //enabled traffic lights tool through roads panel -> no ui to change
+                ToolsModifierControl.toolController.CurrentTool = _previousTool;
+            }
+            else if (ToolsModifierControl.toolController.Tools.Contains(_previousTool))
+            {
+                //enabled from some buildin tool -> reenable that ui
+                SetTool(_previousTool);
+            }
+            else
+            {
+                //possible mod tool
+                //I can't know how to best activate it
+                //so I just set the CurrentTool without hiding anything
+                ToolsModifierControl.toolController.CurrentTool = _previousTool;
+            }
+
+
+            //TODO: register esc
             //TODO: to previous tool
+            //TODO: do something when closing roadsoptionpane
             //            ToolsModifierControl.SetTool<NetTool>();
+        }
+
+        private static void SetTool(ToolBase tool)
+        {
+            //copied from ToolsModifierControl.SetTool
+            //necessary for custom tools AND buildin tools for which I don't have the specific type (just ToolBase)
+
+            //not necessary -- tools are already collected
+//            if (ToolsModifierControl.m_Tools == null) 
+//                ToolsModifierControl.CollectTools();
+
+            //I already have the tool
+//            ToolBase toolBase;
+//            if (!(ToolsModifierControl.toolController != null) || !ToolsModifierControl.m_Tools.TryGetValue(typeof (T), out toolBase))
+//            {
+//                return null;
+//            }
+
+            if (!ToolsModifierControl.keepThisWorldInfoPanel)
+            {
+                WorldInfoPanel.HideAllWorldInfoPanels();
+            }
+            GameAreaInfoPanel.Hide();
+            ToolsModifierControl.keepThisWorldInfoPanel = false;
+            if (ToolsModifierControl.toolController.CurrentTool != tool)
+            {
+                ToolsModifierControl.toolController.CurrentTool = tool;
+            }
+
+ 
         }
 
         #endregion
@@ -267,35 +339,63 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI
         #region handle other tabs in roadsoptionpanel
         private IEnumerable<UITabstrip> GetInterferingTabstrips()
         {
-            new []
-            {
-                UiHelper.FindComponent<UITabstrip>("ToolMode"),
-            }
-            
-            //TODO: test for null?
-            //TODO: extended road tool hinzufügen
+            //TODO: wie IEnumerable einfach erstellen? {1;2;3} in F#?
+            return new[]
+                {
+                    UiHelper.FindComponent<UITabstrip>("ToolMode"),
+                    //TODO: extended road tool hinzufügen
+                }
+                .Where(ts => ts != null); 
         }
 
-        private void RegisterToInterferingTabstrips()
+        private void RegisterToInterferingUis()
         {
             foreach (var t in GetInterferingTabstrips())
             {
                 t.eventSelectedIndexChanged += OnInterferingTabstripSelectedIndexChanged;
             }
+
+            var roadsPanel = UiHelper.FindComponent<UIComponent>("RoadsPanel");
+            if(roadsPanel != null)
+            {
+                roadsPanel.eventVisibilityChanged += RoadsPanelOnEventVisibilityChanged;
+            }
+
+            RememberCurrentActiveTab();
+
         }
-        private void DeregisterFromInterferingTabstrip()
+
+        private void DeregisterFromInterferingUis()
         {
             foreach (var t in GetInterferingTabstrips())
             {
                 t.eventSelectedIndexChanged -= OnInterferingTabstripSelectedIndexChanged;
             }
+            var roadsPanel = UiHelper.FindComponent<UIComponent>("RoadsPanel");
+            if (roadsPanel != null)
+            {
+                roadsPanel.eventVisibilityChanged -= RoadsPanelOnEventVisibilityChanged;
+            }
         }
         private void OnInterferingTabstripSelectedIndexChanged(UIComponent component, int value)
         {
-            var ts = (UITabstrip) component;
-            
-            //TODO: eigenes deselecten
-
+            //-1: nothing selected -> some other option was selected (for example: this tool) 
+            if (value >= 0 && IsToolActivated())
+            {
+                //other tool was selected -> deactivate this tool
+                DebugLog.Info("Some other tool was selected -> deselecting Traffic Lights Tool");
+                Deactivate();
+            }
+        }
+        private void RoadsPanelOnEventVisibilityChanged(UIComponent component, bool value)
+        {
+            //wenn von visible->invisible und tool selected -> change to previous road tab tool
+            DebugLog.Message("Changing visibility on RoadsPanel to {0}", value);
+            if (value == false && IsToolActivated())
+            {
+                //set selected tab to previous one
+                RestorePreviousActiveTab();
+            }
         }
         #endregion
 
@@ -320,9 +420,12 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI
 
         }
 
-        #endregion
+        private void SetPreviousTool(ToolBase tool)
+        {
+            DebugLog.Info("Previous tool set to {0}", tool == null ? "null" : tool.GetType().Name);
 
-        #region Disable RoadTabs
+            _previousTool = tool;
+        }
         #endregion
 
         #region Traffic Lights Tool
@@ -330,8 +433,14 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI
         {
             if (_trafficLightsTool == null)
             {
-                _trafficLightsTool = ToolsModifierControl.toolController.gameObject.GetComponent<ToggleTrafficLightsTool>()
-                                     ?? ToolsModifierControl.toolController.gameObject.AddComponent<ToggleTrafficLightsTool>();
+                _trafficLightsTool = ToolsModifierControl.toolController.gameObject.GetComponent<ToggleTrafficLightsTool>();
+                if (_trafficLightsTool == null)
+                {
+                    var previousTool = ToolsModifierControl.toolController.CurrentTool;
+                    _trafficLightsTool = ToolsModifierControl.toolController.gameObject.AddComponent<ToggleTrafficLightsTool>();
+                    //reset to previous tool. Somehow AddComponent enabled the added tool...
+                    ToolsModifierControl.toolController.CurrentTool = previousTool;
+                }
 
                 //register enabledchanged
                 _trafficLightsTool.OnEnabledChanged += OnTrafficLightsEnabledChanged;
@@ -345,6 +454,41 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI
         }
         #endregion
 
+        #region selected tab
 
+        private void RememberCurrentActiveTab()
+        {
+            var selected = GetInterferingTabstrips().FirstOrDefault(ts => ts.selectedIndex >= 0);
+            _previousTab = selected != null
+                           ? new Tab(selected, selected.selectedIndex)
+                           : new Tab(GetInterferingTabstrips().First(), 0);
+        }
+
+        private void RestorePreviousActiveTab()
+        {
+            if (_previousTab == null)
+            {
+                //default to first tab tool (straight tool)
+                GetInterferingTabstrips().First().selectedIndex = 0;
+            }
+            else
+            {
+                var tab = _previousTab;
+                tab.Tabstrip.selectedIndex = tab.SelectedIndex;
+            }
+        }
+
+        private class Tab
+        {
+            public readonly UITabstrip Tabstrip;
+            public readonly int SelectedIndex;
+
+            public Tab(UITabstrip tabstrip, int selectedIndex)
+            {
+                Tabstrip = tabstrip;
+                SelectedIndex = selectedIndex;
+            }
+        }
+        #endregion
     }
 }
