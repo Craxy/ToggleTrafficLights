@@ -231,7 +231,10 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI
         private void RegisterToInterferingUis()
         {
             var toolMode = GetToolModeTabstrip();
-            toolMode.eventSelectedIndexChanged += OnToolModeChanged;
+            if (toolMode != null)
+            {
+                toolMode.eventSelectedIndexChanged += OnToolModeChanged;
+            }
 
             var roadsPanel = UiHelper.FindComponent<UIComponent>("RoadsPanel");
             if (roadsPanel != null)
@@ -243,7 +246,10 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI
         private void DeregisterFromInterferingUis()
         {
             var toolMode = GetToolModeTabstrip();
-            toolMode.eventSelectedIndexChanged -= OnToolModeChanged;
+            if (toolMode != null)
+            {
+                toolMode.eventSelectedIndexChanged -= OnToolModeChanged;
+            }
 
             var roadsPanel = UiHelper.FindComponent<UIComponent>("RoadsPanel");
             if (roadsPanel != null)
