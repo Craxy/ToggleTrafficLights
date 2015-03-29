@@ -1,14 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
+using System.Collections;
 using System.Linq;
 using ColossalFramework.UI;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Tools;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI
 {
-    public class SelectToggleTrafficLightsToolButton
+    public class SelectButton
     {
         #region members
         private UIButton _button = null;
@@ -190,129 +191,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI
         }
         #endregion
 
-        #region events
-        private IEnumerator RegisterButtonEvents(UIButton button)
-        {
-            yield return null;
-
-            button.eventClick += OnClick;
-            DebugLog.Info("RegisterButtonEvents: OnClick registered");
-        }
-        private void RegisterToInterferingUis()
-        {
-            //register to other mods tabstrips
-            foreach (var t in GetInterferingTabstrips())
-            {
-                t.eventSelectedIndexChanged += OnInterferingTabstripSelectedIndexChanged;
-            }
-
-            var roadsPanel = UiHelper.FindComponent<UIComponent>("RoadsPanel");
-            if (roadsPanel != null)
-            {
-                roadsPanel.eventVisibilityChanged += RoadsPanelOnEventVisibilityChanged;
-            }
-        }
-
-        private void DeregisterFromInterferingUis()
-        {
-            foreach (var t in GetInterferingTabstrips())
-            {
-                t.eventSelectedIndexChanged -= OnInterferingTabstripSelectedIndexChanged;
-            }
-            var roadsPanel = UiHelper.FindComponent<UIComponent>("RoadsPanel");
-            if (roadsPanel != null)
-            {
-                roadsPanel.eventVisibilityChanged -= RoadsPanelOnEventVisibilityChanged;
-            }
-        }
-
-        private UITabstrip GetToolModeTabstrip()
-        {
-            return UiHelper.FindComponent<UITabstrip>("ToolMode");
-        }
-        private IEnumerable<UITabstrip> GetInterferingTabstrips()
-        {
-            //TODO: wie IEnumerable einfach erstellen? {1;2;3} in F#?
-            return new[]
-                {
-                    UiHelper.FindComponent<UITabstrip>("ToolMode"),
-                    UiHelper.FindComponent<UITabstrip>("ExtendedRoadUpgradePanel"),
-                }
-                .Where(ts => ts != null);
-        }
-
-        private void OnInterferingTabstripSelectedIndexChanged(UIComponent component, int value)
-        {
-            //i'm not interested in deselecting
-            if (value < 0)
-            {
-                return;
-            }
-            
-            //buildin tab
-            if (component.name == "ToolMode")
-            {
-                //store for restoring when closing panel
-                _previousToolModeSelectedIndex = value;
-            }
-
-            //a selectedIndex >= 0 means its tool is activated
-            //I don't know how other tools handle selected -> ignore them
-            if (Enabled && component.name == "ToolMode")
-            {
-                ToolsModifierControl.toolController.CurrentTool = ToolsModifierControl.toolController.Tools.OfType<NetTool>().First();
-                DebugLog.Info("OnInterferingTabstripSelectedIndexChanged: back to NetTool because value is {0}", value);
-            }
-
-        }
-
-        private void RoadsPanelOnEventVisibilityChanged(UIComponent component, bool value)
-        {
-            //enabled can not be used because tool gets first disabled then roadspanel hides
-            var tab = GetToolModeTabstrip();
-            if (tab.selectedIndex < 0)
-            {
-                tab.selectedIndex = _previousToolModeSelectedIndex;
-                DebugLog.Info("RoadsPanelOnEventVisibilityChanged: change selected to {0}", _previousToolModeSelectedIndex);
-            }
-
-        }
-        #endregion
-
-        #region toggle
-        private void OnClick(UIComponent component, UIMouseEventParameter args)
-        {
-            if (!Enabled)
-            {
-                Activate();
-            }
-        }
-
-        private void OnTrafficLightsEnabledChanged(object sender, EventArgs<bool> args)
-        {
-            if (_button == null)
-            {
-                return;
-            }
-
-            //set button sprites depending on state
-            var enabled = args.Value;
-            if (enabled)
-            {
-                SetActivedStateSprites(_button);
-            }
-            else
-            {
-                SetDeactivatedStateSprites(_button);
-
-                //reset tab selection if necessary
-                if (GetInterferingTabstrips().All(t => t.selectedIndex < 0))
-                {
-                    GetToolModeTabstrip().selectedIndex = _previousToolModeSelectedIndex;
-                }
-            }
-        }
-        #endregion
 
         #region sprites
         private void SetActivedStateSprites(UIButton btn)
@@ -345,30 +223,145 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI
         }
         #endregion
 
-        #region Activation
-
-        public void Activate()
+        #region other tabs
+        private UITabstrip GetToolModeTabstrip()
         {
-            if (Enabled)
+            return UiHelper.FindComponent<UITabstrip>("ToolMode");
+        }
+        private void RegisterToInterferingUis()
+        {
+            var toolMode = GetToolModeTabstrip();
+            toolMode.eventSelectedIndexChanged += OnToolModeChanged;
+
+            var roadsPanel = UiHelper.FindComponent<UIComponent>("RoadsPanel");
+            if (roadsPanel != null)
             {
-                DebugLog.Info("Traffic Lights tool already activated");
-                return;
+                roadsPanel.eventVisibilityChanged += RoadsPanelOnEventVisibilityChanged;
             }
 
-            //Disable all other tabs
-            GetInterferingTabstrips().ForEach(t => t.selectedIndex = -1);
-            //activate this tool
-            ToolsModifierControl.toolController.CurrentTool = GetTrafficLightsTool();
+        }
+        private void DeregisterFromInterferingUis()
+        {
+            var toolMode = GetToolModeTabstrip();
+            toolMode.eventSelectedIndexChanged -= OnToolModeChanged;
+
+            var roadsPanel = UiHelper.FindComponent<UIComponent>("RoadsPanel");
+            if (roadsPanel != null)
+            {
+                roadsPanel.eventVisibilityChanged -= RoadsPanelOnEventVisibilityChanged;
+            }
+        }
+        private void OnToolModeChanged(UIComponent component, int value)
+        {
+
+            if (value >= 0)
+            {
+                _previousToolModeSelectedIndex = value;
+            }
+            if (value >= 0 && Enabled)
+            {
+                //switch back to NetTool
+                ToolsModifierControl.toolController.CurrentTool = GetNetTool();
+                DebugLog.Info("Switched from Traffic Lights Tool back to NetTool");
+            }
+
+        }
+
+        private void RoadsPanelOnEventVisibilityChanged(UIComponent component, bool value)
+        {
+            //enabled can not be used because tool gets first disabled then roadspanel hides
+            var tab = GetToolModeTabstrip();
+            if (tab.selectedIndex < 0)
+            {
+                tab.selectedIndex = _previousToolModeSelectedIndex;
+                DebugLog.Info("RoadsPanelOnEventVisibilityChanged: change selected to {0}", _previousToolModeSelectedIndex);
+            }
+
+        }
+        private static NetTool GetNetTool()
+        {
+            return ToolsModifierControl.toolController.Tools.OfType<NetTool>().First();
+        }
+
+        /// <summary>
+        /// call in game loop
+        /// </summary>
+        public void RetainToolModeValidity()
+        {
+            if (ToolsModifierControl.GetCurrentTool<NetTool>() != null)
+            {
+                //select tab IF nettool is selected but no index is selected
+                GetToolModeTabstrip().selectedIndex = _previousToolModeSelectedIndex;
+            }
+        }
+        #endregion
+
+        #region click
+        private IEnumerator RegisterButtonEvents(UIButton button)
+        {
+            yield return null;
+
+            button.eventClick += OnClick;
+            DebugLog.Info("RegisterButtonEvents: OnClick registered");
+        }
+        private void OnClick(UIComponent component, UIMouseEventParameter args)
+        {
+            if (!Enabled)
+            {
+                Activate();
+            }
+            else
+            {
+                DebugLog.Info("OnClick: Traffic Lights tool already selected");
+            }
+        }
+
+
+        #endregion
+
+        #region activation
+        public void Activate()
+        {
+            if (!Enabled)
+            {
+                ToolsModifierControl.toolController.CurrentTool = GetTrafficLightsTool();
+                if (!GameObject.Find("ExtendedRoadUpgradePanel"))
+                {
+                    GetToolModeTabstrip().selectedIndex = -1;
+                }
+                else
+                {
+                    DebugLog.Info("Extended Road Upgrade mod detected.");
+                }
+            }
         }
 
         public void Deactivate()
         {
             //TODO: implement
+            throw new NotImplementedException();
         }
         #endregion
 
-
         #region Traffic Lights tool
+        private void OnTrafficLightsEnabledChanged(object sender, EventArgs<bool> args)
+        {
+            if (_button == null)
+            {
+                return;
+            }
+
+            //set button sprites depending on state
+            var enabled = args.Value;
+            if (enabled)
+            {
+                SetActivedStateSprites(_button);
+            }
+            else
+            {
+                SetDeactivatedStateSprites(_button);
+            }
+        }
         public ToggleTrafficLightsTool GetTrafficLightsTool()
         {
             if (_trafficLightsTool == null)
@@ -395,6 +388,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI
 
         #endregion
 
+        #region Show
         public void ToggleShow()
         {
 
@@ -422,7 +416,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI
             }
 
         }
-
         internal static void ClickOnRoadsButton()
         {
             //open/close road panel
@@ -433,5 +426,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI
             var tutorialUiTag = (TutorialUITag)MonoTutorialTag.Find("Roads");
             tutorialUiTag.target.SimulateClick();
         }
+
+        #endregion
     }
 }

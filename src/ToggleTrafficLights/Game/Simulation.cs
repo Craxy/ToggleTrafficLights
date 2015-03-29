@@ -13,8 +13,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
     {
         #region members
 
-        private SelectToggleTrafficLightsToolButton _selectToolButton = null;
-        private OpenViaKey _openViaKey = new OpenViaKey();
+        private SelectButton _selectToolButton = null;
+        private readonly OpenViaKey _openViaKey = new OpenViaKey();
         #endregion
 
         public override void OnCreated(IThreading threading)
@@ -41,7 +41,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
             {
                 if (_selectToolButton == null)
                 {
-                    _selectToolButton = new SelectToggleTrafficLightsToolButton();
+                    _selectToolButton = new SelectButton();
                     DebugLog.Info("SelectToolButton created");
                 }
                 if (!_selectToolButton.Initialized)
@@ -51,6 +51,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
                         DebugLog.Info("SelectToolButton initialized");
                     }
                 }
+
+                _selectToolButton.RetainToolModeValidity();
 
                 _openViaKey.OpenIfAppropriate(_selectToolButton);
             }
@@ -64,7 +66,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
             }
 
             private bool _isOpening = false;
-            public void OpenIfAppropriate(SelectToggleTrafficLightsToolButton button)
+            public void OpenIfAppropriate(SelectButton button)
             {
                 if(!_isOpening && ShouldOpen())
                 {
@@ -78,7 +80,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
                 }
             }
 
-            private void Open(SelectToggleTrafficLightsToolButton button)
+            private void Open(SelectButton button)
             {
                 if (button.Initialized)
                 {
@@ -94,7 +96,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
                     var roadsPanel = UiHelper.FindComponent<UIComponent>("RoadsPanel");
                     if (!roadsPanel.isVisible)
                     {
-                        SelectToggleTrafficLightsToolButton.ClickOnRoadsButton();
+                        SelectButton.ClickOnRoadsButton();
                     }
                 }
             }
