@@ -72,6 +72,16 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
                 {
                     ToggleTrafficLights();
                 }
+                else if (current.type == EventType.MouseDown && current.button == 1)
+                {
+                    //detect only road intersections
+                    var node = GetNetNode();
+                    var info = node.Info;
+                    var ai = info.GetAI();
+
+                    var isRoad = ai is RoadBaseAI;
+                    DebugLog.Info("is road: {0}", isRoad);
+                }
             }
         }
 
@@ -120,7 +130,17 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
         #region Node
         private bool IsValidNetNode()
         {
-            return m_hoverInstance.NetNode != 0;
+            if (m_hoverInstance.NetNode == 0)
+            {
+                return false;
+            }
+
+            //detect only road intersections
+            var node = GetNetNode();
+            var info = node.Info;
+            var ai = info.GetAI();
+
+            return ai is RoadBaseAI;
         }
 
         private int GetNetNodeId()
@@ -130,7 +150,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 
         private NetNode GetNetNode()
         {
-            if (!IsValidNetNode())
+            if (m_hoverInstance.NetNode == 0)
             {
                 throw new InvalidOperationException("Not a valid NetNode");
             }
