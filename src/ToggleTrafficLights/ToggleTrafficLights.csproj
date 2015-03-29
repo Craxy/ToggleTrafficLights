@@ -60,9 +60,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Game\Serialization.cs" />
-    <Compile Include="Game\UI\SelectToggleTrafficLightsToolMultiStateButton.cs" />
-    <Compile Include="Game\UI\SelectToolBase.cs" />
-    <Compile Include="Game\UI\SelectToolButton.cs" />
     <Compile Include="Game\UI\SelectToggleTrafficLightsToolButton.cs" />
     <Compile Include="Mod.cs" />
     <Compile Include="Game\Loading.cs" />

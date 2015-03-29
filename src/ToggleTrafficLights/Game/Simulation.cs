@@ -1,9 +1,11 @@
 ﻿using System;
+using ColossalFramework.UI;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Tools;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions;
 using ICities;
+using UnityEngine;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
 {
@@ -11,8 +13,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
     {
         #region members
 
-        private ToolBase _previousTool = null;
-        private SelectToggleTrafficLightsToolButton _selectToolMultiStateButton = null;
+        private SelectToggleTrafficLightsToolButton _selectToolButton = null;
+        private OpenViaKey _openViaKey = new OpenViaKey();
         #endregion
 
         public override void OnCreated(IThreading threading)
@@ -24,10 +26,10 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
         {
             base.OnReleased();
 
-            if (_selectToolMultiStateButton != null)
+            if (_selectToolButton != null)
             {
-                _selectToolMultiStateButton.Destroy();
-                _selectToolMultiStateButton = null;
+                _selectToolButton.Destroy();
+                _selectToolButton = null;
             }
         }
 
@@ -37,90 +39,65 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
 
             if (managers.loading.IsGameMode())
             {
-                if (_selectToolMultiStateButton == null)
+                if (_selectToolButton == null)
                 {
-                    _selectToolMultiStateButton = new SelectToggleTrafficLightsToolButton();
+                    _selectToolButton = new SelectToggleTrafficLightsToolButton();
                     DebugLog.Info("SelectToolButton created");
                 }
-                if (!_selectToolMultiStateButton.Initialized)
+                if (!_selectToolButton.Initialized)
                 {
-                    if (_selectToolMultiStateButton.Initialize())
+                    if (_selectToolButton.Initialize())
                     {
                         DebugLog.Info("SelectToolButton initialized");
                     }
                 }
-//                if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.T))
-//                {
-//                    ToggleToggleTrafficLightsTool();
-//                }
+
+                _openViaKey.OpenIfAppropriate(_selectToolButton);
             }
-
-
         }
 
-        private void ToggleToggleTrafficLightsTool()
+        private class OpenViaKey
         {
-            var controller = ToolsModifierControl.toolController;
-
-            var currentTool = controller.CurrentTool;
-            var ttltool = GetTrafficLightsTool<ToggleTrafficLightsTool>();
-
-            if (currentTool == ttltool)
+            private bool ShouldOpen()
             {
-                //switch to previous tool
-                if (_previousTool == null)
+                return (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) && Input.GetKeyDown(KeyCode.T);
+            }
+
+            private bool _isOpening = false;
+            public void OpenIfAppropriate(SelectToggleTrafficLightsToolButton button)
+            {
+                if(!_isOpening && ShouldOpen())
                 {
-                    //fallback: back to defaulttool (selection tool)
-                    ToolsModifierControl.SetTool<DefaultTool>();
+                    _isOpening = true;
+                }
+
+                if (_isOpening)
+                {
+                    //tool might not yet be activated -> try activate until activated
+                    Open(button);
+                }
+            }
+
+            private void Open(SelectToggleTrafficLightsToolButton button)
+            {
+                if (button.Initialized)
+                {
+                    //hier findet eigentlicher toggle statt
+                    button.ToggleShow();
+                    _isOpening = false;
                 }
                 else
                 {
-                    controller.CurrentTool = _previousTool;
+                    //must be initialized first
+                    //-> Click on button to show roadspanel
+                    //but only of panel is not visible
+                    var roadsPanel = UiHelper.FindComponent<UIComponent>("RoadsPanel");
+                    if (!roadsPanel.isVisible)
+                    {
+                        SelectToggleTrafficLightsToolButton.ClickOnRoadsButton();
+                    }
                 }
-
-                DebugLog.Message("Switched to previous tool: {0}", _previousTool == null ? "[DefaultTool]" : _previousTool.GetType().Name);
-
-                _previousTool = null;
-                System.Diagnostics.Debug.Assert(_previousTool == null);
-
             }
-            else
-            {
-                //switch to traffic lights tool
-                _previousTool = currentTool;
-                controller.CurrentTool = ttltool;
-
-                DebugLog.Message("Switched to ToggleTrafficLightsTool from {0}", _previousTool == null ? "[DefaultTool]" : _previousTool.GetType().Name);
-
-                System.Diagnostics.Debug.Assert(_previousTool != null);
-            }
-        }
-
-        private ToolBase GetTrafficLightsTool<T>() where T : ToolBase 
-        {
-            T tool = null;
-            try
-            {
-                tool = ToolsModifierControl.toolController.gameObject.GetComponent<T>();
-            }
-            catch (Exception e)
-            {
-                Log.Warning("GetComponent null: {0}", e.ToString());
-            }
-            if (tool == null)
-            {
-                tool = ToolsModifierControl.toolController.gameObject.AddComponent<T>();
-                DebugLog.Message("Simulation: ToggleTrafficLightsTool created");
-            }
-
-            if (tool == null)
-            {
-                Log.Error("Tool is still null...");
-            }
-
-            System.Diagnostics.Debug.Assert(tool != null);
-
-            return tool;
         }
     }
 }
