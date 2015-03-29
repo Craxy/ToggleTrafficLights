@@ -1,7 +1,6 @@
 ﻿using System;
 using ColossalFramework;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
-using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions;
 using UnityEngine;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
@@ -75,6 +74,33 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
                 }
             }
         }
+
+        public override void RenderOverlay(RenderManager.CameraInfo cameraInfo)
+        {
+            base.RenderOverlay(cameraInfo);
+
+            if (IsValidNetNode())
+            {
+                var node = GetNetNode();
+                var position = node.m_position;
+
+                var info = node.Info;
+
+                var color = GetToolColor(false, false);
+                //http://paletton.com/#uid=13r0u0k++++qKZWAF+V+VAFZWqK
+                if (HasTrafficLights(node.m_flags))
+                {
+                    color = new Color(0.2f, 0.749f, 0.988f, color.a);
+                }
+                else
+                {
+                    color = new Color(0.0f, 0.369f, 0.525f, color.a);
+                }
+
+                ++Singleton<ToolManager>.instance.m_drawCallData.m_overlayCalls;
+                Singleton<RenderManager>.instance.OverlayEffect.DrawCircle(cameraInfo, color, position, info.m_halfWidth * 2, -1f, 1280f, false, false);
+            }
+        }
         #endregion
 
         #region Events
@@ -138,16 +164,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
             var node = GetNetNode();
 
             node.m_flags = ToggleTrafficLights(node.m_flags);
-//            if (HasTrafficLights(node.m_flags))
-//            {
-//                node.m_flags &= ~NetNode.Flags.TrafficLights;
-//                DebugLog.Message("Traffic lights disabled");
-//            }
-//            else
-//            {
-//                node.m_flags |= NetNode.Flags.TrafficLights;
-//                DebugLog.Message("Traffic lights enabled");
-//            }
 
             Singleton<NetManager>.instance.m_nodes.m_buffer[GetNetNodeId()] = node;
         }

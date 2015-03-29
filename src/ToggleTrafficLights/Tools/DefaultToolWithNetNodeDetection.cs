@@ -1,5 +1,4 @@
 ﻿using ColossalFramework;
-using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 {
