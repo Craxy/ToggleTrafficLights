@@ -6,8 +6,8 @@ Mod for Cities:Skylines
 Tool to **remove or add traffic lights at intersection**. Traffic lights can be added and removed at any kind of road intersection including highways and their off- and on-ramps.
 ![Same intersection with and without traffic lights](./docs/files/img/TrafficLightsVsNoTrafficLights.png)
 
-In game the tool can be activated via a **button in the roads menu** below the roads tool or via the **Ctrl+T**.
-![Deactivated button in the roads menu](./docs/files/img/Button_Deactivated.png)![Activated button in the roads menu](./docs/files/img/Button_Activated.png)
+In game the tool can be activated via a **button in the roads menu** below the roads tool or via the **Ctrl+T**.  
+![Deactivated button in the roads menu](./docs/files/img/Button_Deactivated.png)![Activated button in the roads menu](./docs/files/img/Button_Activated.png)  
 When you hover over an intersection a ToolTip will show the current Traffic Light status (has traffic light or not). Via a left mouse click you can toggle between traffic lights and no traffic lights. To disable this tool simply select another tool.
 
 
