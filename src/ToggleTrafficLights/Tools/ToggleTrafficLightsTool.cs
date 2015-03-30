@@ -1,5 +1,6 @@
 ﻿using System;
 using ColossalFramework;
+using ColossalFramework.Steamworks;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using UnityEngine;
 
@@ -49,10 +50,16 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
             {
                 var node = GetNetNode();
                 var hasTrafficLight = CitiesHelper.HasTrafficLights(node.m_flags);
-                var txt = string.Format("Traffic lights: {0}", hasTrafficLight);
+                var txt = string.Join("\n", new[]
+                    {
+                        string.Format("Traffic lights: {0}", hasTrafficLight),
+                        string.Format("      Original: {0}", WantTrafficLights()),
+
 #if DEBUG
-                txt = string.Format("{0}\nNode: {1}", txt, m_hoverInstance.NetNode);
+                        string.Format("          Node: {0}", m_hoverInstance.NetNode),
 #endif
+                    });
+
                 ShowToolInfo(true, txt, node.m_position);
             }
             else
@@ -74,13 +81,13 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
                 }
                 else if (current.type == EventType.MouseDown && current.button == 1)
                 {
-                    //detect only road intersections
-                    var node = GetNetNode();
-                    var info = node.Info;
-                    var ai = info.GetAI();
+                    var wantLights = WantTrafficLights();
+                    var hasLights = HasTrafficLights(GetNetNode().m_flags);
 
-                    var isRoad = ai is RoadBaseAI;
-                    DebugLog.Info("is road: {0}", isRoad);
+                    if (hasLights != wantLights)
+                    {
+                        ToggleTrafficLights();
+                    }
                 }
             }
         }
@@ -186,6 +193,64 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
             node.m_flags = ToggleTrafficLights(node.m_flags);
 
             Singleton<NetManager>.instance.m_nodes.m_buffer[GetNetNodeId()] = node;
+        }
+
+        private bool WantTrafficLights()
+        {
+            return WantTrafficLights((ushort) GetNetNodeId(), GetNetNode());
+        }
+        public static bool WantTrafficLights(ushort nodeId, NetNode node)
+        {
+            //Source: RoadBaseAI.UpdateNodeFlags
+            //seems pretty......human unfriendly....
+            NetNode.Flags flags1 = node.m_flags;
+            uint num1 = 0U;
+            int num2 = 0;
+            NetManager instance = Singleton<NetManager>.instance;
+            int num3 = 0;
+            int num4 = 0;
+            int num5 = 0;
+            bool flag = ((RoadBaseAI)node.Info.GetAI()).WantTrafficLights();
+            for (int index = 0; index < 8; ++index)
+            {
+                ushort segment = node.GetSegment(index);
+                if ((int)segment != 0)
+                {
+                    NetInfo info = instance.m_segments.m_buffer[(int)segment].Info;
+                    uint num6 = 1U << (int)(info.m_class.m_level & (ItemClass.Level)31);
+                    if (((int)num1 & (int)num6) == 0)
+                    {
+                        num1 |= num6;
+                        ++num2;
+                    }
+                    if (info.m_netAI.WantTrafficLights())
+                        flag = true;
+                    int forward = 0;
+                    int backward = 0;
+                    instance.m_segments.m_buffer[(int)segment].CountLanes(segment, NetInfo.LaneType.Vehicle, VehicleInfo.VehicleType.Car, ref forward, ref backward);
+                    if ((int)instance.m_segments.m_buffer[(int)segment].m_endNode == (int)nodeId)
+                    {
+                        if (forward != 0)
+                        {
+                            ++num3;
+                            num4 += forward;
+                        }
+                    }
+                    else if (backward != 0)
+                    {
+                        ++num3;
+                        num4 += backward;
+                    }
+                    if (forward != 0 || backward != 0)
+                        ++num5;
+                }
+            }
+            NetNode.Flags flags2 = num2 < 2 ? flags1 & ~NetNode.Flags.Transition : flags1 | NetNode.Flags.Transition;
+            NetNode.Flags flags3 = !flag ||
+                num3 <= 2 && (num3 < 2 || num5 < 3 || num4 <= 6) ||
+                (flags2 & NetNode.Flags.Junction) == NetNode.Flags.None ? flags2 & ~NetNode.Flags.TrafficLights : flags2 | NetNode.Flags.TrafficLights;
+
+            return (flags3 & NetNode.Flags.TrafficLights) == NetNode.Flags.TrafficLights;
         }
         #endregion
 
