@@ -89,7 +89,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
             if (Button != null)
             {
                 SetActivedStateSprites(Button);
-                Button.tooltip = "Hallo";
             }
 
             _originalSelectIndex = BuiltinTabstrip.selectedIndex;
