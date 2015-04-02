@@ -180,7 +180,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI
 
             if (_trafficLightsTool != null)
             {
-                _trafficLightsTool.OnEnabledChanged -= OnTrafficLightsEnabledChanged;
+                _trafficLightsTool.EnabledChanged -= TrafficLightsEnabledChanged;
                 if (ToolsModifierControl.toolController.CurrentTool == _trafficLightsTool)
                 {
                     ToolsModifierControl.SetTool<NetTool>();
@@ -350,7 +350,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI
         #endregion
 
         #region Traffic Lights tool
-        private void OnTrafficLightsEnabledChanged(object sender, EventArgs<bool> args)
+        private void TrafficLightsEnabledChanged(object sender, EventArgs<bool> args)
         {
             if (_button == null)
             {
@@ -382,7 +382,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI
                 }
 
                 //register enabledchanged
-                _trafficLightsTool.OnEnabledChanged += OnTrafficLightsEnabledChanged;
+                _trafficLightsTool.EnabledChanged += TrafficLightsEnabledChanged;
 
                 DebugLog.Message("Simulation: ToggleTrafficLightsTool events registered");
             }

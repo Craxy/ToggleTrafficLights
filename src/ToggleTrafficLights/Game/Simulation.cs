@@ -1,7 +1,8 @@
 ﻿using System;
-using ColossalFramework.UI;
-using Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI;
-using Craxy.CitiesSkylines.ToggleTrafficLights.Tools;
+using System.Diagnostics;
+using System.Reflection;
+using ColossalFramework.Steamworks;
+using Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions;
 using ICities;
@@ -9,97 +10,180 @@ using UnityEngine;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
 {
-    public class Simulation : ThreadingExtensionBase
+    //Order of Events in Unity: https://i.imgur.com/NJage5W.png
+
+    //C:S does not work with a class implementing two Interfaces at once:
+    // it creates for each Interface one instance
+    // therefore ILoadingExtension AND IThreadingExtension can not live together in the same instance
+
+    public sealed class Loading : LoadingExtensionBase
     {
-        #region members
+        #region Overrides of LoadingExtensionBase
 
-        private SelectButton _selectToolButton = null;
-        private readonly OpenViaKey _openViaKey = new OpenViaKey();
-        #endregion
-
-        public override void OnCreated(IThreading threading)
+        public override void OnCreated(ILoading loading)
         {
-            base.OnCreated(threading);
+            base.OnCreated(loading);
+
+            Simulation.OnCreated(loading);
         }
 
         public override void OnReleased()
         {
             base.OnReleased();
 
-            if (_selectToolButton != null)
-            {
-                _selectToolButton.Destroy();
-                _selectToolButton = null;
-            }
+            Simulation.OnReleased();
         }
+
+        public override void OnLevelLoaded(LoadMode mode)
+        {
+            base.OnLevelLoaded(mode);
+
+            Simulation.OnLevelLoaded(mode);
+        }
+
+        public override void OnLevelUnloading()
+        {
+            base.OnLevelUnloading();
+
+            Simulation.OnLevelUnloading();
+        }
+
+        #endregion
+
+        public Simulation Simulation
+        {
+            get { return SimulationInstance.Simulation; }
+        }
+    }
+
+    public sealed class Threading : ThreadingExtensionBase
+    {
+        public Simulation Simulation
+        {
+            get { return SimulationInstance.Simulation; }
+        }
+
+        #region Overrides of ThreadingExtensionBase
 
         public override void OnUpdate(float realTimeDelta, float simulationTimeDelta)
         {
             base.OnUpdate(realTimeDelta, simulationTimeDelta);
 
-            if (managers.loading.IsGameMode())
-            {
-                if (_selectToolButton == null)
-                {
-                    _selectToolButton = new SelectButton();
-                    DebugLog.Info("SelectToolButton created");
-                }
-                if (!_selectToolButton.Initialized)
-                {
-                    if (_selectToolButton.Initialize())
-                    {
-                        DebugLog.Info("SelectToolButton initialized");
-                    }
-                }
-
-                _selectToolButton.RetainToolModeValidity();
-
-                _openViaKey.OpenIfAppropriate(_selectToolButton);
-            }
+            Simulation.OnUpdate(realTimeDelta, simulationTimeDelta);
         }
 
-        private class OpenViaKey
+        #endregion
+    }
+
+    // I don't want to add an static Instance property to the Simulation class...
+    public static class SimulationInstance
+    {
+        public static readonly Simulation Simulation = new Simulation();
+    }
+
+    public sealed class Simulation
+    {
+        #region members
+        private TrafficLightsMachine _stateMachine = null;
+        #endregion
+
+        #region properties
+        public ILoading LoadingManager { get; private set; }
+        public IManagers Managers
         {
-            private bool ShouldOpen()
+            get
             {
-                return (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) && Input.GetKeyDown(KeyCode.T);
-            }
-
-            private bool _isOpening = false;
-            public void OpenIfAppropriate(SelectButton button)
-            {
-                if(!_isOpening && ShouldOpen())
-                {
-                    _isOpening = true;
-                }
-
-                if (_isOpening)
-                {
-                    //tool might not yet be activated -> try activate until activated
-                    Open(button);
-                }
-            }
-
-            private void Open(SelectButton button)
-            {
-                if (button.Initialized)
-                {
-                    //hier findet eigentlicher toggle statt
-                    button.ToggleShow();
-                    _isOpening = false;
-                }
-                else
-                {
-                    //must be initialized first
-                    //-> Click on button to show roadspanel
-                    //but only of panel is not visible
-                    var roadsPanel = UiHelper.FindComponent<UIComponent>("RoadsPanel");
-                    if (!roadsPanel.isVisible)
-                    {
-                        SelectButton.ClickOnRoadsButton();
-                    }
-                }
+                return this.LoadingManager.managers;
             }
         }
+
+        #endregion
+
+        #region Implementation of IThreadingExtension
+
+        public void OnUpdate(float realTimeDelta, float simulationTimeDelta)
+        {
+            if (IsLoading() || !IsGameMode())
+            {
+                return;
+            }
+
+            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.O))
+            {
+                DebugLog.Info("Current State: {0}", _stateMachine.CurrentState);
+                DebugLog.Info("Current tool: {0}", ToolsModifierControl.toolController.CurrentTool);
+            }
+
+            _stateMachine.OnUpdate();
+        }
+
+        #endregion
+
+        #region Overrides of LoadingExtensionBase
+
+        public void OnCreated(ILoading loading)
+        {
+            LoadingManager = loading;
+
+            DebugLog.Message("Created v.{0} at {1}", Assembly.GetExecutingAssembly().GetName().Version, DateTime.Now);
+        }
+
+        public void OnReleased()
+        {
+            if (_stateMachine != null)
+            {
+                _stateMachine.Destroy();
+            }
+            _stateMachine = null;
+                        
+            DebugLog.Message("Released v.{0}", Assembly.GetExecutingAssembly().GetName().Version);
+        }
+
+        public void OnLevelLoaded(LoadMode mode)
+        {
+
+            if (IsGameMode())
+            {
+                _stateMachine = new TrafficLightsMachine();
+                DebugLog.Message("Level loaded");
+            }
+            else
+            {
+                DebugLog.Message("In Editor -> mod is disabled");
+            }
+        }
+
+        public void OnLevelUnloading()
+        {
+            if (_stateMachine != null)
+            {
+                _stateMachine.Destroy();
+            }
+            _stateMachine = null;
+            DebugLog.Message("Level unloaded");
+        }
+
+        #endregion
+
+        #region helpers
+        private bool IsGameMode()
+        {
+            if (LoadingManager != null)
+            {
+                return LoadingManager.IsGameMode();
+            }
+            //don't know -> go on
+            DebugLog.Warning("IsGameMode: unknown -- default to true");
+            var st = new StackTrace();
+            DebugLog.Warning(st.ToString());
+            return true;
+        }
+
+        private bool IsLoading()
+        {
+            return _stateMachine == null;
+        }
+        #endregion
+
     }
 }

@@ -122,10 +122,10 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 
         #region Events
 
-        public event EventHandler<EventArgs<bool>> OnEnabledChanged;
+        public event EventHandler<EventArgs<bool>> EnabledChanged;
         protected virtual void OnOnEnabledChanged(bool isEnabled)
         {
-            var handler = OnEnabledChanged;
+            var handler = EnabledChanged;
             if (handler != null)
             {
                 handler(this, new EventArgs<bool>(isEnabled));

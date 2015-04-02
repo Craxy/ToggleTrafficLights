@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using ColossalFramework;
+using ColossalFramework.HTTP.Paradox;
 using ColossalFramework.Plugins;
 using JetBrains.Annotations;
 
@@ -9,13 +10,18 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
     {
         internal static readonly string Prefix = "TrafficLight";
 
+        internal static string FormatMessage(PluginManager.MessageType messageType, string text)
+        {
+            return string.Format("[{0}][{1}] {2}", Prefix, messageType, text);
+        }
+
         public static void Generic(PluginManager.MessageType messageType, string text)
         {
             var msg = string.Format("[{0}] {1}", Prefix, text);
             DebugOutputPanel.AddMessage(messageType, msg);
 
 #if DEBUG
-//            CODebugBase<LogChannel>.Warn(LogChannel.Modding, string.Format("ToggleTrafficLights: {0}: {1}", messageType.ToString("G"), msg));
+            CODebugBase<LogChannel>.Warn(LogChannel.Modding, string.Format("ToggleTrafficLights: {0}: {1}", messageType.ToString("G"), msg));
 #endif
         }
 
@@ -66,6 +72,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
         public static void Generic(PluginManager.MessageType messageType, string text)
         {
             Log.Generic(messageType, text);
+//            var msg = Log.FormatMessage(messageType, text);
+//            UnityEngine.Debug.Log(msg);
         }
         [Conditional("DEBUG")]
         public static void Error(string text)

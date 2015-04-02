@@ -60,9 +60,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Game\Serialization.cs" />
-    <Compile Include="Game\UI\SelectButton.cs" />
+    <Compile Include="Game\UI\KeyHelper.cs" />
+    <Compile Include="Game\UI\StateMachine\StateMachine.cs" />
+    <Compile Include="Game\UI\StateMachine\States\ActivatedState.cs" />
+    <Compile Include="Game\UI\StateMachine\States\ButtonStateBase.cs" />
+    <Compile Include="Game\UI\StateMachine\States\DeactivatedState.cs" />
+    <Compile Include="Game\UI\StateMachine\States\HiddenState.cs" />
+    <Compile Include="Game\UI\StateMachine\States\IState.cs" />
+    <Compile Include="Game\UI\StateMachine\States\StateBase.cs" />
+    <Compile Include="Game\UI\StateMachine\TrafficLightsMachine.cs" />
     <Compile Include="Mod.cs" />
-    <Compile Include="Game\Loading.cs" />
     <Compile Include="Game\Simulation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serializer\SerializerManager.cs" />
