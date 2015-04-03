@@ -1,19 +1,21 @@
-﻿using ColossalFramework.UI;
+﻿using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
 {
-    public class HiddenState : StateBase
+    public class HiddenToActivatedState : StateBase
     {
-        #region Implementation of IState
+        #region Overrides of StateBase
 
         public override State State
         {
-            get { return State.Hidden;}
+            get { return State.HiddenToActivated; }
         }
 
         public override void OnEntry()
         {
             base.OnEntry();
+
+            OpenRoadPanel();
         }
 
         public override void OnExit()
@@ -24,6 +26,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
         public override void OnUpdate()
         {
             base.OnUpdate();
+
+            OpenRoadPanel();
         }
 
         public override Command? CheckCommand()
@@ -33,14 +37,17 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
                 return Command.DisplayRoadsPanel;
             }
 
-            if (KeyHelper.IsToolKeyPressed())
-            {
-                return Command.PressShortcut;
-            }
-
             return null;
         }
 
         #endregion
+
+        private void OpenRoadPanel()
+        {
+            if (RoadsPanel != null && !RoadsPanel.isVisible)
+            {
+                CitiesHelper.ClickOnRoadsButton();
+            }
+        }
     }
 }

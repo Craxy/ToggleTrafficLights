@@ -18,7 +18,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine
             Transitions = new List<Transition>
             {
                 new Transition(State.Hidden, Command.DisplayRoadsPanel, State.Deactivated),
-                new Transition(State.Hidden, Command.PressShortcut, State.Activated),
+                new Transition(State.Hidden, Command.PressShortcut, State.HiddenToActivated),
+                new Transition(State.HiddenToActivated, Command.DisplayRoadsPanel, State.Activated),
                 new Transition(State.Deactivated, Command.HideRoadsPanel, State.Hidden),
                 new Transition(State.Deactivated, Command.PressShortcut, State.Activated),
                 new Transition(State.Deactivated, Command.ClickToolButton, State.Activated),
@@ -32,6 +33,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine
                 new HiddenState(),
                 new Deactivated(),
                 new ActivatedState(),
+                new HiddenToActivatedState(),
             };
         }
 
@@ -52,23 +54,41 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine
                 _firstUpdate = false;
             }
 
-            Command? command = null;
-            while ((command = state.CheckCommand()).HasValue)
+//            Command? command = null;
+//            while ((command = state.CheckCommand()).HasValue)
+//            {
+//                //move to next state
+//                var transition = MoveNext(command.Value);
+//
+//                DebugLog.Info("Transition: {0}", transition);
+//
+//                //revert old state
+//                state.OnExit();
+//
+//                state = GetCurrentState();
+//                //activate new state
+//                state.OnEntry();
+//            }
+
+            var command = state.CheckCommand();
+            if (command.HasValue)
             {
                 //move to next state
                 var transition = MoveNext(command.Value);
-
+                
                 DebugLog.Info("Transition: {0}", transition);
-
+                
                 //revert old state
                 state.OnExit();
-
+                
                 state = GetCurrentState();
                 //activate new state
                 state.OnEntry();
             }
-
-            state.OnUpdate();
+            else
+            {
+                state.OnUpdate();
+            }
         }
 
         public void Destroy()

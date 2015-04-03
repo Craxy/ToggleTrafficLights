@@ -12,6 +12,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine
         Hidden,   //!RoadsPanel.isVisible
         Deactivated,
         Activated,
+        HiddenToActivated,
     }
 
     public enum Command
@@ -94,7 +95,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine
             transition = Transitions.SingleOrDefault(t => t.From == @from && t.Command == command);
             return transition != null;
         }
-
+        
         public Transition GetNext(Command command)
         {
             Transition transition;

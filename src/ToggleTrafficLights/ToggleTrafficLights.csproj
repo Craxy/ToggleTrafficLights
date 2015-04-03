@@ -66,6 +66,7 @@
     <Compile Include="Game\UI\StateMachine\States\ButtonStateBase.cs" />
     <Compile Include="Game\UI\StateMachine\States\DeactivatedState.cs" />
     <Compile Include="Game\UI\StateMachine\States\HiddenState.cs" />
+    <Compile Include="Game\UI\StateMachine\States\HiddenToActivatedState.cs" />
     <Compile Include="Game\UI\StateMachine\States\InvisibleActivatedState.cs" />
     <Compile Include="Game\UI\StateMachine\States\IState.cs" />
     <Compile Include="Game\UI\StateMachine\States\StateBase.cs" />

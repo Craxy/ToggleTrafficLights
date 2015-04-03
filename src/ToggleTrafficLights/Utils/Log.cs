@@ -21,7 +21,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
             DebugOutputPanel.AddMessage(messageType, msg);
 
 #if DEBUG
-            CODebugBase<LogChannel>.Warn(LogChannel.Modding, string.Format("ToggleTrafficLights: {0}: {1}", messageType.ToString("G"), msg));
+            CODebugBase<LogChannel>.Log(LogChannel.Modding, string.Format("ToggleTrafficLights: {0}: {1}", messageType.ToString("G"), msg));
 #endif
         }
 
