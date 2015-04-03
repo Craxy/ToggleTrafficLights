@@ -126,6 +126,11 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
                 return Command.ActivateOtherTool;
             }
 
+            if (KeyHelper.IsToolKeyPressed())
+            {
+                return Command.PressShortcut;
+            }
+
             if (_selectedIndexChanged)
             {
                 return Command.ClickToolModeTab;

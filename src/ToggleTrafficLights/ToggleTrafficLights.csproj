@@ -63,6 +63,7 @@
     <Compile Include="Game\UI\KeyHelper.cs" />
     <Compile Include="Game\UI\StateMachine\StateMachine.cs" />
     <Compile Include="Game\UI\StateMachine\States\ActivatedState.cs" />
+    <Compile Include="Game\UI\StateMachine\States\ActivatedToHiddenState.cs" />
     <Compile Include="Game\UI\StateMachine\States\ButtonStateBase.cs" />
     <Compile Include="Game\UI\StateMachine\States\DeactivatedState.cs" />
     <Compile Include="Game\UI\StateMachine\States\HiddenState.cs" />
