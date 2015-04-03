@@ -66,6 +66,14 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
                 DebugLog.Info("Tab.selectedIndex reset to {0}", BuiltinTabstrip.selectedIndex);
             }
 
+            if (RoadsPanel != null && !RoadsPanel.isVisible)
+            {
+                if (BuiltinTabstrip != null)
+                {
+                    BuiltinTabstrip.selectedIndex = 0;
+                }
+            }
+
             if (_tool != null)
             {
                 UnityEngine.Object.Destroy(_tool);
