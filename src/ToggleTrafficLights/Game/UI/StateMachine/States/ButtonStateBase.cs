@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Reflection;
 using ColossalFramework.UI;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using UnityEngine;
@@ -44,6 +45,25 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
         #endregion
 
         #region UI
+//        protected bool OpenRoadsPanelIfNotVisible()
+//        {
+//            if (RoadsOptionPanel == null)
+//            {
+//                return false;
+//            }
+//
+//            if (!RoadsOptionPanel.isVisible)
+//            {
+//                CitiesHelper.ClickOnRoadsButton();
+//            }
+//
+//            return true;
+//        }
+//
+//        protected bool CloseRoadsPanelIfVisible()
+//        {
+//            
+//        }
         protected bool Initialize()
         {
             if(Initialized)
@@ -64,7 +84,15 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
                 return false;
             }
 
-            RoadsOptionPanel = UiHelper.FindComponent<UIComponent>("RoadsOptionPanel", null, UiHelper.FindOptions.NameContains);
+//            DebugLog.Info("RoadsPanel: {0}", );
+
+//            RoadsOptionPanel = UiHelper.FindComponent<UIComponent>("RoadsOptionPanel", null, UiHelper.FindOptions.NameContains);
+            RoadsOptionPanel = UiHelper.FindComponent<UIComponent>("RoadsOptionPanel(RoadsPanel)", null, UiHelper.FindOptions.NameContains);
+//            RoadsOptionPanel = UIView.Find<UIComponent>("RoadsOptionPanel");
+//            {
+//                var fi = typeof(RoadsPanel).GetField("m_RoadsOptionPanel", BindingFlags.Instance | BindingFlags.NonPublic);
+//                RoadsOptionPanel = fi == null ? null : (UIComponent) fi.GetValue(RoadsPanel);
+//            }
             if (RoadsOptionPanel == null)
             {
                 DebugLog.Info("State {0}: Initialize: RoadsOptionPanel is null", State);
@@ -73,6 +101,11 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
             if (!RoadsOptionPanel.gameObject.activeInHierarchy)
             {
                 DebugLog.Info("State {0}: Initialize: RoadsOptionPanel is not active in hierarchy", State);
+                return false;
+            }
+            if (!RoadsOptionPanel.isVisible)
+            {
+                DebugLog.Info("State {0}: Initialize: RoadsOptionPanel is not visible", State);
                 return false;
             }
 

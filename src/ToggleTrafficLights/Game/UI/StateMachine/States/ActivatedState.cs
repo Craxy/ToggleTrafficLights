@@ -80,6 +80,11 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
         public override void OnUpdate()
         {
             base.OnUpdate();
+
+            if (BuiltinTabstrip != null && BuiltinTabstrip.selectedIndex >= 0)
+            {
+                BuiltinTabstrip.selectedIndex = -1;
+            }
         }
 
         protected override void OnInitialized()
