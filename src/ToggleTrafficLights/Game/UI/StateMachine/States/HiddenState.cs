@@ -33,6 +33,11 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
                 return Command.DisplayRoadsPanel;
             }
 
+            if (KeyHelper.IsInvisibleToolKeyPressed())
+            {
+                return Command.PressInvisibleShortcut;
+            }
+
             if (KeyHelper.IsToolKeyPressed())
             {
                 return Command.PressShortcut;
