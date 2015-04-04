@@ -68,7 +68,7 @@
     <Compile Include="Game\UI\StateMachine\States\DeactivatedState.cs" />
     <Compile Include="Game\UI\StateMachine\States\HiddenState.cs" />
     <Compile Include="Game\UI\StateMachine\States\HiddenToActivatedState.cs" />
-    <Compile Include="Game\UI\StateMachine\States\InvisibleActivatedState.cs" />
+    <Compile Include="Game\UI\StateMachine\States\HiddenActivatedState.cs" />
     <Compile Include="Game\UI\StateMachine\States\IState.cs" />
     <Compile Include="Game\UI\StateMachine\States\StateBase.cs" />
     <Compile Include="Game\UI\StateMachine\TrafficLightsMachine.cs" />

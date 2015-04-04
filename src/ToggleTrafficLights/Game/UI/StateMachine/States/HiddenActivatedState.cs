@@ -2,7 +2,7 @@
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
 {
-    public class InvisibleActivatedState : StateBase
+    public class HiddenActivatedState : StateBase
     {
         #region fields
         private ToggleTrafficLightsTool _tool = null;
@@ -13,7 +13,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
 
         public override State State
         {
-            get { return State.InvisibleActivatedState; }
+            get { return State.HiddenActivatedState; }
         }
 
         public override void OnEntry()

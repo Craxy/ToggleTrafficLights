@@ -19,7 +19,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine
             {
                 new Transition(State.Hidden, Command.DisplayRoadsPanel, State.Deactivated),
                 new Transition(State.Hidden, Command.PressShortcut, State.HiddenToActivated),
-                new Transition(State.Hidden, Command.PressInvisibleShortcut, State.InvisibleActivatedState),
+                new Transition(State.Hidden, Command.PressInvisibleShortcut, State.HiddenActivatedState),
 
                 new Transition(State.HiddenToActivated, Command.DisplayRoadsPanel, State.Activated),
                 
@@ -37,9 +37,9 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine
                 
                 new Transition(State.ActivatedToHidden, Command.HideRoadsPanel, State.Hidden),
 
-                new Transition(State.InvisibleActivatedState, Command.PressInvisibleShortcut, State.Hidden),
-                new Transition(State.InvisibleActivatedState, Command.PressShortcut, State.Hidden),
-                new Transition(State.InvisibleActivatedState, Command.ActivateOtherTool, State.Hidden),
+                new Transition(State.HiddenActivatedState, Command.PressInvisibleShortcut, State.Hidden),
+                new Transition(State.HiddenActivatedState, Command.PressShortcut, State.Hidden),
+                new Transition(State.HiddenActivatedState, Command.ActivateOtherTool, State.Hidden),
             };
             States = new List<IState>
             {
@@ -48,7 +48,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine
                 new ActivatedState(),
                 new HiddenToActivatedState(),
                 new ActivatedToHiddenState(),
-                new InvisibleActivatedState(),
+                new HiddenActivatedState(),
             };
         }
 

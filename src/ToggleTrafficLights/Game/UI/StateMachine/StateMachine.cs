@@ -14,7 +14,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine
         Activated,
         HiddenToActivated,
         ActivatedToHidden,
-        InvisibleActivatedState,
+        HiddenActivatedState,
     }
 
     public enum Command
