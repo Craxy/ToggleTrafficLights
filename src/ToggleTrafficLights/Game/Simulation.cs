@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Reflection;
+using ColossalFramework;
 using ColossalFramework.Steamworks;
+using Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Options;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions;
@@ -70,7 +72,22 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
             base.OnUpdate(realTimeDelta, simulationTimeDelta);
 
             Simulation.OnUpdate(realTimeDelta, simulationTimeDelta);
+
+            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.P))
+            {
+                if (_ui == null)
+                {
+                    var toolControl = Singleton<ToolManager>.instance;
+                    _ui = toolControl.gameObject.AddComponent<AdditionalUi>();
+                }
+                else
+                {
+                    _ui.enabled = !_ui.enabled;
+                }
+            }
         }
+
+        private AdditionalUi _ui = null;
 
         #endregion
     }
@@ -108,11 +125,13 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
                 return;
             }
 
+#if DEBUG
             if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.O))
             {
                 DebugLog.Info("Current State: {0}", _stateMachine.CurrentState);
                 DebugLog.Info("Current tool: {0}", ToolsModifierControl.toolController.CurrentTool);
             }
+#endif
 
             _stateMachine.OnUpdate();
         }

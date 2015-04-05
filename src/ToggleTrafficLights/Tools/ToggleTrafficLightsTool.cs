@@ -46,7 +46,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
         {
             base.OnToolUpdate();
 
-            if (!m_toolController.IsInsideUI && Cursor.visible && IsValidNetNode())
+            if (!m_toolController.IsInsideUI && Cursor.visible && IsValidRoadNode())
             {
                 var node = GetNetNode();
                 var hasTrafficLight = CitiesHelper.HasTrafficLights(node.m_flags);
@@ -71,7 +71,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
         {
             base.OnToolGUI();
 
-            if (!m_toolController.IsInsideUI && Cursor.visible && IsValidNetNode())
+            if (!m_toolController.IsInsideUI && Cursor.visible && IsValidRoadNode())
             {
                 var current = Event.current;
                 //button=0 -> left click
@@ -96,7 +96,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
         {
             base.RenderOverlay(cameraInfo);
 
-            if (IsValidNetNode())
+            if (IsValidRoadNode())
             {
                 var node = GetNetNode();
                 var position = node.m_position;
@@ -135,7 +135,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
         #endregion
 
         #region Node
-        private bool IsValidNetNode()
+        private bool IsValidRoadNode()
         {
             if (m_hoverInstance.NetNode == 0)
             {
@@ -144,6 +144,11 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 
             //detect only road intersections
             var node = GetNetNode();
+            return IsValidRoadNode(node);
+        }
+
+        public static bool IsValidRoadNode(NetNode node)
+        {
             var info = node.Info;
             var ai = info.GetAI();
 
@@ -172,7 +177,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
             return (flags & NetNode.Flags.TrafficLights) == NetNode.Flags.TrafficLights;
         }
 
-        private static NetNode.Flags ToggleTrafficLights(NetNode.Flags flags)
+        public static NetNode.Flags ToggleTrafficLights(NetNode.Flags flags)
         {
             if (HasTrafficLights(flags))
             {
@@ -185,6 +190,16 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
                 DebugLog.Message("Traffic lights enabled");
             }
             return flags;
+        }
+
+        public static NetNode.Flags SetTrafficLights(NetNode.Flags flags)
+        {
+            return flags | NetNode.Flags.TrafficLights;
+        }
+
+        public static NetNode.Flags UnsetTrafficLights(NetNode.Flags flags)
+        {
+            return flags & ~NetNode.Flags.TrafficLights;
         }
         private void ToggleTrafficLights()
         {
