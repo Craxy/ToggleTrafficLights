@@ -1,6 +1,6 @@
 Toggle Traffic Lights
 =====================
-Mod for Cities:Skylines
+Mod for Cities:Skylines  
 -> [on Steam Workshop](http://steamcommunity.com/sharedfiles/filedetails/?id=411833858)  
 
 
