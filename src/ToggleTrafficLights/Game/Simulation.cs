@@ -73,21 +73,21 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
 
             Simulation.OnUpdate(realTimeDelta, simulationTimeDelta);
 
-            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.P))
-            {
-                if (_ui == null)
-                {
-                    var toolControl = Singleton<ToolManager>.instance;
-                    _ui = toolControl.gameObject.AddComponent<AdditionalUi>();
-                }
-                else
-                {
-                    _ui.enabled = !_ui.enabled;
-                }
-            }
+//            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.P))
+//            {
+//                if (_ui == null)
+//                {
+//                    var toolControl = Singleton<ToolManager>.instance;
+//                    _ui = toolControl.gameObject.AddComponent<AdditionalUi>();
+//                }
+//                else
+//                {
+//                    _ui.enabled = !_ui.enabled;
+//                }
+//            }
         }
 
-        private AdditionalUi _ui = null;
+//        private AdditionalUi _ui = null;
 
         #endregion
     }

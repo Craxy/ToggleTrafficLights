@@ -17,6 +17,32 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
         private const string ButtonName = "ToggleTrafficLightsButton";
 
         protected bool Initialized = false;
+
+        #endregion
+
+        #region properties
+        #region mouse
+
+        public bool IsMouseDown(int button)
+        {
+            //button values are 0 for left button, 1 for right button, 2 for the middle button.
+            return Button != null && Button.containsMouse && Input.GetMouseButtonDown(button);
+        }
+        public bool LeftClick
+        {
+            get { return IsMouseDown(0); }
+        }
+        public bool RightClick
+        {
+            get { return IsMouseDown(1); }
+        }
+        public bool MiddleClick
+        {
+            get { return IsMouseDown(1); }
+        }
+        #endregion
+
+
         #endregion
 
         #region Overrides of StateBase
@@ -45,25 +71,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
         #endregion
 
         #region UI
-//        protected bool OpenRoadsPanelIfNotVisible()
-//        {
-//            if (RoadsOptionPanel == null)
-//            {
-//                return false;
-//            }
-//
-//            if (!RoadsOptionPanel.isVisible)
-//            {
-//                CitiesHelper.ClickOnRoadsButton();
-//            }
-//
-//            return true;
-//        }
-//
-//        protected bool CloseRoadsPanelIfVisible()
-//        {
-//            
-//        }
         protected bool Initialize()
         {
             if(Initialized)
@@ -84,15 +91,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
                 return false;
             }
 
-//            DebugLog.Info("RoadsPanel: {0}", );
-
-//            RoadsOptionPanel = UiHelper.FindComponent<UIComponent>("RoadsOptionPanel", null, UiHelper.FindOptions.NameContains);
             RoadsOptionPanel = UiHelper.FindComponent<UIComponent>("RoadsOptionPanel(RoadsPanel)", null, UiHelper.FindOptions.NameContains);
-//            RoadsOptionPanel = UIView.Find<UIComponent>("RoadsOptionPanel");
-//            {
-//                var fi = typeof(RoadsPanel).GetField("m_RoadsOptionPanel", BindingFlags.Instance | BindingFlags.NonPublic);
-//                RoadsOptionPanel = fi == null ? null : (UIComponent) fi.GetValue(RoadsPanel);
-//            }
             if (RoadsOptionPanel == null)
             {
                 DebugLog.Info("State {0}: Initialize: RoadsOptionPanel is null", State);
@@ -161,9 +160,9 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
                 {
                     RoadsOptionPanel.RemoveUIComponent(Button);
                 }
-                //Delay destroying of button -- otherwise if Tooltip is visible it will not be removed and stays open until another tooltip opens
-                Button.StartCoroutine(DeleteButton(Button));
-//                Object.Destroy(Button);
+                Object.Destroy(Button);
+////                //Delay destroying of button -- otherwise if Tooltip is visible it will not be removed and stays open until another tooltip opens
+//                Button.StartCoroutine(DeleteButton(Button));
             }
 
             RoadsOptionPanel = null;
@@ -208,6 +207,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
                                 "OptionBasePressed",
                                 "Selected", 
                                 "Unselected",
+                                "OptionBaseFocusedRed",
                             });
             btn.playAudioEvents = true;
             btn.relativePosition = new Vector3(131, 38);
@@ -326,7 +326,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
             }
         }
 
-        protected virtual void OnButtonClicked(UIComponent component, UIMouseEventParameter eventParam)
+        protected virtual void OnButtonClicked(UIComponent component, UIMouseEventParameter args)
         {
         }
         protected virtual void OnBuiltinTabstripSelectedIndexChanged(UIComponent component, int value)

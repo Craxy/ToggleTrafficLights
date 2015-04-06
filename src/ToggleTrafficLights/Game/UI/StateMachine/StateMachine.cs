@@ -15,6 +15,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine
         HiddenToActivated,
         ActivatedToHidden,
         HiddenActivatedState,
+        ActivatedUiState,
     }
 
     public enum Command
@@ -23,7 +24,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine
         HideRoadsPanel,
         PressShortcut,
         PressInvisibleShortcut,
-        ClickToolButton,
+        LeftClickOnToolButton,
+        RightClickToolButton,
         ActivateOtherTool,
         ClickToolModeTab,
     }

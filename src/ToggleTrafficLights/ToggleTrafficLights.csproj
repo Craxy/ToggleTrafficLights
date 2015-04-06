@@ -72,6 +72,7 @@
     <Compile Include="Game\UI\StateMachine\States\HiddenActivatedState.cs" />
     <Compile Include="Game\UI\StateMachine\States\IState.cs" />
     <Compile Include="Game\UI\StateMachine\States\StateBase.cs" />
+    <Compile Include="Game\UI\StateMachine\States\ActivatedUiState.cs" />
     <Compile Include="Game\UI\StateMachine\TrafficLightsMachine.cs" />
     <Compile Include="Mod.cs" />
     <Compile Include="Game\Simulation.cs" />

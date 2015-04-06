@@ -141,6 +141,11 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
                 return Command.ClickToolModeTab;
             }
 
+            if (RightClick)
+            {
+                return Command.RightClickToolButton;
+            }
+
             return null;
         }
         #endregion

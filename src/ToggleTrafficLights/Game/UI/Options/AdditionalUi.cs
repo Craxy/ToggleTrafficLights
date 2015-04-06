@@ -217,6 +217,48 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Options
             return changes;
         }
 
+        private ChangedStatistics ChangeTrafficLightsForAllNodes(ShouldHaveLights shouldHaveLights)
+        {
+            var changes = new ChangedStatistics();
+
+            var netManager = Singleton<NetManager>.instance;
+            for (ushort i = 0; i < netManager.m_nodes.m_size; i++)
+            {
+                var node = netManager.m_nodes.m_buffer[i];
+
+                if (node.m_flags == NetNode.Flags.None)
+                {
+                    continue;
+                }
+                if (!ToggleTrafficLightsTool.IsValidRoadNode(node))
+                {
+                    continue;
+                }
+
+                var hasLights = ToggleTrafficLightsTool.HasTrafficLights(node.m_flags);
+
+                var shouldLights = shouldHaveLights(i, node, hasLights);
+                if (shouldLights != hasLights)
+                {
+                    changes.NumberOfChanges++;
+
+                    if (shouldLights)
+                    {
+                        node.m_flags = ToggleTrafficLightsTool.SetTrafficLights(node.m_flags);
+                        changes.NumberOfAddedLights++;
+                    }
+                    else
+                    {
+                        node.m_flags = ToggleTrafficLightsTool.UnsetTrafficLights(node.m_flags);
+                        changes.NumberOfRemovedLights++;
+                    }
+                    netManager.m_nodes.m_buffer[i] = node;
+                }
+            }
+
+            return changes;
+        }
+
         public class Statistics
         {
             public int NumberOfUsedNodes = 0;

@@ -4,10 +4,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
 {
     public class Deactivated : ButtonStateBase
     {
-        #region fields
-
-        private bool _buttonClicked = false;
-        #endregion
 
         #region Overrides of StateBase
         public override State State
@@ -23,16 +19,12 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
         public override void OnExit()
         {
             base.OnExit();
-
-            _buttonClicked = false;
         }
 
         public override void OnUpdate()
         {
             base.OnUpdate();
         }
-
-
 
         public override Command? CheckCommand()
         {
@@ -51,9 +43,13 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
                 return Command.PressShortcut;
             }
 
-            if (_buttonClicked)
+            if (LeftClick)
             {
-                return Command.ClickToolButton;
+                return Command.LeftClickOnToolButton;
+            }
+            if (RightClick)
+            {
+                return Command.RightClickToolButton;
             }
 
             return null;
@@ -68,17 +64,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
                 SetDeactivatedStateSprites(Button);
             }
         }
-        #endregion
-
-        #region Overrides of ButtonStateBase
-
-        protected override void OnButtonClicked(UIComponent component, UIMouseEventParameter eventParam)
-        {
-            base.OnButtonClicked(component, eventParam);
-
-            _buttonClicked = true;
-        }
-
         #endregion
     }
 }
