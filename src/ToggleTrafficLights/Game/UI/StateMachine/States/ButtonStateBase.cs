@@ -157,25 +157,15 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
             if (Button != null)
             {
                 //hide tooltip
+                //but only if tooltip on button
                 if (Button.GetNonPublicField<UIComponent, bool>("m_TooltipShowing"))
                 {
                     var ttb = Button.tooltipBox;
                     if (ttb != null)
                     {
-                        DebugLog.Error("Hide tooltip");
                         ttb.Hide();
                     }
-                    else
-                    {
-                        DebugLog.Error("No hiding tooltip");
-                    }
                 }
-                else
-                {
-                    DebugLog.Error("no tooltip showing");
-                }
-
-
 
                 //remove button
                 Button.Hide();

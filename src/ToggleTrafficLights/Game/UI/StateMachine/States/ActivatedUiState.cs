@@ -8,7 +8,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
     public class ActivatedUiState : ActivatedState
     {
         #region fields
-        private AdditionalUi _ui = null;
+        private BatchUi _ui = null;
         #endregion
 
         #region Overrides of StateBase
@@ -27,7 +27,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
             {
                 //gets enabled automatically
                 var toolControl = Singleton<ToolManager>.instance;
-                _ui = toolControl.gameObject.AddComponent<AdditionalUi>();
+                _ui = toolControl.gameObject.AddComponent<BatchUi>();
             }
             _ui.enabled = true;
         }

@@ -78,7 +78,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
 //                if (_ui == null)
 //                {
 //                    var toolControl = Singleton<ToolManager>.instance;
-//                    _ui = toolControl.gameObject.AddComponent<AdditionalUi>();
+//                    _ui = toolControl.gameObject.AddComponent<BatchUi>();
 //                }
 //                else
 //                {
@@ -87,7 +87,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
 //            }
         }
 
-//        private AdditionalUi _ui = null;
+//        private BatchUi _ui = null;
 
         #endregion
     }

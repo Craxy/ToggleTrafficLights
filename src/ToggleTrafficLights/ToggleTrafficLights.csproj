@@ -61,7 +61,7 @@
   <ItemGroup>
     <Compile Include="Game\Serialization.cs" />
     <Compile Include="Game\UI\KeyHelper.cs" />
-    <Compile Include="Game\UI\Options\AdditionalUi.cs" />
+    <Compile Include="Game\UI\Options\BatchUi.cs" />
     <Compile Include="Game\UI\StateMachine\StateMachine.cs" />
     <Compile Include="Game\UI\StateMachine\States\ActivatedState.cs" />
     <Compile Include="Game\UI\StateMachine\States\ActivatedToHiddenState.cs" />

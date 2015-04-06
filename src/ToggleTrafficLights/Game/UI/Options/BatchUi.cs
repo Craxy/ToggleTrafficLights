@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Options
 {
-    public sealed class AdditionalUi : MonoBehaviour
+    public sealed class BatchUi : MonoBehaviour
     {
         #region fields
 
@@ -26,25 +26,25 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Options
         [UsedImplicitly]
         private void Awake()
         {
-            DebugLog.Info("AdditionalUi: Awake");
+            DebugLog.Info("BatchUi: Awake");
         }
 
         [UsedImplicitly]
         private void Start()
         {
-            DebugLog.Info("AdditionalUi: Start");
+            DebugLog.Info("BatchUi: Start");
         }
 
         [UsedImplicitly]
         private void OnDestroy()
         {
-            DebugLog.Info("AdditionalUi: OnDestroy");
+            DebugLog.Info("BatchUi: OnDestroy");
         }
 
         [UsedImplicitly]
         private void OnEnable()
         {
-            DebugLog.Info("AdditionalUi: OnEnable");
+            DebugLog.Info("BatchUi: OnEnable");
 
             _updateStatisticsCounter = 0;
             _updateChangedStatisticsCounter = 0;
@@ -55,7 +55,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Options
         [UsedImplicitly]
         private void OnDisable()
         {
-            DebugLog.Info("AdditionalUi: OnDisable");
+            DebugLog.Info("BatchUi: OnDisable");
 
             _updateStatisticsCounter = 0;
             _updateChangedStatisticsCounter = 0;
@@ -127,6 +127,13 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Options
                     _updateChangedStatisticsCounter--;
                 }
 
+#if DEBUG
+                if (GUILayout.Button("Test Traffic Lights"))
+                {
+                    TestChangingTrafficLights(50);
+                }
+#endif
+
                 GUILayout.EndArea();
             }
 
@@ -156,7 +163,24 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Options
 
             var changes = ChangeTrafficLights((id, node, ___) => ToggleTrafficLightsTool.WantTrafficLights(id, node));
             SetChangedStatistics("Traffic Lights reset", changes);
+        }
 
+        public void TestChangingTrafficLights(int iterations)
+        {
+            DebugLog.Info("Clicked: Test traffic lights");
+
+            var totalChanges = new ChangedStatistics();
+            for (var i = 0; i < iterations; i++)
+            {
+                //change all
+                var changes = ChangeTrafficLights((_, __, hasLights) => !hasLights);
+
+                totalChanges.NumberOfChanges += changes.NumberOfChanges;
+                totalChanges.NumberOfAddedLights += changes.NumberOfAddedLights;
+                totalChanges.NumberOfRemovedLights += changes.NumberOfRemovedLights;
+            }
+
+            SetChangedStatistics(string.Format("Traffic lights testes. Iterations: {0}", iterations), totalChanges);
         }
 
         private IEnumerator ChangeLights(string action, ShouldHaveLights toggleLights)
