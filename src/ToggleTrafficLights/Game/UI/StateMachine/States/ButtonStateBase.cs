@@ -2,6 +2,7 @@
 using System.Reflection;
 using ColossalFramework.UI;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
+using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -155,29 +156,40 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
 
             if (Button != null)
             {
+                //hide tooltip
+                if (Button.GetNonPublicField<UIComponent, bool>("m_TooltipShowing"))
+                {
+                    var ttb = Button.tooltipBox;
+                    if (ttb != null)
+                    {
+                        DebugLog.Error("Hide tooltip");
+                        ttb.Hide();
+                    }
+                    else
+                    {
+                        DebugLog.Error("No hiding tooltip");
+                    }
+                }
+                else
+                {
+                    DebugLog.Error("no tooltip showing");
+                }
+
+
+
+                //remove button
                 Button.Hide();
                 if (RoadsOptionPanel != null)
                 {
                     RoadsOptionPanel.RemoveUIComponent(Button);
                 }
                 Object.Destroy(Button);
-////                //Delay destroying of button -- otherwise if Tooltip is visible it will not be removed and stays open until another tooltip opens
-//                Button.StartCoroutine(DeleteButton(Button));
             }
 
             RoadsOptionPanel = null;
             BuiltinTabstrip = null;
             Button = null;
             Initialized = false;
-        }
-
-        private IEnumerator DeleteButton(UIButton button)
-        {
-            if (button != null)
-            {
-                yield return null;
-                Object.Destroy(button);
-            }
         }
         #endregion
 

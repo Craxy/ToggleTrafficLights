@@ -85,6 +85,7 @@
     <Compile Include="Utils\EventArgs.cs" />
     <Compile Include="Utils\Extensions\ArrayExtensions.cs" />
     <Compile Include="Utils\Extensions\CitiesExtensions.cs" />
+    <Compile Include="Utils\Extensions\ReflectionExtensions.cs" />
     <Compile Include="Utils\Extensions\StringBuilderExtensions.cs" />
     <Compile Include="Utils\Log.cs" />
     <Compile Include="Utils\UiHelper.cs" />
