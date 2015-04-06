@@ -18,6 +18,12 @@ When the tool is active you can hover over an intersection. This intersection is
 To toggle the traffic lights **left click** on an intersection. Alternatively you can reset the traffic lights to its original state via a **right click**.  
 
 
+With [version 0.4.0](https://github.com/Craxy/ToggleTrafficLights/releases/tag/0.4.0) batch commands were introduced. With these all traffic lights can be removed, reset to their game-default or added to all intersections. These commands can be accessed via a right click in the Toggle Traffic Lights tool button. A menu with the commands opens on the left side of the screen.  
+![Same intersection with and without traffic lights](./docs/files/img/BatchCommandsMenu_v0-4-0.png)  
+Please note: A batch command gets executed immediately after you clicked the corresponding button. There is no revert. There are some [additional remarks](https://github.com/Craxy/ToggleTrafficLights/releases/tag/0.4.0) witch can be found in the [release notes](https://github.com/Craxy/ToggleTrafficLights/releases/tag/0.4.0).  
+  
+
+
 **Note**: The existence of traffic lights will be added to new savegames (the savegame size increases by a couple of kB (~33kB) -- I think that's negligible). The savegame can be loaded without the mod enabled but in this case the traffic lights will be reset to it's original statuses (see [this table](https://www.reddit.com/r/CitiesSkylines/comments/2zp61z/i_made_a_table_chart_of_which_intersections/) for the default statuses).  
 
 Note: If you append or remove a road to/from an intersection the traffic lights will be recalculated by the game and placed according to the used road types. You must then retoggle the traffic lights via this tool.  
