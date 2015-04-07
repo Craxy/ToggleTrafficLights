@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using ColossalFramework;
 using ColossalFramework.HTTP.Paradox;
 using ColossalFramework.Plugins;
@@ -71,9 +72,20 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
         [Conditional("DEBUG")]
         public static void Generic(PluginManager.MessageType messageType, string text)
         {
-            Log.Generic(messageType, text);
-//            var msg = Log.FormatMessage(messageType, text);
-//            UnityEngine.Debug.Log(msg);
+            switch (messageType)
+            {
+                case PluginManager.MessageType.Error:
+                    UnityEngine.Debug.LogError(text);
+                    break;
+                case PluginManager.MessageType.Warning:
+                    UnityEngine.Debug.LogWarning(text);
+                    break;
+                case PluginManager.MessageType.Message:
+                    UnityEngine.Debug.Log(text);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("messageType");
+            }
         }
         [Conditional("DEBUG")]
         public static void Error(string text)
