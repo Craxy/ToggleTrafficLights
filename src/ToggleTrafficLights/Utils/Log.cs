@@ -9,7 +9,12 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
 {
     public static class Log
     {
-        internal static readonly string Prefix = "TrafficLight";
+        internal static readonly string Prefix = "TrafficLights";
+
+        internal static string AppendPrefix(string text)
+        {
+            return string.Format("[{0}] {1}", Prefix, text);
+        }
 
         internal static string FormatMessage(PluginManager.MessageType messageType, string text)
         {
@@ -18,11 +23,12 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
 
         public static void Generic(PluginManager.MessageType messageType, string text)
         {
-            var msg = string.Format("[{0}] {1}", Prefix, text);
+//            var msg = string.Format("[{0}] {1}", Prefix, text);
+            var msg = AppendPrefix(text);
             DebugOutputPanel.AddMessage(messageType, msg);
 
 #if DEBUG
-            CODebugBase<LogChannel>.Log(LogChannel.Modding, string.Format("ToggleTrafficLights: {0}: {1}", messageType.ToString("G"), msg));
+            CODebugBase<LogChannel>.Log(LogChannel.Modding, string.Format("{0}: {1}", messageType.ToString("G"), msg));
 #endif
         }
 
@@ -72,20 +78,24 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
         [Conditional("DEBUG")]
         public static void Generic(PluginManager.MessageType messageType, string text)
         {
+            var msg = Log.AppendPrefix(text);
+
             switch (messageType)
             {
                 case PluginManager.MessageType.Error:
-                    UnityEngine.Debug.LogError(text);
+                    UnityEngine.Debug.LogError(msg);
                     break;
                 case PluginManager.MessageType.Warning:
-                    UnityEngine.Debug.LogWarning(text);
+                    UnityEngine.Debug.LogWarning(msg);
                     break;
                 case PluginManager.MessageType.Message:
-                    UnityEngine.Debug.Log(text);
+                    UnityEngine.Debug.Log(msg);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("messageType");
             }
+
+            CODebugBase<LogChannel>.Log(LogChannel.Modding, string.Format("{0}: {1}", messageType.ToString("G"), msg));
         }
         [Conditional("DEBUG")]
         public static void Error(string text)
