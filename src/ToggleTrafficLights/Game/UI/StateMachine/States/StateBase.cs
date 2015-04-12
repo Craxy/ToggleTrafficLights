@@ -45,7 +45,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
         }
 
         public abstract Command? CheckCommand();
-
+        public virtual void Destroy()
+        {}
         #endregion
     }
 }

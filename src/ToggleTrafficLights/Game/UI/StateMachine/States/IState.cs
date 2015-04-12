@@ -9,5 +9,7 @@
 
         void OnUpdate();
         Command? CheckCommand();
+
+        void Destroy();
     }
 }

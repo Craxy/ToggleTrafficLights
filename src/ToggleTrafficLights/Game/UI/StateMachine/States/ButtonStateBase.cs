@@ -1,8 +1,5 @@
-﻿using System.Collections;
-using System.Reflection;
-using ColossalFramework.UI;
+﻿using ColossalFramework.UI;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
-using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -17,7 +14,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
         protected UIButton Button = null;
         protected UITabstrip BuiltinTabstrip = null;
         protected UIComponent RoadsOptionPanel = null;
-        private const string ButtonName = "ToggleTrafficLightsButton";
+        protected static string ButtonBaseName = "ToggleTrafficLightsButton";
 
         protected bool Initialized = false;
 
@@ -25,7 +22,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
 
         #region properties
         #region mouse
-
         public bool IsMouseDown(int button)
         {
             //button values are 0 for left button, 1 for right button, 2 for the middle button.
@@ -45,7 +41,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
         }
         #endregion
 
-
+        protected abstract string ButtonName { get; }
         #endregion
 
         #region Overrides of StateBase
@@ -71,6 +67,22 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
                 Initialize();
             }
         }
+
+        public override void Destroy()
+        {
+            if (Button != null)
+            {
+                Button.Hide();
+
+                if (RoadsOptionPanel != null)
+                {
+                    RoadsOptionPanel.RemoveUIComponent(Button);
+                }
+
+                Object.Destroy(Button.gameObject);
+            }
+        }
+
         #endregion
 
         #region UI
@@ -117,18 +129,29 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
                 DebugLog.Info("State {0}: Initialize: ToolMode is null", State);
                 return false;
             }
-            if (!RoadsOptionPanel.gameObject.activeInHierarchy)
+            if (!BuiltinTabstrip.gameObject.activeInHierarchy)
             {
                 DebugLog.Info("State {0}: Initialize: ToolMode is not active in hierarchy", State);
                 return false;
             }
 
+            //TODO: doppelt gemoppelt wenn Button schon gesetzt
             Button = UiHelper.FindComponent<UIButton>(ButtonName);
+
             if (Button != null)
             {
-                DestroyView();
+                DebugLog.Info("State {0}: Button {1} created previously", State, ButtonName);
             }
-            Button = CreateButton(RoadsOptionPanel);
+            else
+            {
+                DebugLog.Info("State {0}: Creating button {1}", State, ButtonName);
+                Button = CreateButton(RoadsOptionPanel);
+                if (Button == null)
+                {
+                    DebugLog.Info("State {0}: Initialize: Button is still null after initialization", State);
+                    return false;
+                }
+            }
 
             if (Button == null)
             {
@@ -144,6 +167,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
 
             DebugLog.Info("State {0}: Initialize: Button initialized", State);
 
+            Button.Show();
             Initialized = true;
             OnInitialized();
 
@@ -158,24 +182,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
 
             if (Button != null)
             {
-                //hide tooltip
-                //but only if tooltip on button
-                if (Button.GetNonPublicField<UIComponent, bool>("m_TooltipShowing"))
-                {
-                    var ttb = Button.tooltipBox;
-                    if (ttb != null)
-                    {
-                        ttb.Hide();
-                    }
-                }
-
-                //remove button
+                //do not destroy button for reuse
                 Button.Hide();
-                if (RoadsOptionPanel != null)
-                {
-                    RoadsOptionPanel.RemoveUIComponent(Button);
-                }
-                Object.Destroy(Button.gameObject);
             }
 
             RoadsOptionPanel = null;

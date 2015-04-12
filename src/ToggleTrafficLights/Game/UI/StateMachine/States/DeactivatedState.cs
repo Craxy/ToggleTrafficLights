@@ -4,6 +4,12 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
 {
     public class Deactivated : ButtonStateBase
     {
+        #region Overrides of ButtonStateBase
+        protected override string ButtonName
+        {
+            get { return ButtonBaseName + "Deactivated"; }
+        }
+        #endregion
 
         #region Overrides of StateBase
         public override State State

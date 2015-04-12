@@ -74,6 +74,13 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
 
         #endregion
 
+        #region Overrides of ActivatedState
+        protected override string ButtonName
+        {
+            get { return ButtonBaseName + "ActivatedUi"; }
+        }
+        #endregion
+
         protected void SetActivedUiStateSprites(UIButton btn)
         {
             btn.normalFgSprite = "Selected";

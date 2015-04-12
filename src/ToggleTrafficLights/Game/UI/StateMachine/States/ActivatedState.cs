@@ -23,6 +23,10 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
         }
 
         #region Overrides of ButtonStateBase
+        protected override string ButtonName
+        {
+            get { return ButtonBaseName + "Activated"; }
+        }
 
         public override void OnEntry()
         {

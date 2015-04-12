@@ -123,6 +123,11 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine
                 var state = GetCurrentState();
                 state.OnExit();
             }
+
+            foreach (var s in States)
+            {
+                s.Destroy();
+            }
         }
     }
 }

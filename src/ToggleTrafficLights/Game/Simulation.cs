@@ -74,19 +74,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
 
 //            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.P))
 //            {
-//                if (_ui == null)
-//                {
-//                    var toolControl = Singleton<ToolManager>.instance;
-//                    _ui = toolControl.gameObject.AddComponent<BatchUi>();
-//                }
-//                else
-//                {
-//                    _ui.enabled = !_ui.enabled;
-//                }
 //            }
         }
-
-//        private BatchUi _ui = null;
 
         #endregion
     }
