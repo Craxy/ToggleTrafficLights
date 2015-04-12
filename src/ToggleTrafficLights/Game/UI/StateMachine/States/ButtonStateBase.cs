@@ -198,7 +198,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
             const int spriteHeight = 31;
 
             var btn = parent.AddUIComponent<UIButton>();
-            btn.name = "ToggleTrafficLightsToolButton";
+            btn.name = ButtonName;
             btn.tooltip = "Add/remove traffic lights.\nRight click for menu.";
             btn.size = new Vector2(spriteWidth, spriteHeight);
             //add sprites
