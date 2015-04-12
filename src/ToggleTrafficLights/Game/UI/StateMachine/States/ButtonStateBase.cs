@@ -12,7 +12,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
     {
         #region fields
 
-        private static UITextureAtlas _atlas;
+        private static UITextureAtlas _atlas = null;
 
         protected UIButton Button = null;
         protected UITabstrip BuiltinTabstrip = null;
