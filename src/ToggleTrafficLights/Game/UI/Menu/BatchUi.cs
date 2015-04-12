@@ -6,7 +6,7 @@ using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using JetBrains.Annotations;
 using UnityEngine;
 
-namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Options
+namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
 {
     public sealed class BatchUi : MonoBehaviour
     {
