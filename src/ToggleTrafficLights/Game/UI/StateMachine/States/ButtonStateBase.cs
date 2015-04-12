@@ -12,6 +12,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
     {
         #region fields
 
+        private static UITextureAtlas _atlas;
+
         protected UIButton Button = null;
         protected UITabstrip BuiltinTabstrip = null;
         protected UIComponent RoadsOptionPanel = null;
@@ -200,18 +202,24 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
             btn.tooltip = "Add/remove traffic lights.\nRight click for menu.";
             btn.size = new Vector2(spriteWidth, spriteHeight);
             //add sprites
-            btn.atlas = CreateAtlas("icons.png", "ToggleTrafficLightsUI", UIView.Find<UITabstrip>("ToolMode").atlas.material,
-                            spriteWidth, spriteHeight, new[]
-                            {
-                                "OptionBase",
-                                "OptionBaseDisabled",
-                                "OptionBaseFocused",
-                                "OptionBaseHovered",
-                                "OptionBasePressed",
-                                "Selected", 
-                                "Unselected",
-                                "OptionBaseFocusedRed",
-                            });
+            if (_atlas == null)
+            {
+                _atlas = CreateAtlas("icons.png", "ToggleTrafficLightsUI",
+                                        UIView.Find<UITabstrip>("ToolMode").atlas.material,
+                                        spriteWidth, spriteHeight, new[]
+                                        {
+                                            "OptionBase",
+                                            "OptionBaseDisabled",
+                                            "OptionBaseFocused",
+                                            "OptionBaseHovered",
+                                            "OptionBasePressed",
+                                            "Selected",
+                                            "Unselected",
+                                            "OptionBaseFocusedRed",
+                                        });
+                DebugLog.Info("ButtonStateBase: Atlas created");
+            }
+            btn.atlas = _atlas;
             btn.playAudioEvents = true;
             btn.relativePosition = new Vector3(131, 38);
 
