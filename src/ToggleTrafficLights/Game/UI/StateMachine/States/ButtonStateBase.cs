@@ -173,7 +173,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
                 {
                     RoadsOptionPanel.RemoveUIComponent(Button);
                 }
-                Object.Destroy(Button);
+                Object.Destroy(Button.gameObject);
             }
 
             RoadsOptionPanel = null;
@@ -196,6 +196,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
             const int spriteHeight = 31;
 
             var btn = parent.AddUIComponent<UIButton>();
+            btn.name = "ToggleTrafficLightsToolButton";
             btn.tooltip = "Add/remove traffic lights";
             btn.size = new Vector2(spriteWidth, spriteHeight);
             //add sprites
