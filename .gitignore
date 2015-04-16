@@ -181,4 +181,9 @@ UpgradeLog*.htm
 
 # Microsoft Fakes
 FakesAssemblies/
+
+#FAKE
 .paket/paket.exe
+
+#Assets
+src/ToggleTrafficLights/Assets/orig/game/*
