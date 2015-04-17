@@ -59,7 +59,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Game\Options.cs" />
     <Compile Include="Game\Serialization.cs" />
+    <Compile Include="Game\UI\HighlightTest.cs" />
     <Compile Include="Game\UI\KeyHelper.cs" />
     <Compile Include="Game\UI\Menu\BatchUi.cs" />
     <Compile Include="Game\UI\StateMachine\StateMachine.cs" />
@@ -83,11 +85,12 @@
     <Compile Include="Tools\ToggleTrafficLightsTool.cs" />
     <Compile Include="Utils\CitiesHelper.cs" />
     <Compile Include="Utils\EventArgs.cs" />
-    <Compile Include="Utils\Extensions\ArrayExtensions.cs" />
     <Compile Include="Utils\Extensions\CitiesExtensions.cs" />
     <Compile Include="Utils\Extensions\ReflectionExtensions.cs" />
     <Compile Include="Utils\Extensions\StringBuilderExtensions.cs" />
     <Compile Include="Utils\Log.cs" />
+    <Compile Include="Utils\MeshHelper.cs" />
+    <Compile Include="Utils\Tuple.cs" />
     <Compile Include="Utils\UiHelper.cs" />
   </ItemGroup>
   <ItemGroup>

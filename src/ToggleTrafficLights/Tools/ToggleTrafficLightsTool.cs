@@ -1,7 +1,7 @@
 ﻿using System;
 using ColossalFramework;
-using ColossalFramework.Steamworks;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
@@ -9,6 +9,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
     public class ToggleTrafficLightsTool : DefaultToolWithNetNodeDetection
     {
         #region Start/End
+
+        [UsedImplicitly]
         private void Start()
         {
             DebugLog.Message("ToggleTrafficLightsTool start");
@@ -46,14 +48,16 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
         {
             base.OnToolUpdate();
 
-            if (!m_toolController.IsInsideUI && Cursor.visible && IsValidRoadNode())
+            var nodeId = GetCurrentNetNodeId();
+
+            if (!m_toolController.IsInsideUI && Cursor.visible && IsValidRoadNode(nodeId))
             {
-                var node = GetNetNode();
+                var node = GetNetNode(nodeId);
                 var hasTrafficLight = CitiesHelper.HasTrafficLights(node.m_flags);
                 var txt = string.Join("\n", new[]
                     {
                         string.Format("Traffic lights: {0}", hasTrafficLight),
-                        string.Format("      Original: {0}", WantTrafficLights()),
+                        string.Format("      Original: {0}", WantTrafficLights(nodeId)),
 
 #if DEBUG
                         string.Format("          Node: {0}", m_hoverInstance.NetNode),
@@ -71,22 +75,24 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
         {
             base.OnToolGUI();
 
-            if (!m_toolController.IsInsideUI && Cursor.visible && IsValidRoadNode())
+            var nodeId = GetCurrentNetNodeId();
+
+            if (!m_toolController.IsInsideUI && Cursor.visible && IsValidRoadNode(nodeId))
             {
                 var current = Event.current;
                 //button=0 -> left click
                 if (current.type == EventType.MouseDown && current.button == 0)
                 {
-                    ToggleTrafficLights();
+                    ToggleTrafficLights(nodeId);
                 }
                 else if (current.type == EventType.MouseDown && current.button == 1)
                 {
-                    var wantLights = WantTrafficLights();
-                    var hasLights = HasTrafficLights(GetNetNode().m_flags);
+                    var wantLights = WantTrafficLights(nodeId);
+                    var hasLights = HasTrafficLights(GetNetNode(nodeId).m_flags);
 
                     if (hasLights != wantLights)
                     {
-                        ToggleTrafficLights();
+                        ToggleTrafficLights(nodeId);
                     }
                 }
             }
@@ -96,27 +102,39 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
         {
             base.RenderOverlay(cameraInfo);
 
-            if (IsValidRoadNode())
+            var nodeId = GetCurrentNetNodeId();
+
+//            if (Options.HighlightAllIntersections)
+//            {
+//                HighlightAllIntersections();
+//            }
+
+
+            if (IsValidRoadNode(nodeId))
             {
-                var node = GetNetNode();
-                var position = node.m_position;
-
-                var info = node.Info;
-
-                var color = GetToolColor(false, false);
-                //http://paletton.com/#uid=13r0u0k++++qKZWAF+V+VAFZWqK
-                if (HasTrafficLights(node.m_flags))
-                {
-                    color = new Color(0.2f, 0.749f, 0.988f, color.a);
-                }
-                else
-                {
-                    color = new Color(0.0f, 0.369f, 0.525f, color.a);
-                }
-
-                ++Singleton<ToolManager>.instance.m_drawCallData.m_overlayCalls;
-                Singleton<RenderManager>.instance.OverlayEffect.DrawCircle(cameraInfo, color, position, info.m_halfWidth * 2, -1f, 1280f, false, false);
+                HighlightNode(cameraInfo, nodeId);
             }
+        }
+
+
+        #endregion
+
+        #region overlays
+        private void HighlightNode(RenderManager.CameraInfo cameraInfo, int nodeId)
+        {
+            var node = GetNetNode(nodeId);
+            var position = node.m_position;
+
+            var info = node.Info;
+
+            var color = GetToolColor(false, false);
+            //http://paletton.com/#uid=13r0u0k++++qKZWAF+V+VAFZWqK
+            color = HasTrafficLights(node.m_flags) 
+                    ? new Color(0.2f, 0.749f, 0.988f, color.a) 
+                    : new Color(0.0f, 0.369f, 0.525f, color.a);
+
+            ++Singleton<ToolManager>.instance.m_drawCallData.m_overlayCalls;
+            Singleton<RenderManager>.instance.OverlayEffect.DrawCircle(cameraInfo, color, position, info.m_halfWidth * 2, -1f, 1280f, false, false);
         }
         #endregion
 
@@ -135,16 +153,17 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
         #endregion
 
         #region Node
-        private bool IsValidRoadNode()
+
+        private static bool IsValidRoadNode(int nodeId)
         {
-            if (m_hoverInstance.NetNode == 0)
+            if (nodeId == 0)
             {
                 return false;
             }
 
-            //detect only road intersections
-            var node = GetNetNode();
+            var node = GetNetNode(nodeId);
             return IsValidRoadNode(node);
+
         }
 
         public static bool IsValidRoadNode(NetNode node)
@@ -155,19 +174,19 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
             return ai is RoadBaseAI;
         }
 
-        private int GetNetNodeId()
+        private int GetCurrentNetNodeId()
         {
             return m_hoverInstance.NetNode;
         }
 
-        private NetNode GetNetNode()
+        private static NetNode GetNetNode(int nodeId)
         {
-            if (m_hoverInstance.NetNode == 0)
+            if (nodeId == 0)
             {
                 throw new InvalidOperationException("Not a valid NetNode");
             }
 
-            return Singleton<NetManager>.instance.m_nodes.m_buffer[GetNetNodeId()];
+            return Singleton<NetManager>.instance.m_nodes.m_buffer[nodeId];
         }
         #endregion
 
@@ -201,38 +220,38 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
         {
             return flags & ~NetNode.Flags.TrafficLights;
         }
-        private void ToggleTrafficLights()
+        private static void ToggleTrafficLights(int nodeId)
         {
-            var node = GetNetNode();
+            var node = GetNetNode(nodeId);
 
             node.m_flags = ToggleTrafficLights(node.m_flags);
 
-            Singleton<NetManager>.instance.m_nodes.m_buffer[GetNetNodeId()] = node;
+            Singleton<NetManager>.instance.m_nodes.m_buffer[nodeId] = node;
         }
 
-        private bool WantTrafficLights()
+        private static bool WantTrafficLights(int nodeId)
         {
-            return WantTrafficLights((ushort) GetNetNodeId(), GetNetNode());
+            return WantTrafficLights((ushort) nodeId, GetNetNode(nodeId));
         }
         public static bool WantTrafficLights(ushort nodeId, NetNode node)
         {
             //Source: RoadBaseAI.UpdateNodeFlags
             //seems pretty......human unfriendly....
-            NetNode.Flags flags1 = node.m_flags;
-            uint num1 = 0U;
-            int num2 = 0;
-            NetManager instance = Singleton<NetManager>.instance;
-            int num3 = 0;
-            int num4 = 0;
-            int num5 = 0;
-            bool flag = ((RoadBaseAI)node.Info.GetAI()).WantTrafficLights();
-            for (int index = 0; index < 8; ++index)
+            var flags1 = node.m_flags;
+            var num1 = 0U;
+            var num2 = 0;
+            var instance = Singleton<NetManager>.instance;
+            var num3 = 0;
+            var num4 = 0;
+            var num5 = 0;
+            var flag = ((RoadBaseAI)node.Info.GetAI()).WantTrafficLights();
+            for (var index = 0; index < 8; ++index)
             {
-                ushort segment = node.GetSegment(index);
-                if ((int)segment != 0)
+                var segment = node.GetSegment(index);
+                if (segment != 0)
                 {
-                    NetInfo info = instance.m_segments.m_buffer[(int)segment].Info;
-                    uint num6 = 1U << (int)(info.m_class.m_level & (ItemClass.Level)31);
+                    var info = instance.m_segments.m_buffer[segment].Info;
+                    var num6 = 1U << (int)(info.m_class.m_level & (ItemClass.Level)31);
                     if (((int)num1 & (int)num6) == 0)
                     {
                         num1 |= num6;
@@ -240,10 +259,10 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
                     }
                     if (info.m_netAI.WantTrafficLights())
                         flag = true;
-                    int forward = 0;
-                    int backward = 0;
-                    instance.m_segments.m_buffer[(int)segment].CountLanes(segment, NetInfo.LaneType.Vehicle, VehicleInfo.VehicleType.Car, ref forward, ref backward);
-                    if ((int)instance.m_segments.m_buffer[(int)segment].m_endNode == (int)nodeId)
+                    var forward = 0;
+                    var backward = 0;
+                    instance.m_segments.m_buffer[segment].CountLanes(segment, NetInfo.LaneType.Vehicle, VehicleInfo.VehicleType.Car, ref forward, ref backward);
+                    if (instance.m_segments.m_buffer[segment].m_endNode == nodeId)
                     {
                         if (forward != 0)
                         {
@@ -260,8 +279,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
                         ++num5;
                 }
             }
-            NetNode.Flags flags2 = num2 < 2 ? flags1 & ~NetNode.Flags.Transition : flags1 | NetNode.Flags.Transition;
-            NetNode.Flags flags3 = !flag ||
+            var flags2 = num2 < 2 ? flags1 & ~NetNode.Flags.Transition : flags1 | NetNode.Flags.Transition;
+            var flags3 = !flag ||
                 num3 <= 2 && (num3 < 2 || num5 < 3 || num4 <= 6) ||
                 (flags2 & NetNode.Flags.Junction) == NetNode.Flags.None ? flags2 & ~NetNode.Flags.TrafficLights : flags2 | NetNode.Flags.TrafficLights;
 
