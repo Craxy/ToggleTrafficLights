@@ -1,41 +1,155 @@
-﻿using System.Linq;
+﻿using System;
+using System.Globalization;
+using System.Linq;
+using System.Reflection;
 using ColossalFramework;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Tools;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
-using JetBrains.Annotations;
+using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Ui;
 using UnityEngine;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI
 {
-    public class HighlightTest : ToolBase
+    public class MyHighlightTestTool : ToolBase
     {
+        #region Activation
+
+        private static ToolBase _previousTool = null;
+        private static MyHighlightTestTool _tool = null;
+        public static bool ToggleActivated()
+        {
+            if (_tool == null || ToolsModifierControl.toolController.CurrentTool != _tool)
+            {
+                _tool = ToolsModifierControl.toolController.gameObject.GetComponent<MyHighlightTestTool>()
+                        ?? ToolsModifierControl.toolController.gameObject.AddComponent<MyHighlightTestTool>();
+
+                _previousTool = ToolsModifierControl.toolController.CurrentTool;
+                ToolsModifierControl.toolController.CurrentTool = _tool;
+
+                DebugLog.Info("MyHighlightTestTool: Activated");
+                return true;
+            }
+            else
+            {
+                ToolsModifierControl.toolController.CurrentTool = _previousTool;
+                _previousTool = null;
+                _tool = null;
+
+                DebugLog.Info("MyHighlightTestTool: Deactivated");
+                return false;
+            }
+        }
+        #endregion
+
 
         #region fields
         private Vector2 _scrollPosition;
         #endregion
 
+        #region GUI fields
+        private readonly ValueParser<float> _diameterMultiplier = ValueParser.Create(Parser.ParseFloat, 1.0f);
+
+        private readonly ValueParser<float>[] _buildingSize = new[]
+        {
+            ValueParser.Create(Parser.ParseFloat, 1.0f),
+            ValueParser.Create(Parser.ParseFloat, 1.0f),
+            ValueParser.Create(Parser.ParseFloat, 1.0f),
+            ValueParser.Create(Parser.ParseFloat, 1.0f),
+        };
+
+        private readonly ValueParser<int> _cylinderSides = ValueParser.Create(Parser.ParseInt, 5);
+        #endregion
+
+
         #region MonoBehaviour
 
-        protected override void Awake()
+        protected void Start()
         {
-            DebugLog.Info("HighlightTest: Awake");
+            DebugLog.Info("MyHighlightTestTool: Start");
         }
 
         protected override void OnDestroy()
         {
-            DebugLog.Info("HighlightTest: OnDestroy");
+            DebugLog.Info("MyHighlightTestTool: OnDestroy");
         }
 
         protected override void OnEnable()
         {
-            DebugLog.Info("HighlightTest: OnEnable");
+            DebugLog.Info("MyHighlightTestTool: OnEnable");
         }
 
         protected override void OnDisable()
         {
-            DebugLog.Info("HighlightTest: OnDisable");
+            DebugLog.Info("MyHighlightTestTool: OnDisable");
         }
 
+        protected override void OnToolGUI()
+        {
+            base.OnToolGUI();
+
+            const float left = 0f;
+            const float top = 50f;
+            const float width = 225f;
+            const float height = 510f;
+            const float padding = 5f;
+
+            GUILayout.BeginArea(new Rect(left, top, width, height));
+            
+            var bgTexture = new Texture2D(1, 1);
+            bgTexture.SetPixel(0, 0, new Color(0.321f, 0.321f, 0.321f, 1.0f));
+            bgTexture.Apply();
+            GUI.Box(new Rect(0f, 0f, width, height), bgTexture);
+            {
+                GUILayout.BeginArea(new Rect(padding, padding, width - 2 * padding, height - 2 * padding));
+                _scrollPosition = GUILayout.BeginScrollView(_scrollPosition);
+            
+                GUILayout.Label("<size=15><b>Highlight stuff</b></size>");
+            
+                GUILayout.Space(10f);
+
+                GUILayout.Label("Cylinder:");
+                ValueInput("dia mult", _diameterMultiplier);
+//                ValueInput("x", _buildingSize[0]);
+//                ValueInput("y", _buildingSize[1]);
+//                ValueInput("z", _buildingSize[2]);
+//                ValueInput("w", _buildingSize[3]);
+                ValueInput("sides", _cylinderSides);
+                
+
+
+
+                GUILayout.EndScrollView();
+                GUILayout.EndArea();
+            }
+
+            GUILayout.EndArea();
+        }
+
+        private static void ValueInput<TResult>(string title, ValueParser<TResult> vp)
+        {
+            GUILayout.BeginHorizontal();
+
+            GUILayout.Label(title + ":");
+            GUILayout.FlexibleSpace();
+
+            {
+                Color? pre = null;
+                if (!vp.IsValidInput)
+                {
+                    pre = GUI.color;
+                    GUI.color = Color.red;
+                }
+                vp.Input = GUILayout.TextArea(vp.Input);
+                if (pre.HasValue)
+                {
+                    GUI.color = pre.Value;
+                }
+            }
+
+            GUILayout.Label(string.Format("({0})", vp.Value));
+
+            GUILayout.EndHorizontal();
+        }
 
 //        protected override void OnToolGUI()
 //        {
@@ -128,27 +242,33 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI
 
             var bm = Singleton<BuildingManager>.instance;
 
+
             var material = new Material(bm.m_properties.m_highlightMaterial)
             {
                 color = Color.red
             };
-            var mesh = CreateHighlightMesh();
+            var mesh = MeshHelper.CreateCylinder(_cylinderSides.Value);
             var id = Shader.PropertyToID("_BuildingSize");
+//            var id = Shader.PropertyToID("_Highlight1");
+
 
 
             foreach (var node in nodes)
             {
                 var info = node.Info;
-
                 
 
-                var d = info.m_halfWidth * 2;
+                var d = info.m_halfWidth * 2 * _diameterMultiplier.Value;
                 var position = node.m_position;
 
-                var v = new Vector3(15f, 15f, 15f);
+                //x & z: radius of ellipse (length, width)
+                //y & w have no effect (because default shader?)
+                material.SetVector(id, new Vector4(d, 0, d, 0));
+//                Log.Info("d: {0}", d);
+//                material.SetVector(id, new Vector4(_buildingSize[0].Value, _buildingSize[1].Value, _buildingSize[2].Value, _buildingSize[3].Value));
+//                material.SetVector(Shader.PropertyToID("_HeightMapping"), node.);
 
-                material.SetVector(id, v);
-
+                //shader does not seem to have an effect
 
                 if (material.SetPass(0))
                 {
@@ -160,15 +280,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI
         }
         private Mesh CreateHighlightMesh()
         {
-            //Source: BuildingManager
-
-            var m = new Mesh();
-
-
-            //http://wiki.unity3d.com/index.php/ProceduralPrimitives#C.23_-_Tube
-
-
-            return m;
+            return MeshHelper.CreateCylinder(9);
 
             
             //4 corners

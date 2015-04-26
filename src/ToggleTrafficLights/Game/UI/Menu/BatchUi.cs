@@ -24,12 +24,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
         #region MonoBehaviour
 
         [UsedImplicitly]
-        private void Awake()
-        {
-            DebugLog.Info("BatchUi: Awake");
-        }
-
-        [UsedImplicitly]
         private void Start()
         {
             DebugLog.Info("BatchUi: Start");

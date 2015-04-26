@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.Reflection;
 using ColossalFramework;
 using ColossalFramework.Steamworks;
+using Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI;
+using Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu.Experimental;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions;
@@ -72,9 +74,13 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
 
             Simulation.OnUpdate(realTimeDelta, simulationTimeDelta);
 
-//            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.P))
-//            {
-//            }
+#if DEBUG
+            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.P))
+            {
+//                MyHighlightTestTool.ToggleActivated();
+                HighlightIntersectionsUi.ToggleShow();
+            }
+#endif
         }
 
         #endregion

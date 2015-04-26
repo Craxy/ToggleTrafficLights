@@ -45,4 +45,5 @@ For release notes see: [GitHub release page](https://github.com/Craxy/ToggleTraf
 
 
 ### Additional Infos
-* Some code is taken from or inspired by the mod "Extended Road Upgrade" by viakmaky: https://github.com/viakmaky/Skylines-ExtendedRoadUpgrade (MIT licence)
+* Some code is inspired by the mod "Extended Road Upgrade" by viakmaky: https://github.com/viakmaky/Skylines-ExtendedRoadUpgrade (MIT licence)
+* Some code is taken from or inspired by the mod "ModTools" by nlight: https://steamcommunity.com/sharedfiles/filedetails/?id=409520576 (MIT licence)
