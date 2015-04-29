@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Reflection;
 using ColossalFramework;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu.Components;
 using Craxy.CitiesSkylines.ToggleTrafficLights.ModTools;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
+using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Ui;
 using JetBrains.Annotations;
 using UnityEngine;
+using Debug = System.Diagnostics.Debug;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu.Experimental
 {
@@ -96,7 +99,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu.Experimental
 
             var left = 0f;
             var top = 50f;
-            var width = 475f;
+            var width = 250f;
             var height = 550f;
             var padding = 5f;
 
@@ -198,10 +201,19 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu.Experimental
                     if (UseMonocolor)
                     {
                         //enable
+//                        RenderSettings.ambientSkyColor = im.m_properties.m_ambientColor;
+//                        Shader.SetGlobalColor("_InfoCurrentColor", im.m_properties.m_modeProperties[(int)InfoManager.InfoMode.None].m_activeColor.linear);
+//                        Shader.SetGlobalColor("_InfoCurrentColorB", im.m_properties.m_modeProperties[(int)InfoManager.InfoMode.None].m_activeColorB.linear);
 
-                        RenderSettings.ambientSkyColor = im.m_properties.m_ambientColor;
-                        Shader.SetGlobalColor("_InfoCurrentColor", im.m_properties.m_modeProperties[(int)InfoManager.InfoMode.None].m_activeColor.linear);
-                        Shader.SetGlobalColor("_InfoCurrentColorB", im.m_properties.m_modeProperties[(int)InfoManager.InfoMode.None].m_activeColorB.linear);
+                        var rm = Singleton<RenderManager>.instance;
+                        var cm = rm.m_objectColorMap;
+                        for (int x = 0; x < cm.width; x++)
+                        {
+                            for (int y = 0; y < cm.height; y++)
+                            {
+                                cm.SetPixel(x, y, im.m_properties.m_neutralColor);
+                            }
+                        }
 
                         Shader.EnableKeyword("INFOMODE_ON");
                         Shader.DisableKeyword("INFOMODE_OFF");
@@ -209,14 +221,32 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu.Experimental
                     else
                     {
                         //disable
-                        im.SetCurrentMode(InfoManager.InfoMode.None, InfoManager.SubInfoMode.Default);
+//                        RenderSettings.ambientSkyColor = Singleton<RenderManager>.instance.m_properties.m_ambientLight;
+//                        Shader.SetGlobalColor("_InfoCurrentColor", im.m_properties.m_neutralColor.linear);
+//                        Shader.SetGlobalColor("_InfoCurrentColorB", im.m_properties.m_neutralColor.linear);
+
+                        Shader.EnableKeyword("INFOMODE_OFF");
+                        Shader.DisableKeyword("INFOMODE_ON");
                     }
+
+                    Singleton<CoverageManager>.instance.SetMode(ItemClass.Service.None, ItemClass.SubService.None, ItemClass.Level.None, 300f, false);
+
+                    Singleton<ImmaterialResourceManager>.instance.ResourceMapVisible = ImmaterialResourceManager.Resource.None;
+                    Singleton<ElectricityManager>.instance.ElectricityMapVisible = false;
+                    Singleton<WaterManager>.instance.WaterMapVisible = false;
+                    Singleton<DistrictManager>.instance.DistrictsInfoVisible = false;
+                    Singleton<TransportManager>.instance.LinesVisible = false;
+                    Singleton<WindManager>.instance.WindMapVisible = false;
+                    Singleton<TerrainManager>.instance.TransparentWater = false;
+                    Singleton<BuildingManager>.instance.UpdateBuildingColors();
+                    Singleton<NetManager>.instance.UpdateSegmentColors();
+                    Singleton<NetManager>.instance.UpdateNodeColors();
                 }
 
-                if (UseMonocolor)
-                {
-                    ShowOptionsGui();
-                }
+//                if (UseMonocolor)
+//                {
+//                    ShowOptionsGui();
+//                }
             }
 
             private void ShowOptionsGui()
@@ -304,17 +334,74 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu.Experimental
             private static readonly string[] services = Enum.GetNames(typeof (ItemClass.Service));
             private static readonly string[] subServices = Enum.GetNames(typeof(ItemClass.SubService));
             private static readonly string[] levels = Enum.GetNames(typeof(ItemClass.Level));
+            public bool ShowTrafficCoverage = false;
 
             public void ShowGui()
             {
                 using (Layout.Vertical())
                 {
                     GUILayout.Label("<b>Service</b>");
-                    GuiControls.ComboBox("Service", "Service", services, (int) Service, i => _OnSelectedServiceChanged((ItemClass.Service) i));
-                    GuiControls.ComboBox("SubServices", "SubServices", subServices, (int)SubService, i => _OnSelectedSubServiceChanged((ItemClass.SubService)i));
-                    GuiControls.ComboBox("Level", "Level", levels, (int)Level + 1, i => _OnSelectedLevelChanged((ItemClass.Level)(i-1)));
-                    GuiControls.InputField("FadeLength", "FadeLength", FadeLength, _OnFadeLengthChanged, Parser.ParseFloat, 65f);
+
+                    var pre = ShowTrafficCoverage;
+                    ShowTrafficCoverage = GUILayout.Toggle(ShowTrafficCoverage, "Traffic Coverage");
+                    if (pre != ShowTrafficCoverage)
+                    {
+                        var im = Singleton<InfoManager>.instance;
+
+//                        var mainLight = im.GetNonPublicField<InfoManager, Light>("m_mainLight");
+//                        var cameraController = im.GetNonPublicField<InfoManager, CameraController>("m_cameraController");
+                        if (ShowTrafficCoverage)
+                        {
+                            //enable
+                            im.SetNonPublicField("m_currentMode", InfoManager.InfoMode.Traffic);
+
+//                            mainLight.color = im.m_properties.m_lightColor;
+//                            mainLight.intensity = im.m_properties.m_lightIntensity;
+//
+//                            cameraController.SetViewMode(CameraController.ViewMode.Info);
+
+                            RenderSettings.ambientSkyColor = im.m_properties.m_ambientColor;
+                            Shader.SetGlobalColor("_InfoCurrentColor", im.m_properties.m_modeProperties[(int)InfoManager.InfoMode.Traffic].m_activeColor.linear);
+                            Shader.SetGlobalColor("_InfoCurrentColorB", im.m_properties.m_modeProperties[(int)InfoManager.InfoMode.Traffic].m_activeColorB.linear);
+                        }
+                        else
+                        {
+                            //disable
+                            im.SetNonPublicField("m_currentMode", InfoManager.InfoMode.None);
+
+//                            mainLight.color = im.GetNonPublicField<InfoManager, Color>("m_wasLightColor");
+//                            mainLight.intensity = im.GetNonPublicField<InfoManager, float>("m_wasLightIntensity");
+//
+//                            cameraController.SetViewMode(CameraController.ViewMode.Normal);
+
+                            RenderSettings.ambientSkyColor = Singleton<RenderManager>.instance.m_properties.m_ambientLight;
+                            Shader.SetGlobalColor("_InfoCurrentColor", im.m_properties.m_neutralColor.linear);
+                            Shader.SetGlobalColor("_InfoCurrentColorB", im.m_properties.m_neutralColor.linear);
+                        }
+
+                        Singleton<CoverageManager>.instance.SetMode(ItemClass.Service.None, ItemClass.SubService.None, ItemClass.Level.None, 300f, false);
+
+                        Singleton<ImmaterialResourceManager>.instance.ResourceMapVisible = ImmaterialResourceManager.Resource.None;
+                        Singleton<ElectricityManager>.instance.ElectricityMapVisible = false;
+                        Singleton<WaterManager>.instance.WaterMapVisible = false;
+                        Singleton<DistrictManager>.instance.DistrictsInfoVisible = false;
+                        Singleton<TransportManager>.instance.LinesVisible = false;
+                        Singleton<WindManager>.instance.WindMapVisible = false;
+                        Singleton<TerrainManager>.instance.TransparentWater = false;
+                        Singleton<BuildingManager>.instance.UpdateBuildingColors();
+                        Singleton<NetManager>.instance.UpdateSegmentColors();
+                        Singleton<NetManager>.instance.UpdateNodeColors();
+                    }
                 }
+
+//                using (Layout.Vertical())
+//                {
+//                    GUILayout.Label("<b>Service</b>");
+//                    GuiControls.ComboBox("Service", "Service", services, (int) Service, i => _OnSelectedServiceChanged((ItemClass.Service) i));
+//                    GuiControls.ComboBox("SubServices", "SubServices", subServices, (int)SubService, i => _OnSelectedSubServiceChanged((ItemClass.SubService)i));
+//                    GuiControls.ComboBox("Level", "Level", levels, (int)Level + 1, i => _OnSelectedLevelChanged((ItemClass.Level)(i-1)));
+//                    GuiControls.InputField("FadeLength", "FadeLength", FadeLength, _OnFadeLengthChanged, Parser.ParseFloat, 65f);
+//                }
             }
 
             private void _OnSelectedServiceChanged(ItemClass.Service service)

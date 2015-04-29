@@ -61,9 +61,9 @@
   <ItemGroup>
     <Compile Include="Game\Options.cs" />
     <Compile Include="Game\Serialization.cs" />
+    <Compile Include="Game\UI\Menu\Components\ComboBox.cs" />
     <Compile Include="Game\UI\Menu\Components\GuiControls.cs" />
     <Compile Include="Game\UI\Menu\Experimental\HighlightIntersectionsUi.cs" />
-    <Compile Include="Game\UI\Menu\Experimental\VisualizationUi.cs" />
     <Compile Include="Game\UI\MyHighlightTestTool.cs" />
     <Compile Include="Game\UI\KeyHelper.cs" />
     <Compile Include="Game\UI\Menu\BatchUi.cs" />
@@ -79,7 +79,6 @@
     <Compile Include="Game\UI\StateMachine\States\StateBase.cs" />
     <Compile Include="Game\UI\StateMachine\States\ActivatedUiState.cs" />
     <Compile Include="Game\UI\StateMachine\TrafficLightsMachine.cs" />
-    <Compile Include="Game\UI\Visualization\InfoMode.cs" />
     <Compile Include="Mod.cs" />
     <Compile Include="Game\Simulation.cs" />
     <Compile Include="ModTools\ColorPicker.cs" />
@@ -91,8 +90,8 @@
     <Compile Include="Serializer\SerializerManager.cs" />
     <Compile Include="Serializer\SerializerV1.cs" />
     <Compile Include="Tools\DefaultToolWithNetNodeDetection.cs" />
+    <Compile Include="Tools\Visualization\IntersectionHighlighting.cs" />
     <Compile Include="Tools\ToggleTrafficLightsTool.cs" />
-    <Compile Include="Tools\Visualization\Settings.cs" />
     <Compile Include="Utils\ChangedValue.cs" />
     <Compile Include="Utils\CitiesHelper.cs" />
     <Compile Include="Utils\EventArgs.cs" />
@@ -120,7 +119,9 @@
     <None Include="Assets\orig\TrafficLightsIcon.design" />
     <None Include="Assets\orig\Unselected.pdn" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Game\UI\Visualization\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>mkdir "%25LOCALAPPDATA%25\Colossal Order\Cities_Skylines\Addons\Mods\$(SolutionName)"

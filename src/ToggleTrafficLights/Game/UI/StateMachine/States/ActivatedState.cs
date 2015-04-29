@@ -11,6 +11,12 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
     {
         #region field
         private ToggleTrafficLightsTool _tool = null;
+
+        protected ToggleTrafficLightsTool Tool
+        {
+            get { return _tool; }
+        }
+
         private int _originalSelectIndex = 0;
         private bool _selectedIndexChanged = false;
         #endregion
@@ -80,7 +86,9 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
 
             if (_tool != null)
             {
-                UnityEngine.Object.Destroy(_tool);
+                _tool.ClearRenderOverlay();
+                //TODO: destroys tool unsynchronous -> other state gets tool, which then gets destroyed...
+//                UnityEngine.Object.Destroy(_tool);
             }
             _tool = null;
             _selectedIndexChanged = false;
@@ -115,6 +123,22 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
             }
             BuiltinTabstrip.selectedIndex = -1;
         }
+
+        #region Overrides of ButtonStateBase
+
+        public override void Destroy()
+        {
+            if (_tool != null)
+            {
+                _tool.ClearRenderOverlay();
+                UnityEngine.Object.Destroy(_tool);
+            }
+            _tool = null;
+
+            base.Destroy();
+        }
+
+        #endregion
 
         #endregion
 

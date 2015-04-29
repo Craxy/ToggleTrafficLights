@@ -1,7 +1,10 @@
-﻿using ColossalFramework;
+﻿using System;
+using System.Linq;
+using ColossalFramework;
 using ColossalFramework.UI;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu;
-using UnityEngine;
+using Craxy.CitiesSkylines.ToggleTrafficLights.Tools.Visualization;
+using Object = UnityEngine.Object;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
 {
@@ -9,6 +12,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
     {
         #region fields
         private BatchUi _ui = null;
+        private IntersectionHighlighting _intersectionHighlighting = null;
         #endregion
 
         #region Overrides of StateBase
@@ -23,12 +27,18 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
         {
             base.OnEntry();
 
+            if (_intersectionHighlighting == null)
+            {
+                _intersectionHighlighting = new IntersectionHighlighting();
+//                Tool.AddRenderOverlay(_intersectionHighlighting.RenderOverlay);
+            }
             if (_ui == null)
             {
                 //gets enabled automatically
                 var toolControl = Singleton<ToolManager>.instance;
                 _ui = toolControl.gameObject.AddComponent<BatchUi>();
             }
+            _ui.IntersectionHightlighting = _intersectionHighlighting;
             _ui.enabled = true;
         }
 
@@ -50,6 +60,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
                 Object.Destroy(_ui);
             }
             _ui = null;
+            _intersectionHighlighting = null;
 
             base.OnExit();
         }

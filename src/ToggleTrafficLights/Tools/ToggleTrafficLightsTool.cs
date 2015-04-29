@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using ColossalFramework;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using JetBrains.Annotations;
@@ -109,6 +111,14 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 //                HighlightAllIntersections();
 //            }
 
+            if (OnRenderOverlay != null)
+            {
+                foreach (var action in OnRenderOverlay)
+                {
+                    action(cameraInfo);
+                }
+            }
+
 
             if (IsValidRoadNode(nodeId))
             {
@@ -150,6 +160,31 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
             }
         }
 
+        #endregion
+
+        #region Actions
+
+        private readonly List<Action<RenderManager.CameraInfo>> _onRenderOverlay = Enumerable.Empty<Action<RenderManager.CameraInfo>>().ToList();
+
+        public IEnumerable<Action<RenderManager.CameraInfo>> OnRenderOverlay
+        {
+            get { return _onRenderOverlay; }
+        }
+
+        public void AddRenderOverlay(Action<RenderManager.CameraInfo> onRenderOverlay)
+        {
+            _onRenderOverlay.Add(onRenderOverlay);
+        }
+
+        public void RemoveRenderOverlay(Action<RenderManager.CameraInfo> onRenderOverlay)
+        {
+            _onRenderOverlay.Remove(onRenderOverlay);
+        }
+
+        public void ClearRenderOverlay()
+        {
+            _onRenderOverlay.Clear();
+        }
         #endregion
 
         #region Node
