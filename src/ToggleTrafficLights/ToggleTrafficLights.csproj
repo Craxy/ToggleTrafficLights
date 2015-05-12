@@ -62,6 +62,7 @@
     <Compile Include="Game\Options.cs" />
     <Compile Include="Game\Serialization.cs" />
     <Compile Include="Game\UI\Menu\Components\ComboBox.cs" />
+    <Compile Include="Game\UI\Menu\Components\ComboBoxSrc.cs" />
     <Compile Include="Game\UI\Menu\Components\GuiControls.cs" />
     <Compile Include="Game\UI\Menu\Experimental\HighlightIntersectionsUi.cs" />
     <Compile Include="Game\UI\MyHighlightTestTool.cs" />

@@ -1,140 +1,88 @@
-﻿namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu.Components
+﻿using System;
+using System.Linq;
+using System.Xml.Schema;
+using UnityEngine;
+
+namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu.Components
 {
-    //Source: http://wiki.unity3d.com/wiki/index.php?title=PopupList#C.23_-_ComboBox_-_Update
-
-    // Popup list created by Eric Haines
-    // ComboBox Extended by Hyungseok Seo.(Jerry) sdragoon@nate.com
-    // 
-    // -----------------------------------------------
-    // This code working like ComboBox Control.
-    // I just changed some part of code, 
-    // because I want to seperate ComboBox button and List.
-    // ( You can see the result of this code from Description's last picture )
-    // -----------------------------------------------
-    //
-    // === usage ======================================
-    //
-    // public class SomeClass : MonoBehaviour
-    // {
-    //	GUIContent[] comboBoxList;
-    //	private ComboBox comboBoxControl = new ComboBox();
-    //	private GUIStyle listStyle = new GUIStyle();
-    //
-    //	private void Start()
-    //	{
-    //	    comboBoxList = new GUIContent[5];
-    //	    comboBoxList[0] = new GUIContent("Thing 1");
-    //	    comboBoxList[1] = new GUIContent("Thing 2");
-    //	    comboBoxList[2] = new GUIContent("Thing 3");
-    //	    comboBoxList[3] = new GUIContent("Thing 4");
-    //	    comboBoxList[4] = new GUIContent("Thing 5");
-    //
-    //	    listStyle.normal.textColor = Color.white; 
-    //	    listStyle.onHover.background =
-    //	    listStyle.hover.background = new Texture2D(2, 2);
-    //	    listStyle.padding.left =
-    //	    listStyle.padding.right =
-    //	    listStyle.padding.top =
-    //	    listStyle.padding.bottom = 4;
-    //	}
-    //
-    //	private void OnGUI () 
-    //	{
-    //	    int selectedItemIndex = comboBoxControl.GetSelectedItemIndex();
-    //	    selectedItemIndex = comboBoxControl.List( 
-    //			new Rect(50, 100, 100, 20), comboBoxList[selectedItemIndex].text, comboBoxList, listStyle );
-    //          GUI.Label( new Rect(50, 70, 400, 21), 
-    //			"You picked " + comboBoxList[selectedItemIndex].text + "!" );
-    //	}
-    // }
-    //
-    // =================================================
-
-    using UnityEngine;
-
-    public class ComboBox
+    public class ComboBox<T>
     {
-        private static bool forceToUnShow = false;
-        private static int useControlID = -1;
-        private bool isClickedComboButton = false;
-
-        private int selectedItemIndex = 0;
-
-        public int List(Rect rect, string buttonText, GUIContent[] listContent, GUIStyle listStyle)
+        public bool ShowDropDown { get; private set; }
+        public T[] Items { get; set; }
+        public int SelectedIndex { get; set; }
+        public T SelectedItem
         {
-            return List(rect, new GUIContent(buttonText), listContent, "button", "box", listStyle);
-        }
-
-        public int List(Rect rect, GUIContent buttonContent, GUIContent[] listContent, GUIStyle listStyle)
-        {
-            return List(rect, buttonContent, listContent, "button", "box", listStyle);
-        }
-
-        public int List(Rect rect, string buttonText, GUIContent[] listContent, GUIStyle buttonStyle, GUIStyle boxStyle, GUIStyle listStyle)
-        {
-            return List(rect, new GUIContent(buttonText), listContent, buttonStyle, boxStyle, listStyle);
-        }
-
-        public int List(Rect rect, GUIContent buttonContent, GUIContent[] listContent,
-                                        GUIStyle buttonStyle, GUIStyle boxStyle, GUIStyle listStyle)
-        {
-            if (forceToUnShow)
+            get
             {
-                forceToUnShow = false;
-                isClickedComboButton = false;
+                return Items[SelectedIndex];
+            }
+            set
+            {
+                SelectedIndex = Array.IndexOf(Items, value);
+            }
+        }
+        private Rect _rect = new Rect(0,0,0,0);
+
+        public delegate string GetItemName(T item);
+        public GetItemName CalcItemName { get; set; }
+
+        public string GetItemNameByIndex(int index)
+        {
+            return CalcItemName(Items[index]);
+        }
+
+        public ComboBox()
+        {
+            ShowDropDown = false;
+         
+            CalcItemName = item => item.ToString();
+        }
+
+
+        public int Show()
+        {
+            if (Items == null || Items.Length == 0)
+            {
+                throw new InvalidOperationException("No items specified!");
+            }
+            if (Items.Length == 1)
+            {
+                GUILayout.Label(GetItemNameByIndex(0));
+                return 0;
             }
 
-            bool done = false;
-            int controlID = GUIUtility.GetControlID(FocusType.Passive);
+            var items = Items.Select(v => CalcItemName(v)).ToArray();
 
-            switch (Event.current.GetTypeForControl(controlID))
+            //width of button
+            var width = items.Max(v => GUI.skin.button.CalcSize(new GUIContent(v)).x);
+
+
+            //id for button
+            var controlId = GUIUtility.GetControlID(FocusType.Passive);
+
+
+            if (GUILayout.Button(items[SelectedIndex] + " ↓", GUILayout.Width(width + 12)))
             {
-                case EventType.mouseUp:
-                    {
-                        if (isClickedComboButton)
-                        {
-                            done = true;
-                        }
-                    }
-                    break;
+                ShowDropDown = true;
             }
 
-            if (GUI.Button(rect, buttonContent, buttonStyle))
+            //get position of Button
+            if (Event.current.type == EventType.Repaint)
             {
-                if (useControlID == -1)
+                var lastRect = GUILayoutUtility.GetLastRect();
+                if (lastRect != _rect)
                 {
-                    useControlID = controlID;
-                    isClickedComboButton = false;
+                    _rect = lastRect;
                 }
-
-                if (useControlID != controlID)
-                {
-                    forceToUnShow = true;
-                    useControlID = controlID;
-                }
-                isClickedComboButton = true;
             }
 
-            if (isClickedComboButton)
+            if(ShowDropDown && _rect.height != 0)
             {
-                Rect listRect = new Rect(rect.x, rect.y + listStyle.CalcHeight(listContent[0], 1.0f),
-                          rect.width, listStyle.CalcHeight(listContent[0], 1.0f) * listContent.Length);
+                var rect = new Rect(_rect.x,
+                                    _rect.y + GUI.skin.button.CalcSize);
 
-                GUI.Box(listRect, "", boxStyle);
-                int newSelectedItemIndex = GUI.SelectionGrid(listRect, selectedItemIndex, listContent, 1, listStyle);
-                if (newSelectedItemIndex != selectedItemIndex)
-                    selectedItemIndex = newSelectedItemIndex;
+                var rect = new Rect(_rect.x, _rect.y + )
             }
-
-            if (done)
-                isClickedComboButton = false;
-
-            return GetSelectedItemIndex();
-        }
-
-        public int GetSelectedItemIndex()
-        {
-            return selectedItemIndex;
         }
     }
 }

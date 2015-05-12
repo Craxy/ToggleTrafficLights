@@ -29,7 +29,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
 
         public IntersectionHighlighting IntersectionHightlighting { get; set; }
         private GUIStyle _comboboxStyle = null;
-        private ComboBox _cbInfoType = null;
+        private ComboBoxSrc _cbInfoType = null;
         private GUIContent[] _cbInfoTypeItems = null;
         #endregion
 
@@ -57,7 +57,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
                 _comboboxStyle.padding.bottom = 4;
 
 
-                _cbInfoType = new ComboBox();
+                _cbInfoType = new ComboBoxSrc();
                 _cbInfoTypeItems =
                     Enum.GetNames(typeof (IntersectionHighlighting.HighlightingModes.InfoType))
                         .Select(it => new GUIContent(it))
@@ -224,6 +224,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
 
                         var selected = _cbInfoType.GetSelectedItemIndex();
 
+                        GUILayoutUtility.
                         var newSelected = _cbInfoType.List(new Rect(50, 100, 100, 20), _cbInfoTypeItems[selected].text, _cbInfoTypeItems, _comboboxStyle);
 
                         if (selected != newSelected)
