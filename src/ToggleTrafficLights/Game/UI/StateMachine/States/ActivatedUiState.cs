@@ -30,7 +30,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
             if (_intersectionHighlighting == null)
             {
                 _intersectionHighlighting = new IntersectionHighlighting();
-//                Tool.AddRenderOverlay(_intersectionHighlighting.RenderOverlay);
+                Tool.AddRenderOverlay(_intersectionHighlighting.RenderOverlay);
             }
             if (_ui == null)
             {
@@ -60,6 +60,10 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
                 Object.Destroy(_ui);
             }
             _ui = null;
+            if (_intersectionHighlighting != null)
+            {
+                Tool.RemoveRenderOverlay(_intersectionHighlighting.RenderOverlay);
+            }
             _intersectionHighlighting = null;
 
             base.OnExit();

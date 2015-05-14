@@ -121,8 +121,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu.Experimental
                 GUILayout.EndArea();
             }
             GUILayout.EndArea();
-
-            GUIComboBox.DrawGUI();
         }
 
         private void ShowGuiContent()

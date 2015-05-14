@@ -153,24 +153,5 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu.Components
                 onInputChanged(value);
             }
         }
-
-        public static void ComboBox(string id, string title, string[] values, int selectedIndex, Action<int> onSelectedIndexChanged, float indent = 0.0f)
-        {
-            using(Layout.Horizontal())
-            {
-                if (Mathf.Abs(indent) > 0.01f)
-                {
-                    GUILayout.Space(indent);
-                }
-                GUILayout.Label(title);
-                GUILayout.FlexibleSpace();
-
-                var idx = GUIComboBox.Box(selectedIndex, values, "cb" + id);
-                if (idx != selectedIndex)
-                {
-                    onSelectedIndexChanged(idx);
-                }
-            }
-        }
     }
 }

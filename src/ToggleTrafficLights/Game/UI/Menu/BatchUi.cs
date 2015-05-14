@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections;
 using System.Globalization;
-using System.Linq;
 using ColossalFramework;
+using ColossalFramework.UI;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu.Components;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Tools;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Tools.Visualization;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using JetBrains.Annotations;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
 {
@@ -27,10 +28,20 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
         private int _updateChangedStatisticsCounter = 0;
         private ChangedStatistics _changedStatistics = null;
 
+        private UIPanel _clickCatcher = null;
+        private readonly WindowSize _size = new WindowSize
+        {
+             Left = 0f,
+             Top = 50f,
+             Width = 300f,
+             Height = 600f,
+             Padding = 5f, 
+        };
+
         public IntersectionHighlighting IntersectionHightlighting { get; set; }
-        private GUIStyle _comboboxStyle = null;
-        private ComboBoxSrc _cbInfoType = null;
-        private GUIContent[] _cbInfoTypeItems = null;
+        private RadioButtonGroup<IntersectionHighlighting.HighlightingModes.InfoType> _infoTypeSelector;
+        private RadioButtonGroup<IntersectionHighlighting.HighlightingModes.HighlightingMode> _highlightModeSelector; 
+        private RadioButtonGroup<IntersectionHighlighting.HighlightingModes.IntersectionsToHighlight> _intersectionsToHighlightSelector; 
         #endregion
 
         #region MonoBehaviour
@@ -46,29 +57,40 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
             _backgroundTexture.SetPixel(0, 0, new Color(0.321f, 0.321f, 0.321f, 1.0f));
             _backgroundTexture.Apply();
 
+
+            _infoTypeSelector = new RadioButtonGroup<IntersectionHighlighting.HighlightingModes.InfoType>()
             {
-                _comboboxStyle = new GUIStyle();
-                _comboboxStyle.onHover.background =
-                _comboboxStyle.hover.background = new Texture2D(2, 2);
-                _comboboxStyle.normal.textColor = Color.white;
-                _comboboxStyle.padding.left =
-                _comboboxStyle.padding.right =
-                _comboboxStyle.padding.top =
-                _comboboxStyle.padding.bottom = 4;
-
-
-                _cbInfoType = new ComboBoxSrc();
-                _cbInfoTypeItems =
-                    Enum.GetNames(typeof (IntersectionHighlighting.HighlightingModes.InfoType))
-                        .Select(it => new GUIContent(it))
-                        .ToArray();
-            }
+                Title = "Info Type",
+                Items = (IntersectionHighlighting.HighlightingModes.InfoType[]) Enum.GetValues(typeof(IntersectionHighlighting.HighlightingModes.InfoType)),
+                SelectedItem = IntersectionHighlighting.HighlightingModes.InfoType.None,
+                CalcItemName = item => item.ToString(),
+            };            
+            _highlightModeSelector = new RadioButtonGroup<IntersectionHighlighting.HighlightingModes.HighlightingMode>()
+            {
+                Title = "Highlight Mode",
+                Items = (IntersectionHighlighting.HighlightingModes.HighlightingMode[])Enum.GetValues(typeof(IntersectionHighlighting.HighlightingModes.HighlightingMode)),
+                SelectedItem = IntersectionHighlighting.HighlightingModes.HighlightingMode.TrafficLights,
+                CalcItemName = item => item.ToString(),
+            };
+            _intersectionsToHighlightSelector = new RadioButtonGroup<IntersectionHighlighting.HighlightingModes.IntersectionsToHighlight>()
+            {
+                Title = "Intersections to Highlight",
+                Items = (IntersectionHighlighting.HighlightingModes.IntersectionsToHighlight[])Enum.GetValues(typeof(IntersectionHighlighting.HighlightingModes.IntersectionsToHighlight)),
+                SelectedItem = IntersectionHighlighting.HighlightingModes.IntersectionsToHighlight.AllIntersections,
+                CalcItemName = item => item.ToString(),
+            };
         }
 
         [UsedImplicitly]
         private void OnDestroy()
         {
             DebugLog.Info("BatchUi: OnDestroy");
+
+            if (_clickCatcher != null)
+            {
+                Object.Destroy(_clickCatcher.gameObject);
+            }
+            _clickCatcher = null;
         }
 
         [UsedImplicitly]
@@ -80,6 +102,24 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
             _updateChangedStatisticsCounter = 0;
             _changedStatistics = null;
             _statistics = null;
+
+            if (_clickCatcher == null)
+            {
+                var uiView = UIView.GetAView();
+                _clickCatcher = (UIPanel)uiView.AddUIComponent(typeof(UIPanel));
+                _clickCatcher.name = "ToggleTrafficLightsToolBatchUiBachground";
+                //without background sprite it's invisible
+//                _clickCatcher.backgroundSprite = "GenericPanel";
+
+
+                //adjust _size from unity pixels to C:S pixels via GetUIView().ratio
+                var ratio = uiView.ratio;
+
+                _clickCatcher.absolutePosition = new Vector3(_size.Left * ratio, _size.Top * ratio);
+                _clickCatcher.size = new Vector2(_size.Width * ratio, _size.Height * ratio);
+                _clickCatcher.zOrder = int.MaxValue;
+            }
+            _clickCatcher.isVisible = true;
         }
 
         [UsedImplicitly]
@@ -91,24 +131,20 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
             _updateChangedStatisticsCounter = 0;
             _changedStatistics = null;
             _statistics = null;
-        }
 
+            if (_clickCatcher != null)
+            {
+                _clickCatcher.isVisible = false;
+            }
+        }
 
         [UsedImplicitly]
         private void OnGUI()
         {
-
-            const float left = 0f;
-            const float top = 50f;
-            const float width = 225f;
-            const float height = 510f;
-            const float padding = 5f;
-
-
-            GUILayout.BeginArea(new Rect(left, top, width, height));
+            GUILayout.BeginArea(new Rect(_size.Left, _size.Top, _size.Width, _size.Height));
             {
-                GUI.Box(new Rect(0f, 0f, width, height), _backgroundTexture);
-                GUILayout.BeginArea(new Rect(padding, padding, width - 2 * padding, height - 2 * padding));
+                GUI.Box(new Rect(0f, 0f, _size.Width, _size.Height), _backgroundTexture);
+                GUILayout.BeginArea(new Rect(_size.Padding, _size.Padding, _size.Width - 2 * _size.Padding, _size.Height - 2 * _size.Padding));
                 {
                     GUILayout.BeginVertical();
                     {
@@ -145,6 +181,9 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
                 if (IntersectionHightlighting != null)
                 {
                     GUILayout.Space(10f);
+                    GUILayout.Box("", GUILayout.ExpandWidth(true), GUILayout.Height(1));
+                    GUILayout.Space(10f);
+
                     ShowIntersectionHighlightingGui();
                 }
             }
@@ -211,27 +250,15 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
                     }
                     else
                     {
-                        IntersectionHightlighting.Activate();
+                        IntersectionHightlighting.Deactivate();
                     }
                 }
 
                 if (IntersectionHightlighting.Enabled)
                 {
-                    using (Layout.Horizontal())
-                    {
-                        GUILayout.Label("Info Type:");
-                        GUILayout.FlexibleSpace();
-
-                        var selected = _cbInfoType.GetSelectedItemIndex();
-
-                        GUILayoutUtility.
-                        var newSelected = _cbInfoType.List(new Rect(50, 100, 100, 20), _cbInfoTypeItems[selected].text, _cbInfoTypeItems, _comboboxStyle);
-
-                        if (selected != newSelected)
-                        {
-                            IntersectionHightlighting.InfoType = (IntersectionHighlighting.HighlightingModes.InfoType) newSelected;
-                        }
-                    }
+                    _infoTypeSelector.Show((value, _) => IntersectionHightlighting.InfoType = value);
+                    _highlightModeSelector.Show((value, _) => IntersectionHightlighting.HighlightingMode = value);
+                    _intersectionsToHighlightSelector.Show((value, _) => IntersectionHightlighting.IntersectionsToHighlight = value);
                 }
             }
         }
@@ -377,6 +404,15 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
             }
 
             return changes;
+        }
+
+        public struct WindowSize
+        {
+            public float Left;
+            public float Top;
+            public float Width;
+            public float Height;
+            public float Padding; 
         }
 
         public class Statistics

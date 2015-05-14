@@ -61,9 +61,8 @@
   <ItemGroup>
     <Compile Include="Game\Options.cs" />
     <Compile Include="Game\Serialization.cs" />
-    <Compile Include="Game\UI\Menu\Components\ComboBox.cs" />
-    <Compile Include="Game\UI\Menu\Components\ComboBoxSrc.cs" />
     <Compile Include="Game\UI\Menu\Components\GuiControls.cs" />
+    <Compile Include="Game\UI\Menu\Components\RadioButtonGroup.cs" />
     <Compile Include="Game\UI\Menu\Experimental\HighlightIntersectionsUi.cs" />
     <Compile Include="Game\UI\MyHighlightTestTool.cs" />
     <Compile Include="Game\UI\KeyHelper.cs" />
@@ -85,7 +84,6 @@
     <Compile Include="ModTools\ColorPicker.cs" />
     <Compile Include="ModTools\ColorUtil.cs" />
     <Compile Include="ModTools\Configuration.cs" />
-    <Compile Include="ModTools\GuiComboBox.cs" />
     <Compile Include="ModTools\GuiWindow.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serializer\SerializerManager.cs" />
