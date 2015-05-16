@@ -94,6 +94,7 @@
     <Compile Include="Utils\ChangedValue.cs" />
     <Compile Include="Utils\CitiesHelper.cs" />
     <Compile Include="Utils\EventArgs.cs" />
+    <Compile Include="Utils\Extensions\AttributeExtensions.cs" />
     <Compile Include="Utils\Extensions\CitiesExtensions.cs" />
     <Compile Include="Utils\Extensions\ReflectionExtensions.cs" />
     <Compile Include="Utils\Extensions\StringBuilderExtensions.cs" />

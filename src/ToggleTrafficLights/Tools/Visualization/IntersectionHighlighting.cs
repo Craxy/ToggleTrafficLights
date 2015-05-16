@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using ColossalFramework;
+using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions;
 using UnityEngine;
 
@@ -59,9 +60,9 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools.Visualization
 
         public void Deactivate()
         {
-            Enabled = false;
-
             OnInfoTypeChanged(HighlightingModes.InfoType.None);
+
+            Enabled = false;
         }
         #endregion
 
@@ -75,7 +76,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools.Visualization
             }
 
             //InfoType must be set extra (when enabled or changed)
-
 
             //highlighting
             var nm = Singleton<NetManager>.instance;
@@ -108,35 +108,35 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools.Visualization
 
             var m = IntersectionsToHighlight;
 
-            if (m.IsFlagSet(HighlightingModes.IntersectionsToHighlight.AllIntersections))
+            if (m == HighlightingModes.IntersectionsToHighlight.AllIntersections)
             {
                 return true;
             }
 
             var state = ToggleTrafficLightsTool.HasTrafficLights(node.m_flags);
-            if (m.IsFlagSet(HighlightingModes.IntersectionsToHighlight.IntersectionsWithTrafficLights)
+            if (m == HighlightingModes.IntersectionsToHighlight.IntersectionsWithTrafficLights
                 && state)
             {
                 return true;
             }
-            if (m.IsFlagSet(HighlightingModes.IntersectionsToHighlight.IntersectionsWithoutTrafficLights)
+            if (m == HighlightingModes.IntersectionsToHighlight.IntersectionsWithoutTrafficLights
                 && !state)
             {
                 return true;
             }
 
 
-            if (m.IsFlagSet(HighlightingModes.IntersectionsToHighlight.IntersectionsWithDefaultState)
-                || m.IsFlagSet(HighlightingModes.IntersectionsToHighlight.IntersectionsWithoutDefaultState))
+            if (m == HighlightingModes.IntersectionsToHighlight.IntersectionsWithDefaultState
+                || m == HighlightingModes.IntersectionsToHighlight.IntersectionsWithoutDefaultState)
             {
                 var def = ToggleTrafficLightsTool.WantTrafficLights(nodeId, node);
-                if (m.IsFlagSet(HighlightingModes.IntersectionsToHighlight.IntersectionsWithDefaultState)
-                    && def)
+                if (m == HighlightingModes.IntersectionsToHighlight.IntersectionsWithDefaultState
+                    && def == state)
                 {
                     return true;
                 }
-                if (m.IsFlagSet(HighlightingModes.IntersectionsToHighlight.IntersectionsWithoutDefaultState)
-                    && !def)
+                if (m == HighlightingModes.IntersectionsToHighlight.IntersectionsWithoutDefaultState
+                    && def != state)
                 {
                     return true;
                 }
@@ -214,17 +214,17 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools.Visualization
                         im.SetCurrentMode(InfoManager.InfoMode.None, InfoManager.SubInfoMode.Default);
 
                         im.SetNonPublicField("m_currentMode", InfoManager.InfoMode.Traffic);
-                        {
-                            var mainLight = im.GetNonPublicField<InfoManager, Light>("m_mainLight");
-                            mainLight.color = im.m_properties.m_lightColor;
-                            mainLight.intensity = im.m_properties.m_lightIntensity;
-                        }
-                        RenderSettings.ambientSkyColor = im.m_properties.m_ambientColor;
+//                        {
+//                            var mainLight = im.GetNonPublicField<InfoManager, Light>("m_mainLight");
+//                            mainLight.color = im.m_properties.m_lightColor;
+//                            mainLight.intensity = im.m_properties.m_lightIntensity;
+//                        }
+//                        RenderSettings.ambientSkyColor = im.m_properties.m_ambientColor;
                         Shader.SetGlobalColor("_InfoCurrentColor", im.m_properties.m_modeProperties[(int)InfoManager.InfoMode.Traffic].m_activeColor.linear);
                         Shader.SetGlobalColor("_InfoCurrentColorB", im.m_properties.m_modeProperties[(int)InfoManager.InfoMode.Traffic].m_activeColorB.linear);
-
-                        Shader.EnableKeyword("INFOMODE_ON");
-                        Shader.DisableKeyword("INFOMODE_OFF");
+//
+//                        Shader.EnableKeyword("INFOMODE_ON");
+//                        Shader.DisableKeyword("INFOMODE_OFF");
 
                         Singleton<CoverageManager>.instance.SetMode(ItemClass.Service.None, ItemClass.SubService.None, ItemClass.Level.None, 300f, false);
                         Singleton<ImmaterialResourceManager>.instance.ResourceMapVisible = ImmaterialResourceManager.Resource.None;
@@ -253,34 +253,77 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools.Visualization
 
         public static class HighlightingModes
         {
+            public class NameAttribute : Attribute
+            {
+                public string Name { get; set; }
+
+                public NameAttribute(string name)
+                {
+                    Name = name;
+                }
+            }
+
+            public class IgnoreAttribute : Attribute
+            {
+                
+            }
+
+            public static string GetEnumName<TEnum>()
+            {
+                var na = Attribute.GetCustomAttribute(typeof (TEnum), typeof (NameAttribute)) as NameAttribute;
+                return na != null ? na.Name : string.Empty;
+            }
+
+            public static string GetEnumValueName<TEnum>(TEnum value)
+            {
+                var type = typeof (TEnum);
+                var memInfo = type.GetMember(value.ToString());
+                var attributes = memInfo[0].GetCustomAttributes(typeof (NameAttribute), false);
+                return ((NameAttribute)attributes.Last()).Name;
+            }
+
+            [Name("Info View")]
             public enum InfoType
             {
-                None = 0,
-                Traffic = 1,
-                MonocolorTraffic = 2,
+                [Name("None")]
+                None,
+                [Name("Traffic densitiy")]
+                Traffic,
+                [Name("Monocolored traffic density")]
+                MonocolorTraffic,
             }
 
+            [Ignore]
             public enum HighlightingType
             {
-                Circle = 0,
-                Cylinder = 1,
+                Circle,
+                Cylinder,
             }
 
+            [Name("Highlighting Mode")]
             public enum HighlightingMode
             {
-                TrafficLights = 0,
-                DifferenceToDefault = 1,
-                Default = 2,
+                [Name("Existence of Lights")]
+                TrafficLights,
+                [Name("Default state")]
+                Default,
+                [Name("Difference to default")]
+                DifferenceToDefault,
             }
 
-            [Flags]
+            [Name("Intersections to hightlight")]
             public enum IntersectionsToHighlight
             {
-                IntersectionsWithTrafficLights = 0,
-                IntersectionsWithoutTrafficLights = 1,
-                AllIntersections = IntersectionsWithTrafficLights | IntersectionsWithoutTrafficLights,
-                IntersectionsWithDefaultState = 2,
-                IntersectionsWithoutDefaultState = 4,
+                [Name("with lights")]
+                IntersectionsWithTrafficLights,
+                [Name("without lights")]
+                IntersectionsWithoutTrafficLights,
+                [Name("all intersections")]
+                AllIntersections,
+                [Name("with default state")]
+                IntersectionsWithDefaultState,
+                [Name("without default state")]
+                IntersectionsWithoutDefaultState,
             }
         }
 

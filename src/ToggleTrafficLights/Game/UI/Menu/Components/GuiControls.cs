@@ -60,60 +60,66 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu.Components
 
         public static void ColorField(string id, string title, Color value, ColorPicker colorPicker, ColorPicker.OnColorChanged onColorChanged = null, float indent = 0.0f)
         {
-            GUILayout.BeginHorizontal();
+            using (Layout.Vertical())
             {
-                if (Mathf.Abs(indent) > 0.01f)
+                using (Layout.Horizontal())
                 {
-                    GUILayout.Space(indent);
-                }
-                GUILayout.Label(title);
-                GUILayout.FlexibleSpace();
-
-                var r = (byte)(Mathf.Clamp(value.r * 255.0f, Byte.MinValue, Byte.MaxValue));
-                var g = (byte)(Mathf.Clamp(value.g * 255.0f, Byte.MinValue, Byte.MaxValue));
-                var b = (byte)(Mathf.Clamp(value.b * 255.0f, Byte.MinValue, Byte.MaxValue));
-                var a = (byte)(Mathf.Clamp(value.a * 255.0f, Byte.MinValue, Byte.MaxValue));
-
-                var changed = TryInputField(id + ".r", "r", ref r, Parser.ParseByte, 40f);
-                changed |= TryInputField(id + ".g", "g", ref g, Parser.ParseByte, 40f);
-                changed |= TryInputField(id + ".b", "b", ref b, Parser.ParseByte, 40f);
-                changed |= TryInputField(id + ".a", "a", ref a, Parser.ParseByte, 40f);
-
-                if (changed)
-                {
-                    value.r = Mathf.Clamp01(r/255.0f);
-                    value.g = Mathf.Clamp01(g/255.0f);
-                    value.b = Mathf.Clamp01(b/255.0f);
-                    value.a = Mathf.Clamp01(a/255.0f);
+                    if (Mathf.Abs(indent) > 0.01f)
+                    {
+                        GUILayout.Space(indent);
+                    }
+                    GUILayout.Label(string.Format("{0}:", title));
                 }
 
-                if (onColorChanged != null)
+                using (Layout.Horizontal())
                 {
+                    GUILayout.Space(indent + 10.0f);
+
+                    var r = (byte) (Mathf.Clamp(value.r*255.0f, Byte.MinValue, Byte.MaxValue));
+                    var g = (byte) (Mathf.Clamp(value.g*255.0f, Byte.MinValue, Byte.MaxValue));
+                    var b = (byte) (Mathf.Clamp(value.b*255.0f, Byte.MinValue, Byte.MaxValue));
+                    var a = (byte) (Mathf.Clamp(value.a*255.0f, Byte.MinValue, Byte.MaxValue));
+
+                    var changed = TryInputField(id + ".r", "r", ref r, Parser.ParseByte, 40f);
+                    changed |= TryInputField(id + ".g", "g", ref g, Parser.ParseByte, 40f);
+                    changed |= TryInputField(id + ".b", "b", ref b, Parser.ParseByte, 40f);
+                    changed |= TryInputField(id + ".a", "a", ref a, Parser.ParseByte, 40f);
+
                     if (changed)
                     {
-                        onColorChanged(value);
+                        value.r = Mathf.Clamp01(r/255.0f);
+                        value.g = Mathf.Clamp01(g/255.0f);
+                        value.b = Mathf.Clamp01(b/255.0f);
+                        value.a = Mathf.Clamp01(a/255.0f);
                     }
 
-                    if (GUILayout.Button("", GUILayout.Width(40)))
+                    if (onColorChanged != null)
                     {
-                        colorPicker.SetColor(value, onColorChanged);
+                        if (changed)
+                        {
+                            onColorChanged(value);
+                        }
 
-                        Vector2 mouse = Input.mousePosition;
-                        mouse.y = Screen.height - mouse.y;
+                        if (GUILayout.Button("", GUILayout.Width(40)))
+                        {
+                            colorPicker.SetColor(value, onColorChanged);
 
-                        colorPicker.rect.position = mouse;
-                        colorPicker.visible = true;
+                            Vector2 mouse = Input.mousePosition;
+                            mouse.y = Screen.height - mouse.y;
+
+                            colorPicker.rect.position = mouse;
+                            colorPicker.visible = true;
+                        }
+
+                        var lastRect = GUILayoutUtility.GetLastRect();
+                        lastRect.x += 4.0f;
+                        lastRect.y += 4.0f;
+                        lastRect.width -= 8.0f;
+                        lastRect.height -= 8.0f;
+                        GUI.DrawTexture(lastRect, ColorPicker.GetColorTexture(id, value), ScaleMode.StretchToFill);
                     }
-
-                    var lastRect = GUILayoutUtility.GetLastRect();
-                    lastRect.x += 4.0f;
-                    lastRect.y += 4.0f;
-                    lastRect.width -= 8.0f;
-                    lastRect.height -= 8.0f;
-                    GUI.DrawTexture(lastRect, ColorPicker.GetColorTexture(id, value), ScaleMode.StretchToFill);
                 }
             }
-            GUILayout.EndHorizontal();
         }
 
         public static bool TryInputField<T>(string id, string title, ref T value, Func<string, IOption<T>> parse, float textBoxWidth = 100, float indent = 0.0f)

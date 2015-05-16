@@ -126,6 +126,11 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.ModTools
 
         void Update()
         {
+            if (!visible)
+            {
+                return;
+            }
+
             Vector2 mouse = Input.mousePosition;
             mouse.y = Screen.height - mouse.y;
 

@@ -115,6 +115,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.ModTools
                 return;
             }
 
+            //TODO: set size of click catcher correct
             clickCatcher.absolutePosition = rect.position;
             clickCatcher.size = new Vector2(rect.width, rect.height);
             clickCatcher.isVisible = visible;
