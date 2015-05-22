@@ -37,5 +37,5 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion("0.7.0.*")]
 #else
 [assembly: AssemblyVersion("0.7.0")]
-[assembly: AssemblyFileVersion("0.7.3")]
+[assembly: AssemblyFileVersion("0.7.0")]
 #endif
