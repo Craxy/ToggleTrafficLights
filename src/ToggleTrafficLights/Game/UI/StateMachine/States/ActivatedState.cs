@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using ColossalFramework.UI;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Tools;
+using Craxy.CitiesSkylines.ToggleTrafficLights.Tools.Visualization;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using UnityEngine;
 using Object = System.Object;
@@ -19,6 +20,18 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
 
         private int _originalSelectIndex = 0;
         private bool _selectedIndexChanged = false;
+
+        private IntersectionHighlighting _intersectionHighlighting = null;
+        protected IntersectionHighlighting IntersectionHighlighting
+        {
+            get { return _intersectionHighlighting; }
+        }
+
+        public ActivatedState(IntersectionHighlighting intersectionHighlighting)
+        {
+            _intersectionHighlighting = intersectionHighlighting;
+        }
+
         #endregion
 
         #region Overrides of StateBase
@@ -41,10 +54,20 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
             _tool = ToolsModifierControl.toolController.gameObject.GetComponent<ToggleTrafficLightsTool>() 
                     ?? ToolsModifierControl.toolController.gameObject.AddComponent<ToggleTrafficLightsTool>();
             ToolsModifierControl.toolController.CurrentTool = _tool;
+
+            if (IntersectionHighlighting != null && Tool != null)
+            {
+                _tool.AddRenderOverlay(IntersectionHighlighting.RenderOverlay);
+            }
         }
 
         public override void OnExit()
         {
+            if (IntersectionHighlighting != null && Tool != null)
+            {
+                _tool.RemoveRenderOverlay(IntersectionHighlighting.RenderOverlay);
+            }
+
             //TODO: remember previous tool
             //reset tools
             if (ToolsModifierControl.toolController.CurrentTool == _tool || ToolsModifierControl.toolController.CurrentTool == null)
@@ -128,6 +151,19 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
 
         public override void Destroy()
         {
+            if (IntersectionHighlighting != null)
+            {
+                if (IntersectionHighlighting.Enabled)
+                {
+                    IntersectionHighlighting.Deactivate();
+                }
+                if (Tool != null)
+                {
+                    Tool.RemoveRenderOverlay(IntersectionHighlighting.RenderOverlay);
+                }
+            }
+            _intersectionHighlighting = null;
+            
             if (_tool != null)
             {
                 _tool.ClearRenderOverlay();

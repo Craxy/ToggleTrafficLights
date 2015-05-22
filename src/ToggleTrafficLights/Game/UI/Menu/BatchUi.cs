@@ -135,6 +135,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
                 _clickCatcher.zOrder = int.MaxValue;
             }
             _clickCatcher.isVisible = true;
+            _clickCatcher.isEnabled = true;
 
             if (_doesNotHaveTrafficLightsColor == null)
             {
@@ -159,7 +160,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
 
             if (_clickCatcher != null)
             {
-                _clickCatcher.isVisible = false;
+                _clickCatcher.isVisible = true;
+                _clickCatcher.isEnabled = false;
             }
         }
 

@@ -12,7 +12,12 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
     {
         #region fields
         private BatchUi _ui = null;
-        private IntersectionHighlighting _intersectionHighlighting = null;
+
+        public ActivatedUiState(IntersectionHighlighting intersectionHighlighting)
+            : base(intersectionHighlighting)
+        {
+        }
+
         #endregion
 
         #region Overrides of StateBase
@@ -27,18 +32,13 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
         {
             base.OnEntry();
 
-            if (_intersectionHighlighting == null)
-            {
-                _intersectionHighlighting = new IntersectionHighlighting();
-                Tool.AddRenderOverlay(_intersectionHighlighting.RenderOverlay);
-            }
             if (_ui == null)
             {
                 //gets enabled automatically
                 var toolControl = Singleton<ToolManager>.instance;
                 _ui = toolControl.gameObject.AddComponent<BatchUi>();
             }
-            _ui.IntersectionHightlighting = _intersectionHighlighting;
+            _ui.IntersectionHightlighting = IntersectionHighlighting;
             _ui.enabled = true;
         }
 
@@ -57,18 +57,26 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
             if (_ui != null)
             {
                 _ui.enabled = false;
-                Object.Destroy(_ui);
             }
-            _ui = null;
-            if (_intersectionHighlighting != null)
-            {
-                Tool.RemoveRenderOverlay(_intersectionHighlighting.RenderOverlay);
-            }
-            _intersectionHighlighting = null;
 
             base.OnExit();
         }
 
+        #region Overrides of ActivatedState
+
+        public override void Destroy()
+        {
+            if (_ui != null)
+            {
+                _ui.enabled = false;
+                Object.Destroy(_ui);
+            }
+            _ui = null;
+
+            base.Destroy();
+        }
+
+        #endregion
 
         public override Command? CheckCommand()
         {

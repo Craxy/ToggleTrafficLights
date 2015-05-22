@@ -16,9 +16,13 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
                 {
                     m_rayRight = m_rayRight,
                     m_netService = defaultService,
-                    m_ignoreNodeFlags = GetNodeIgnoreFlags()
+                    m_ignoreNodeFlags = GetNodeIgnoreFlags(),
+//                    m_ignoreTerrain = true,
                     //other flags and services unnecessary -- I'm only interested in NetNodes
                 };
+                //NOTE: ONLY Overground XOR Underground
+                //if underground
+                //  input.m_netService.m_itemLayers |= ItemClass.Layer.MetroTunnels;
                 RaycastOutput output;
 
                 if (RayCast(input, out output))
