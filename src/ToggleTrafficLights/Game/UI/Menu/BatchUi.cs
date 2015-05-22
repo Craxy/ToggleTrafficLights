@@ -111,6 +111,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
         [UsedImplicitly]
         private void OnEnable()
         {
+            Options.Ensure();
+
             DebugLog.Info("BatchUi: OnEnable");
 
             _updateStatisticsCounter = 0;
@@ -193,10 +195,40 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
             using (Layout.Vertical())
             {
                 GUILayout.Label("<size=15><b>Toggle Traffic Lights tool</b></size>");
+                GUILayout.Label(string.Format("<size=9>Current Mode: {0}</size>", Options.instance.UsedGroundMode.ToString()));
                 GUILayout.Space(8f);
                 GUILayout.Label("<b>Usage</b>:");
-                GUILayout.Label("  Left Click : Toggle Traffic Lights");
-                GUILayout.Label("  Right Click: Reset to default");
+                {
+                    var usages = new[]
+                    {
+                        Tuple.Create("Left Click", "Toggle Traffic Lights"),
+                        Tuple.Create("Right Click", "Reset to default"),
+                        Tuple.Create(Options.instance.ElevationDown.ToString(), "Only Underground"),
+                        Tuple.Create(Options.instance.ElevationUp.ToString(), "Only Overground"),
+                        Tuple.Create(string.Format("{0}+{1}", Options.instance.ElevationDown.ToString(), Options.instance.ElevationUp.ToString()), "Both Overground & Underground"),
+                    };
+
+                    var skin = new GUIStyle(GUI.skin.label) {fontSize = 11};
+
+                    var maxHeader = usages.Select(u => new GUIContent(u.Item1))
+                                          .Select(skin.CalcSize)
+                                          .Select(s => s.x)
+                                          .Max();
+
+                    foreach (var u in usages)
+                    {
+                        using (Layout.Horizontal())
+                        {
+                            GUILayout.Space(5f);
+                            GUILayout.Label(u.Item1, skin, GUILayout.Width(maxHeader));
+                            GUILayout.Space(1.5f);
+                            GUILayout.Label(":", skin);
+                            GUILayout.Space(1.5f);
+                            GUILayout.Label(u.Item2, skin);
+                            GUILayout.FlexibleSpace();
+                        }
+                    }
+                }
 
                 GUILayout.Space(10f);
                 ShowStatisticsGui();
@@ -205,14 +237,14 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
                 ShowBatchCommandsGui();
 
 
-                if (IntersectionHightlighting != null)
-                {
-                    GUILayout.Space(10f);
-                    GUILayout.Box("", GUILayout.ExpandWidth(true), GUILayout.Height(1));
-                    GUILayout.Space(10f);
-
-                    ShowIntersectionHighlightingGui();
-                }
+//                if (IntersectionHightlighting != null)
+//                {
+//                    GUILayout.Space(10f);
+//                    GUILayout.Box("", GUILayout.ExpandWidth(true), GUILayout.Height(1));
+//                    GUILayout.Space(10f);
+//
+//                    ShowIntersectionHighlightingGui();
+//                }
             }
         }
 

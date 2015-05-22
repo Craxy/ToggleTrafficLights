@@ -74,13 +74,13 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
 
             Simulation.OnUpdate(realTimeDelta, simulationTimeDelta);
 
-#if DEBUG
-            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.P))
-            {
-//                MyHighlightTestTool.ToggleActivated();
-                HighlightIntersectionsUi.ToggleShow();
-            }
-#endif
+//#if DEBUG
+//            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.P))
+//            {
+////                MyHighlightTestTool.ToggleActivated();
+//                HighlightIntersectionsUi.ToggleShow();
+//            }
+//#endif
         }
 
         #endregion

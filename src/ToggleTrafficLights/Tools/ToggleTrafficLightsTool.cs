@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using ColossalFramework;
+using Craxy.CitiesSkylines.ToggleTrafficLights.Game;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
+using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions;
 using JetBrains.Annotations;
 using UnityEngine;
 
@@ -28,7 +30,11 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 
         protected override void OnEnable()
         {
+            Options.Ensure();
+
             base.OnEnable();
+
+            ActivateGroundMode(Options.instance.UsedGroundMode);
 
             OnOnEnabledChanged(true);
 
@@ -37,6 +43,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 
         protected override void OnDisable()
         {
+            ActivateGroundMode(Options.GroundMode.Ground);
+
             base.OnDisable();
 
             OnOnEnabledChanged(false);
@@ -98,6 +106,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
                     }
                 }
             }
+
+            HandleGroundModeKeys();
         }
 
         public override void RenderOverlay(RenderManager.CameraInfo cameraInfo)
@@ -185,6 +195,90 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
         {
             _onRenderOverlay.Clear();
         }
+        #endregion
+
+        #region Underground
+        private void HandleGroundModeKeys()
+        {
+            var os = Options.instance;
+            if (os.ElevationUp.IsPressed() && os.ElevationDown.IsPressed())
+            {
+                ChangeGroundMode(Options.GroundMode.All);
+                DebugLog.Info("ToggleTrafficLightsTool: Changed ground mode to {0}", Options.GroundMode.All);
+            }
+            else if(os.ElevationUp.IsPressed())
+            {
+                ChangeGroundMode(Options.GroundMode.Ground);
+                DebugLog.Info("ToggleTrafficLightsTool: Changed ground mode to {0}", Options.GroundMode.Ground);
+            }
+            else if (os.ElevationDown.IsPressed())
+            {
+                ChangeGroundMode(Options.GroundMode.Underground);
+                DebugLog.Info("ToggleTrafficLightsTool: Changed ground mode to {0}", Options.GroundMode.Underground);
+            }
+
+        }
+
+        public void ChangeGroundMode(Options.GroundMode groundMode)
+        {
+            if (groundMode == Options.instance.UsedGroundMode)
+            {
+                return;
+            }
+
+            Options.instance.UsedGroundMode = groundMode;
+            ActivateGroundMode(groundMode);
+        }
+
+        private void ActivateGroundMode(Options.GroundMode groundMode)
+        {
+            switch (groundMode)
+            {
+                case Options.GroundMode.Ground:
+                    _nodeLayerIncludeFlags = ItemClass.Layer.Default;
+                    ActivateGroundInfoView();
+                    break;
+                case Options.GroundMode.Underground:
+                    _nodeLayerIncludeFlags = ItemClass.Layer.MetroTunnels;
+                    ActivateUndergroundInfoView();
+                    break;
+                case Options.GroundMode.All:
+                    _nodeLayerIncludeFlags = ItemClass.Layer.Default | ItemClass.Layer.MetroTunnels;
+                    ActivateAllInfoView();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("groundMode");
+            }
+        }
+
+        private static void ActivateGroundInfoView()
+        {
+            var im = Singleton<InfoManager>.instance;
+            im.SetCurrentMode(InfoManager.InfoMode.None, InfoManager.SubInfoMode.Default);
+        }
+        private static void ActivateUndergroundInfoView()
+        {
+            var im = Singleton<InfoManager>.instance;
+            im.SetCurrentMode(InfoManager.InfoMode.None, InfoManager.SubInfoMode.Default);
+            im.CallNonPublicMethod("SetMode", InfoManager.InfoMode.Traffic, InfoManager.SubInfoMode.Default);
+        }
+        private static void ActivateAllInfoView()
+        {
+            var im = Singleton<InfoManager>.instance;
+            im.SetCurrentMode(InfoManager.InfoMode.None, InfoManager.SubInfoMode.Default);
+            im.CallNonPublicMethod("SetMode", InfoManager.InfoMode.Traffic, InfoManager.SubInfoMode.Default);
+        }
+
+        #region Overrides of DefaultToolWithNetNodeDetection
+
+        private ItemClass.Layer _nodeLayerIncludeFlags = ItemClass.Layer.Default;
+        public override ItemClass.Layer GetNodeLayerIncludeFlags()
+        {
+            return _nodeLayerIncludeFlags;
+        }
+
+        #endregion
+
         #endregion
 
         #region Node

@@ -11,18 +11,14 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 
             if (m_mouseRayValid && GetNodeIgnoreFlags() != NetNode.Flags.All)
             {
-                var defaultService = new ToolBase.RaycastService(ItemClass.Service.None, ItemClass.SubService.None, ItemClass.Layer.Default);
+                var defaultService = new ToolBase.RaycastService(ItemClass.Service.None, ItemClass.SubService.None, GetNodeLayerIncludeFlags());
                 var input = new ToolBase.RaycastInput(m_mouseRay, m_mouseRayLength)
                 {
                     m_rayRight = m_rayRight,
                     m_netService = defaultService,
                     m_ignoreNodeFlags = GetNodeIgnoreFlags(),
-//                    m_ignoreTerrain = true,
                     //other flags and services unnecessary -- I'm only interested in NetNodes
                 };
-                //NOTE: ONLY Overground XOR Underground
-                //if underground
-                //  input.m_netService.m_itemLayers |= ItemClass.Layer.MetroTunnels;
                 RaycastOutput output;
 
                 if (RayCast(input, out output))
@@ -76,6 +72,11 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
         public virtual NetNode.Flags GetNodeIncludeFlags()
         {
             return NetNode.Flags.All;
+        }
+
+        public virtual ItemClass.Layer GetNodeLayerIncludeFlags()
+        {
+            return ItemClass.Layer.Default;
         }
     }
 }
