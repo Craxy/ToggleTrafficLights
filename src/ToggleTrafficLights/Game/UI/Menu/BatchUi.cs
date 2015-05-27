@@ -162,7 +162,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
 
             if (_clickCatcher != null)
             {
-                _clickCatcher.isVisible = true;
+                _clickCatcher.isVisible = false;
                 _clickCatcher.isEnabled = false;
             }
         }
