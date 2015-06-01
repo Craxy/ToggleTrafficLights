@@ -1,6 +1,7 @@
 ﻿
 using System;
 using ColossalFramework;
+using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
 {
@@ -22,7 +23,29 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
         public SavedInputKey ElevationUp { get; private set; }
         public SavedInputKey ElevationDown { get; private set; }
 
-        public GroundMode UsedGroundMode { get; set; }
+        private GroundMode _usedGroundMode;
+        public GroundMode UsedGroundMode
+        {
+            get { return _usedGroundMode; }
+            set
+            {
+                if (value != _usedGroundMode)
+                {
+                    _usedGroundMode = value;
+                    OnGroundModeChanged(value);
+                }
+            }
+        }
+
+        public event Action<GroundMode> GroundModeChanged;
+        private void OnGroundModeChanged(GroundMode gm)
+        {
+            var handler = GroundModeChanged;
+            if (handler != null)
+            {
+                handler(gm);
+            }
+        }
 
         [Flags]
         public enum GroundMode
@@ -35,6 +58,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
         #endregion
 
         public bool HighlightAllIntersections = true;
+
         #endregion
     }
 }

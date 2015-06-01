@@ -110,8 +110,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
             if (_tool != null)
             {
                 _tool.ClearRenderOverlay();
-                //TODO: destroys tool unsynchronous -> other state gets tool, which then gets destroyed...
-//                UnityEngine.Object.Destroy(_tool);
             }
             _tool = null;
             _selectedIndexChanged = false;
@@ -167,7 +165,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
             if (_tool != null)
             {
                 _tool.ClearRenderOverlay();
-                UnityEngine.Object.Destroy(_tool);
+                UnityEngine.Object.Destroy(_tool.gameObject);
             }
             _tool = null;
 

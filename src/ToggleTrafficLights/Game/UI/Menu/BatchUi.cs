@@ -98,12 +98,12 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
 
             if (_doesNotHaveTrafficLightsColor != null)
             {
-                Destroy(_doesNotHaveTrafficLightsColor);
+                Destroy(_doesNotHaveTrafficLightsColor.gameObject);
             }
             _doesNotHaveTrafficLightsColor = null;
             if (_hasTrafficLightsColorPicker != null)
             {
-                Destroy(_hasTrafficLightsColorPicker);
+                Destroy(_hasTrafficLightsColorPicker.gameObject);
             }
             _hasTrafficLightsColorPicker = null;
         }

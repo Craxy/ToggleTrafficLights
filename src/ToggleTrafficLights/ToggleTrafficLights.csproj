@@ -67,6 +67,7 @@
     <Compile Include="Game\UI\Menu\Components\GuiControls.cs" />
     <Compile Include="Game\UI\Menu\Components\RadioButtonGroup.cs" />
     <Compile Include="Game\UI\Menu\Experimental\HighlightIntersectionsUi.cs" />
+    <Compile Include="Game\UI\Menu\UndergroundModePanel.cs" />
     <Compile Include="Game\UI\MyHighlightTestTool.cs" />
     <Compile Include="Game\UI\KeyHelper.cs" />
     <Compile Include="Game\UI\Menu\BatchUi.cs" />

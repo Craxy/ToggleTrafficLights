@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using ColossalFramework;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Game;
+using Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions;
 using JetBrains.Annotations;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 {
@@ -25,6 +27,12 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
         {
             base.OnDestroy();
 
+            var ump = UndergroundModePanel.Get();
+            if (ump != null)
+            {
+                Destroy(ump.gameObject);
+            }
+
             DebugLog.Message("ToggleTrafficLightsTool destroyed");
         }
 
@@ -35,6 +43,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
             base.OnEnable();
 
             ActivateGroundMode(Options.instance.UsedGroundMode);
+            UndergroundModePanel.GetOrCreate().Show(true);
+            Options.instance.GroundModeChanged += ActivateGroundMode;
 
             OnOnEnabledChanged(true);
 
@@ -43,6 +53,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 
         protected override void OnDisable()
         {
+            Options.instance.GroundModeChanged -= ActivateGroundMode;
+            UndergroundModePanel.GetOrCreate().Hide();
             ActivateGroundMode(Options.GroundMode.Ground);
 
             base.OnDisable();

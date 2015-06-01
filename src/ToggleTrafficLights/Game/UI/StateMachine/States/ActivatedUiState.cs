@@ -69,7 +69,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
             if (_ui != null)
             {
                 _ui.enabled = false;
-                Object.Destroy(_ui);
+                Object.Destroy(_ui.gameObject);
             }
             _ui = null;
 
