@@ -167,6 +167,16 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 
             ++Singleton<ToolManager>.instance.m_drawCallData.m_overlayCalls;
             Singleton<RenderManager>.instance.OverlayEffect.DrawCircle(cameraInfo, color, position, info.m_halfWidth * 2, -1f, 1280f, false, false);
+
+//            // if underground: circle is projected on terrain surface -> draw another circle on road
+//            if (node.m_elevation < 0)
+//            {
+//                p.m_position.y = NetSegment.SampleTerrainHeight(info1, p.m_position, false, p.m_elevation);
+//
+//                node.m_position.y = NetSegment.SampleTerrainHeight(info, position, false, node.m_elevation);
+//            }
+
+
         }
         #endregion
 
