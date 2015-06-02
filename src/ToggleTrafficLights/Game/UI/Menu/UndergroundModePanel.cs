@@ -68,7 +68,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
             backgroundSprite = "InfoPanelBack";
             size = new Vector2(255f, 22f);
 //            relativePosition = new Vector3(-235f, 14, 0);
-            relativePosition = new Vector3(200f, 14, 0);
+            relativePosition = new Vector3(350f, 24, 0);
 
             _cbOverground = CreateCheckbox(Name + "Overground", "Overground", "(Dis)Allow toggling above ground", new Vector2(2f, 3f), 120f);
             _cbUnderground = CreateCheckbox(Name + "Underground", "Underground", "(Dis)Allow toggling below ground", new Vector2(_cbOverground.width + 5f, 3f), 120f);

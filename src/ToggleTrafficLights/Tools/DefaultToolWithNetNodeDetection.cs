@@ -1,5 +1,6 @@
 ﻿using ColossalFramework;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
+using UnityEngine;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 {
@@ -11,16 +12,45 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 
             if (m_mouseRayValid && GetNodeIgnoreFlags() != NetNode.Flags.All)
             {
-                var defaultService = new ToolBase.RaycastService(ItemClass.Service.None, ItemClass.SubService.None, GetNodeLayerIncludeFlags());
+//                var mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+//                var mouseRayLength = Camera.main.farClipPlane;
+//                var rayRight = Camera.main.transform.TransformDirection(Vector3.right);
+//
+//                var defaultService = new ToolBase.RaycastService(ItemClass.Service.Road, ItemClass.SubService.None, ItemClass.Layer.Default);
+//                var input = new ToolBase.RaycastInput(mouseRay, mouseRayLength)
+//                {
+//                    m_rayRight = rayRight,
+//                    m_netService = defaultService,
+//                    m_ignoreNodeFlags = NetNode.Flags.None,
+//                    m_ignoreSegmentFlags = NetSegment.Flags.Untouchable,
+//                };
+//                RaycastOutput output;
+//                if (!RayCast(input, out output))
+//                {
+//                    var id = m_hoverInstance;
+//                    id.NetNode = 0;
+//                    m_hoverInstance = id;
+//                    return;
+//                }
+//
+//                {
+//                    var id = m_hoverInstance;
+//                    id.NetNode = output.m_netNode;
+//                    m_hoverInstance = id;
+//                }
+
+
+
+                var defaultService = new ToolBase.RaycastService(ItemClass.Service.Road, ItemClass.SubService.None, GetNodeLayerIncludeFlags());
                 var input = new ToolBase.RaycastInput(m_mouseRay, m_mouseRayLength)
                 {
                     m_rayRight = m_rayRight,
                     m_netService = defaultService,
                     m_ignoreNodeFlags = GetNodeIgnoreFlags(),
+                    m_ignoreSegmentFlags = NetSegment.Flags.Untouchable,    //provides a MUCH better node recognition -- far mor generous
                     //other flags and services unnecessary -- I'm only interested in NetNodes
                 };
                 RaycastOutput output;
-
                 if (RayCast(input, out output))
                 {
                     if (output.m_netNode != 0)
@@ -46,9 +76,14 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 
                         var id = m_hoverInstance;
                         id.NetNode = output.m_netNode;
-
                         m_hoverInstance = id;
                     }
+                }
+                else
+                {
+                    var id = m_hoverInstance;
+                    id.NetNode = 0;
+                    m_hoverInstance = id;
                 }
             }
         }
