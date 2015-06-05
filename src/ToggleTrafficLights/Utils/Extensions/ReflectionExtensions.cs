@@ -46,5 +46,26 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions
 
             return (TResult) mi.Invoke(obj, args);
         }
+
+        public static void CallNonPublicStaticMethod<TSource>(this TSource obj, string name, params object[] args)
+        {
+            var mi = typeof(TSource).GetMethod(name, BindingFlags.Static | BindingFlags.NonPublic);
+            if (mi == null)
+            {
+                throw new ArgumentException("TSource does not contain the specified method", "name");
+            }
+
+            mi.Invoke(null, args);
+        }
+        public static TResult CallNonPublicStaticFunction<TSource, TResult>(this TSource obj, string name, params object[] args)
+        {
+            var mi = typeof(TSource).GetMethod(name, BindingFlags.Static | BindingFlags.NonPublic);
+            if (mi == null)
+            {
+                throw new ArgumentException("TSource does not contain the specified method", "name");
+            }
+
+            return (TResult)mi.Invoke(null, args);
+        }
     }
 }

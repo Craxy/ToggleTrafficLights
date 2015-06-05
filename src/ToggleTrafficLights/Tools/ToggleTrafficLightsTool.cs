@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ColossalFramework;
+using ColossalFramework.Math;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Game;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
@@ -83,6 +84,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 
 #if DEBUG
                         string.Format("          Node: {0}", m_hoverInstance.NetNode),
+                        string.Format("     Elevation: {0}", node.m_elevation),
+                        string.Format("   Underground: {0}", node.Info.m_netAI.IsUnderground()),
 #endif
                     });
 
@@ -141,7 +144,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
                 }
             }
 
-
             if (IsValidRoadNode(nodeId))
             {
                 HighlightNode(cameraInfo, nodeId);
@@ -168,16 +170,246 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
             ++Singleton<ToolManager>.instance.m_drawCallData.m_overlayCalls;
             Singleton<RenderManager>.instance.OverlayEffect.DrawCircle(cameraInfo, color, position, info.m_halfWidth * 2, -1f, 1280f, false, false);
 
-//            // if underground: circle is projected on terrain surface -> draw another circle on road
+            //if underground: circle is projected on terrain surface -> draw another circle on road
+            //elevation is always >= 0 -- even for underground roads
 //            if (node.m_elevation < 0)
-//            {
-//                p.m_position.y = NetSegment.SampleTerrainHeight(info1, p.m_position, false, p.m_elevation);
+            if(info.m_netAI.IsUnderground())
+            {
+////                p.m_position.y = NetSegment.SampleTerrainHeight(info1, p.m_position, false, p.m_elevation);
+//                position.y = position.y - node.m_elevation;
+
+//                ++Singleton<ToolManager>.instance.m_drawCallData.m_overlayCalls;
+//                Singleton<RenderManager>.instance.OverlayEffect.DrawCircle(cameraInfo, Color.yellow, position, info.m_halfWidth * 2, -1f, 1280f, false, false);
+
+//                var nt = Singleton<NetTool>.instance;
+//                nt.CallNonPublicStaticMethod("RenderNode", info, position, Vector3.zero);
+
+
+//                NetManager instance = Singleton<NetManager>.instance;
+//                Quaternion identity = Quaternion.identity;
+//                for (int index = 0; index < info.m_nodes.Length; ++index)
+//                {
+//                    NetInfo.Node n = info.m_nodes[index];
+//                    if (n.CheckFlags(NetNode.Flags.None))
+//                    {
+//                        ++Singleton<ToolManager>.instance.m_drawCallData.m_defaultCalls;
+//                        Graphics.DrawMesh(n.m_nodeMesh, position, identity, n.m_nodeMaterial, n.m_layer, null, 0, instance.m_materialBlock);
+//                    }
+//                }
+
+
+//                bool isHoveringSegment = false;
+//                int segmentIndex;
+//                NetInfo newPrefab = null;
+//                NetSegment segment;
+//                NetTool.ControlPoint startPoint;
+//                NetTool.ControlPoint middlePoint;
+//                NetTool.ControlPoint endPoint;
+//                ushort n;
+//                ushort outSegment;
+//                int cost;
+//                int productionRate;
+//                // Initializes colliding arrays
+//                ToolErrors errors = NetTool.CreateNode(newPrefab != null ? newPrefab : segment.Info, startPoint, middlePoint, endPoint, 
+//                    NetTool.m_nodePositionsSimulation, 1000, true, false, true, false, false, false, 0, out n, out outSegment, out cost, out productionRate);
+
+//                NetTool.RenderOverlay(cameraInfo, , Color.yellow, Color.red);
+                
+
+
+//                m_toolController.RenderColliding(cameraInfo, Color.yellow, Color.red, Color.green, Color.gray, 0, 0);
+
+
+
+
+//                NetTool.ControlPoint p;
+//                if (NetTool.MakeControlPoint(m_mouseRay, m_mouseRayLength, info, true, GetNodeIgnoreFlags(), GetSegmentIgnoreFlags(), GetBuildingIgnoreFlags(), node.m_elevation, true, out p))
+//                {
 //
-//                node.m_position.y = NetSegment.SampleTerrainHeight(info, position, false, node.m_elevation);
+//                    var startPoint = p;
+//                    var middlePoint = p;
+//                    var endPoint = p;
+//
+////                    Singleton<NetTool>.instance.CallNonPublicMethod("RenderOverlay", cameraInfo, info, Color.yellow, p, p, p);
+//
+//
+//                    Singleton<NetTool>.instance.CallNonPublicMethod("RenderOverlay", cameraInfo, info, Color.yellow, startPoint, middlePoint, endPoint);
+//                    var arr = new object[] {info, startPoint, middlePoint, endPoint};
+//                    if (!Singleton<NetTool>.instance.CallNonPublicStaticFunction<NetTool, bool>("GetSecondaryControlPoints", arr))
+//                        return;
+//
+//                    startPoint = (NetTool.ControlPoint) arr[1];
+//                    middlePoint = (NetTool.ControlPoint) arr[2];
+//                    endPoint = (NetTool.ControlPoint) arr[3];
+//
+//
+//                    Singleton<NetTool>.instance.CallNonPublicMethod("RenderOverlay", cameraInfo, info, Color.yellow, startPoint, middlePoint, endPoint);
+//
+//                }
+
+
+//                GameObject gameObjectWithTag = GameObject.FindGameObjectWithTag("UndergroundView");
+//                var undergroundCamera = gameObjectWithTag.GetComponent<Camera>();
+////                var layerMask = undergroundCamera.cullingMask;
+//                ++Singleton<ToolManager>.instance.m_drawCallData.m_overlayCalls;
+//                Singleton<RenderManager>.instance.OverlayEffect.DrawCircle(undergroundCamera., Color.yellow, position, info.m_halfWidth * 2, -1f, 1280f, false, false);
+
+
+//                NetTool.ControlPoint p;
+//                if (NetTool.MakeControlPoint(m_mouseRay, m_mouseRayLength, info, true, GetNodeIgnoreFlags(),
+//                    GetSegmentIgnoreFlags(), GetBuildingIgnoreFlags(), node.m_elevation, true, out p))
+//                {
+//                    p.m_direction = Vector3.forward;
+//                    ushort n;
+//                    ushort segment;
+//                    int cost;
+//                    int productionRate;
+//
+//                    int num = (int)NetTool.CreateNode(info, p, p, p, NetTool.m_nodePositionsMain, 1000, false, true, true, false, false, false, (ushort)0,
+//                                out n, out segment, out cost, out productionRate);
+//                }
+
+//                var direction = Vector3.forward;
+//                Singleton<NetTool>.instance.CallNonPublicStaticMethod("RenderNode", info, position, direction);
+
+//                NetTool.ControlPoint p;
+//                if (NetTool.MakeControlPoint(m_mouseRay, m_mouseRayLength, info, true, GetNodeIgnoreFlags(), GetSegmentIgnoreFlags(), GetBuildingIgnoreFlags(), node.m_elevation, true, out p))
+//                {
+//                    p.m_elevation = -p.m_elevation;
+//
+//                    var startPoint = p;
+//                    var middlePoint = p;
+//                    var endPoint = p;
+//
+//                    ushort n;
+//                    ushort segment;
+//                    int cost;
+//                    int productionRate;
+//
+////                    Singleton<NetTool>.instance.CallNonPublicStaticMethod("RenderNode", info, position, Vector3.forward);
+//                    NetTool.CreateNode(info, startPoint, middlePoint, endPoint, NetTool.m_nodePositionsMain, 1000, false, true, true, false, false, false, (ushort)0, out n, out segment, out cost, out productionRate);
+//
+//                    var objs = new object[] {info, startPoint, middlePoint, endPoint,};
+//                    if (Singleton<NetTool>.instance.CallNonPublicStaticFunction<NetTool, bool>("GetSecondaryControlPoints", objs))
+//                    {
+//                        startPoint = (NetTool.ControlPoint) objs[1];
+//                        middlePoint = (NetTool.ControlPoint) objs[2];
+//                        endPoint = (NetTool.ControlPoint) objs[3];
+//
+////                        Singleton<NetTool>.instance.CallNonPublicStaticMethod("RenderNode", info, position, Vector3.forward);
+//                        NetTool.CreateNode(info, startPoint, middlePoint, endPoint, NetTool.m_nodePositionsMain, 1000, false, true, true, false, false, false, (ushort)0, out n, out segment, out cost, out productionRate);
+//                    }
+//                }
+
+
+//                Singleton<NetTool>.instance.CallNonPublicStaticMethod("RenderSegment", info, position, position,  Vector3.forward, Vector3.forward, false, false);
+
+//                Singleton<NetTool>.instance.CallNonPublicStaticMethod("RenderNode", info, position, Vector3.forward);
+
+//                NetTool.ControlPoint p;
+//                if (NetTool.MakeControlPoint(m_mouseRay, m_mouseRayLength, info, true, GetNodeIgnoreFlags(),
+//                    GetSegmentIgnoreFlags(), GetBuildingIgnoreFlags(), node.m_elevation, true, out p))
+//                {
+//
+//                    DebugLog.Info("ControlPoint");
+//
+//                    this.m_toolController.RenderCollidingNotifications(cameraInfo, (ushort) 0, (ushort) 0);
+//                    NetTool.ControlPoint controlPoint = p;
+//                    controlPoint.m_direction = Vector3.forward;
+//                    ushort n;
+//                    ushort segment;
+//                    int cost;
+//                    int productionRate;
+//                    int num =
+//                        (int)
+//                            NetTool.CreateNode(info, controlPoint, controlPoint, controlPoint,
+//                                NetTool.m_nodePositionsMain, 0, false, true, true, false, false, false, (ushort) 0,
+//                                out n, out segment, out cost, out productionRate);
+//
+//                }
+
+
+
+
+                // both together do highlight a circle..or something like that....
+                RenderNode(info, position, Vector3.back);
+                RenderNode(info, position, Vector3.forward);
+
+            }
+
+//            {
+//                Bezier3 bezier;
+//                var segment = Singleton<NetManager>.instance.m_segments.m_buffer[node.m_segment0];
+//
+//                bezier.a = node.m_position;
+//                bezier.d = node.m_position;
+//
+//                NetSegment.CalculateMiddlePoints(bezier.a, segment.m_startDirection, bezier.d, segment.m_endDirection, false, false, out bezier.b, out bezier.c);
+//
+//                ++Singleton<ToolManager>.instance.m_drawCallData.m_overlayCalls;
+//                Singleton<RenderManager>.instance.OverlayEffect.DrawBezier(cameraInfo, color, bezier, info.m_halfWidth * 2f, info.m_halfWidth, info.m_halfWidth, -1f, 1280f, false, false);
+//
 //            }
 
-
         }
+        private static void RenderNode(NetInfo info, Vector3 position, Vector3 direction)
+        {
+            if (info.m_nodes == null)
+                return;
+            NetManager instance = Singleton<NetManager>.instance;
+            position.y += 0.15f;
+            Quaternion identity = Quaternion.identity;
+            float vScale = 0.05f;
+            Vector3 vector3_1 = new Vector3(direction.z, 0.0f, -direction.x) * info.m_halfWidth;
+            Vector3 vector3_2 = position + vector3_1;
+            Vector3 vector3_3 = position - vector3_1;
+            Vector3 vector3_4 = vector3_3;
+            Vector3 vector3_5 = vector3_2;
+            float num = Mathf.Min(info.m_halfWidth * 1.333333f, 16f);
+            Vector3 vector3_6 = vector3_2 - direction * num;
+            Vector3 vector3_7 = vector3_4 - direction * num;
+            Vector3 vector3_8 = vector3_3 - direction * num;
+            Vector3 vector3_9 = vector3_5 - direction * num;
+            Vector3 vector3_10 = vector3_2 + direction * num;
+            Vector3 vector3_11 = vector3_4 + direction * num;
+            Vector3 vector3_12 = vector3_3 + direction * num;
+            Vector3 vector3_13 = vector3_5 + direction * num;
+            Matrix4x4 matrix4x4_1 = NetSegment.CalculateControlMatrix(vector3_2, vector3_6, vector3_7, vector3_4, vector3_2, vector3_6, vector3_7, vector3_4, position, vScale);
+            Matrix4x4 matrix4x4_2 = NetSegment.CalculateControlMatrix(vector3_3, vector3_12, vector3_13, vector3_5, vector3_3, vector3_12, vector3_13, vector3_5, position, vScale);
+            Matrix4x4 matrix4x4_3 = NetSegment.CalculateControlMatrix(vector3_2, vector3_10, vector3_11, vector3_4, vector3_2, vector3_10, vector3_11, vector3_4, position, vScale);
+            Matrix4x4 matrix4x4_4 = NetSegment.CalculateControlMatrix(vector3_3, vector3_8, vector3_9, vector3_5, vector3_3, vector3_8, vector3_9, vector3_5, position, vScale);
+            matrix4x4_1.SetRow(3, matrix4x4_1.GetRow(3) + new Vector4(0.2f, 0.2f, 0.2f, 0.2f));
+            matrix4x4_2.SetRow(3, matrix4x4_2.GetRow(3) + new Vector4(0.2f, 0.2f, 0.2f, 0.2f));
+            matrix4x4_3.SetRow(3, matrix4x4_3.GetRow(3) + new Vector4(0.2f, 0.2f, 0.2f, 0.2f));
+            matrix4x4_4.SetRow(3, matrix4x4_4.GetRow(3) + new Vector4(0.2f, 0.2f, 0.2f, 0.2f));
+            Vector4 vector4_1 = new Vector4(0.5f / info.m_halfWidth, 1f / info.m_segmentLength, (float)(0.5 - (double)info.m_pavementWidth / (double)info.m_halfWidth * 0.5), (float)((double)info.m_pavementWidth / (double)info.m_halfWidth * 0.5));
+            Vector4 zero = Vector4.zero;
+            zero.w = (float)(((double)matrix4x4_1.m33 + (double)matrix4x4_2.m33 + (double)matrix4x4_3.m33 + (double)matrix4x4_4.m33) * 0.25);
+            Vector4 vector4_2 = new Vector4((float)((double)info.m_pavementWidth / (double)info.m_halfWidth * 0.5), 1f, (float)((double)info.m_pavementWidth / (double)info.m_halfWidth * 0.5), 1f);
+            instance.m_materialBlock.Clear();
+            instance.m_materialBlock.AddMatrix(instance.ID_LeftMatrix, matrix4x4_1);
+            instance.m_materialBlock.AddMatrix(instance.ID_RightMatrix, matrix4x4_2);
+            instance.m_materialBlock.AddMatrix(instance.ID_LeftMatrixB, matrix4x4_3);
+            instance.m_materialBlock.AddMatrix(instance.ID_RightMatrixB, matrix4x4_4);
+            instance.m_materialBlock.AddVector(instance.ID_MeshScale, vector4_1);
+            instance.m_materialBlock.AddVector(instance.ID_CenterPos, zero);
+            instance.m_materialBlock.AddVector(instance.ID_SideScale, vector4_2);
+            instance.m_materialBlock.AddColor(instance.ID_Color, Color.yellow);
+
+            GameObject gameObjectWithTag = GameObject.FindGameObjectWithTag("UndergroundView");
+            var undergroundCamera = gameObjectWithTag.GetComponent<Camera>();
+            
+            for (int index = 0; index < info.m_nodes.Length; ++index)
+            {
+                NetInfo.Node node = info.m_nodes[index];
+                if (node.CheckFlags(NetNode.Flags.None))
+                {
+                    ++Singleton<ToolManager>.instance.m_drawCallData.m_defaultCalls;
+                    Graphics.DrawMesh(node.m_nodeMesh, position, identity, node.m_nodeMaterial, node.m_layer, undergroundCamera, 0, instance.m_materialBlock);
+                }
+            }
+        }
+
         #endregion
 
         #region Events
