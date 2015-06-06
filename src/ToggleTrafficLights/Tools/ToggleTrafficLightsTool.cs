@@ -149,7 +149,60 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
                 HighlightNode(cameraInfo, nodeId);
             }
         }
+        public override void RenderGeometry(RenderManager.CameraInfo cameraInfo)
+        {
+            base.RenderGeometry(cameraInfo);
 
+            var nodeId = GetCurrentNetNodeId();
+
+            if (!m_toolController.IsInsideUI && Cursor.visible && IsValidRoadNode(nodeId) && _controlPointSet)
+            {
+                var node = GetNetNode(nodeId);
+                var info = node.Info;
+
+                NetTool.ControlPoint controlPoint = _controlPoint;
+                controlPoint.m_direction = Vector3.forward;
+
+                ushort n;
+                ushort segment;
+                int cost;
+                int productionRate;
+                NetTool.CreateNode(info, controlPoint, controlPoint, controlPoint, new FastList<NetTool.NodePosition>() {  }, 0, false, true, true, false, false, false, (ushort)0, out n, out segment, out cost, out productionRate);
+
+            }
+        }
+
+        private bool _controlPointSet = false;
+        private NetTool.ControlPoint _controlPoint;
+        public override void SimulationStep()
+        {
+            base.SimulationStep();
+
+            var nodeId = GetCurrentNetNodeId();
+
+            if (m_mouseRayValid && IsValidRoadNode(nodeId))
+            {
+                var node = GetNetNode(nodeId);
+                var info = node.Info;
+
+                NetTool.ControlPoint p;
+                if (NetTool.MakeControlPoint(this.m_mouseRay, this.m_mouseRayLength, info, false, GetNodeIgnoreFlags(),
+                    GetSegmentIgnoreFlags(), GetBuildingIgnoreFlags(), node.m_elevation, info.m_netAI.IsUnderground(), out p))
+                {
+                    _controlPoint = p;
+                    _controlPointSet = true;
+                }
+                else
+                {
+                    _controlPointSet = false;
+                }
+
+            }
+            else
+            {
+                _controlPointSet = false;
+            }
+        }
 
         #endregion
 
@@ -332,8 +385,11 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 
 
                 // both together do highlight a circle..or something like that....
-                RenderNode(info, position, Vector3.back);
-                RenderNode(info, position, Vector3.forward);
+//                RenderNode(info, position, Vector3.back);
+//                RenderNode(info, position, Vector3.forward);
+
+//                ++Singleton<ToolManager>.instance.m_drawCallData.m_overlayCalls;
+//                DrawCircleUnderground(cameraInfo, Color.yellow, position, info.m_halfWidth * 2, -1f, 1280f, false, false, node);
 
             }
 
@@ -351,7 +407,107 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 //
 //            }
 
+
+//            ++Singleton<ToolManager>.instance.m_drawCallData.m_overlayCalls;
+//            DrawCircleUnderground(cameraInfo, Color.yellow, position, info.m_halfWidth * 2, -1f, 1280f, false, false, node);
+
         }
+
+        private static void DrawCircleUnderground(RenderManager.CameraInfo cameraInfo, Color color, Vector3 center,
+            float size, float minY, float maxY, bool renderLimits, bool alphaBlend, NetNode node)
+        {
+            var oe = Singleton<RenderManager>.instance.OverlayEffect;
+
+            //OverlayEffect.DrawCircle
+            float num = (float)((double)Vector2.Distance((Vector2)cameraInfo.m_position, (Vector2)center) * (1.0 / 1000.0) + 1.0);
+            Vector4 vector1 = new Vector4(center.x, center.z, size * -0.5f, size * 0.5f);
+            Vector4 vector2 = !renderLimits ? new Vector4(-100000f, minY, maxY, 100000f) : new Vector4(minY, -100000f, 100000f, maxY);
+            Vector3 vector3_1 = center - new Vector3(size * 0.5f, 0.0f, size * 0.5f);
+            Vector3 vector3_2 = center + new Vector3(size * 0.5f, 0.0f, size * 0.5f);
+            vector3_1.y = Mathf.Min(vector3_1.y, minY);
+            vector3_2.y = Mathf.Max(vector3_2.y, maxY);
+            Bounds bounds = new Bounds();
+            Vector3 vector3_3 = new Vector3(num, num, num);
+            bounds.SetMinMax(vector3_1 - vector3_3, vector3_2 + vector3_3);
+            if (!bounds.Intersects(cameraInfo.m_bounds))
+            {
+                return;
+            }
+            Material material = !alphaBlend ? oe.GetNonPublicField<OverlayEffect, Material>("m_shapeMaterial") : oe.GetNonPublicField<OverlayEffect, Material>("m_shapeMaterialBlend");
+            material.color = color.linear;
+            material.SetVector(oe.GetNonPublicField<OverlayEffect, int>("ID_Cen terPos"), vector1);
+            material.SetVector(oe.GetNonPublicField<OverlayEffect, int>("ID_LimitsY"), vector2);
+
+            //OverlayEffect.DrawEffect
+            //this.DrawEffect(cameraInfo, material, 1, bounds);
+            GameObject gameObjectWithTag = GameObject.FindGameObjectWithTag("UndergroundView");
+            var undergroundCamera = gameObjectWithTag.GetComponent<Camera>();
+            
+            var pass = 1;
+
+            if (!material.SetPass(pass))
+                return;
+
+            Matrix4x4 matrix = new Matrix4x4();
+//            if (bounds.Intersects(cameraInfo.m_nearBounds))
+//            {
+//                matrix.SetTRS(cameraInfo.m_position + cameraInfo.m_forward * (cameraInfo.m_near + 1f), cameraInfo.m_rotation, new Vector3(100f, 100f, 1f));
+//                DebugLog.Info("A");
+//            }
+//            else
+//            {
+//                matrix.SetTRS(bounds.center, Quaternion.identity, bounds.size);
+//                DebugLog.Info("B");
+//            }
+            matrix.SetTRS(bounds.center, Quaternion.identity, bounds.size);
+
+
+            var mesh = oe.GetNonPublicField<OverlayEffect, Mesh>("m_boxMesh");
+            ++Singleton<ToolManager>.instance.m_drawCallData.m_defaultCalls;
+            Graphics.DrawMeshNow(mesh, matrix);
+
+//            Graphics.DrawMesh(mesh, matrix, material, node.Info.m_netLayers, undergroundCamera);
+//            Graphics.DrawMeshNow(mesh, matrix);
+
+//            Graphics.DrawMesh(mesh, matrix, material, node.Info.m_prefabDataLayer);
+
+//            var info = node.Info;
+//            for (int index = 0; index < info.m_nodes.Length; ++index)
+//            {
+//                NetInfo.Node n = info.m_nodes[index];
+//                ++Singleton<ToolManager>.instance.m_drawCallData.m_defaultCalls;
+//                Graphics.DrawMesh(mesh, node.m_position, Quaternion.identity, material, n.m_layer, (Camera)null);
+//            }
+
+//            Graphics.DrawMesh(mesh, node.m_position, Quaternion.identity, material, node.Info.m_prefabDataLayer, undergroundCamera);
+
+
+
+//            if (bounds.Intersects(cameraInfo.m_nearBounds))
+//            {
+//                if (!material.SetPass(pass))
+//                    return;
+//                matrix.SetTRS(cameraInfo.m_position + cameraInfo.m_forward * (cameraInfo.m_near + 1f), cameraInfo.m_rotation, new Vector3(100f, 100f, 1f));
+//                Graphics.DrawMeshNow(oe.GetNonPublicField<OverlayEffect, Mesh>("m_boxMesh"), matrix);
+//
+////                Graphics.DrawMesh(oe.GetNonPublicField<OverlayEffect, Mesh>("m_boxMesh"), matrix, material, node.Info.m_netLayers, undergroundCamera);
+//
+////                Graphics.DrawMesh(node.m_nodeMesh, position, identity, node.m_nodeMaterial, node.m_layer, undergroundCamera, 0, instance.m_materialBlock);
+//
+//            }
+//            else
+//            {
+//                if (!material.SetPass(pass))
+//                    return;
+//                Matrix4x4 matrix = new Matrix4x4();
+//                matrix.SetTRS(bounds.center, Quaternion.identity, bounds.size);
+//                Graphics.DrawMeshNow(oe.GetNonPublicField<OverlayEffect, Mesh>("m_boxMesh"), matrix);
+//
+////                Graphics.DrawMesh(oe.GetNonPublicField<OverlayEffect, Mesh>("m_boxMesh"), matrix, material, node.Info.m_netLayers, undergroundCamera);
+//
+//            }
+        }
+
         private static void RenderNode(NetInfo info, Vector3 position, Vector3 direction)
         {
             if (info.m_nodes == null)
