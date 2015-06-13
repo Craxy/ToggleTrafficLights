@@ -220,7 +220,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 
             ++Singleton<ToolManager>.instance.m_drawCallData.m_overlayCalls;
             Singleton<RenderManager>.instance.OverlayEffect.DrawCircle(cameraInfo, color, position, info.m_halfWidth * 2, -1f, 1280f, false, false);
-
         }
         #endregion
 
