@@ -215,11 +215,13 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
             if (info.m_netAI.IsUnderground())
             {
                 DrawCircle(cameraInfo, position, info.m_halfWidth, color);
-
+            }
+            else
+            {
+                ++Singleton<ToolManager>.instance.m_drawCallData.m_overlayCalls;
+                Singleton<RenderManager>.instance.OverlayEffect.DrawCircle(cameraInfo, color, position, info.m_halfWidth * 2, -1f, 1280f, false, false);
             }
 
-            ++Singleton<ToolManager>.instance.m_drawCallData.m_overlayCalls;
-            Singleton<RenderManager>.instance.OverlayEffect.DrawCircle(cameraInfo, color, position, info.m_halfWidth * 2, -1f, 1280f, false, false);
         }
         #endregion
 
