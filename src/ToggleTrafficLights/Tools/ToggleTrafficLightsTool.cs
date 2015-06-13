@@ -211,19 +211,16 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
             color = HasTrafficLights(node.m_flags) 
                     ? new Color(0.2f, 0.749f, 0.988f, color.a) 
                     : new Color(0.0f, 0.369f, 0.525f, color.a);
-//            var color = HasTrafficLights(node.m_flags)
-//                ? new Color(0.2f, 0.749f, 0.988f, 1f)
-//                : new Color(0.0f, 0.369f, 0.525f, 1f);
 
-//            ++Singleton<ToolManager>.instance.m_drawCallData.m_overlayCalls;
-//            Singleton<RenderManager>.instance.OverlayEffect.DrawCircle(cameraInfo, color, position, info.m_halfWidth * 2, -1f, 1280f, false, false);
+            if (info.m_netAI.IsUnderground())
+            {
+                DrawCircle(cameraInfo, position, info.m_halfWidth, color);
 
+            }
 
-//            if (info.m_netAI.IsUnderground())
-//            {
-//            }
+            ++Singleton<ToolManager>.instance.m_drawCallData.m_overlayCalls;
+            Singleton<RenderManager>.instance.OverlayEffect.DrawCircle(cameraInfo, color, position, info.m_halfWidth * 2, -1f, 1280f, false, false);
 
-            DrawCircle(cameraInfo, position, info.m_halfWidth, color);
         }
         #endregion
 
