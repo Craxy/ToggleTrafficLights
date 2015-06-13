@@ -164,38 +164,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
                 Destroy(cylinder);
 
                 _mesh.hideFlags = HideFlags.DontSave;
-
-//                var scale = 10;
-//                var vertices = _mesh.vertices;
-//                for (int i = 0; i < vertices.Length; i++)
-//                {
-//                    var v = vertices[i];
-//
-//                    v.x += scale;
-//                    v.y += scale;
-//                    v.z += scale;
-//
-//                    vertices[i] = v;
-//                }
-//                _mesh.vertices = vertices;
-//                _mesh.RecalculateNormals();
-//                _mesh.RecalculateBounds();
-
-                _mesh.normals = new Vector3[0];
-                _mesh.tangents = new Vector4[0];
-                _mesh.uv = new Vector2[0];
-                _mesh.uv2 = new Vector2[0];
-                _mesh.uv3 = new Vector2[0];
-                _mesh.uv4 = new Vector2[0];
-
-//
-//                transform.TransformPoint()
-
-//                var tmp = Singleton<RenderManager>.instance.OverlayEffect;
-//                _mesh = tmp.GetNonPublicField<OverlayEffect, Mesh>("m_boxMesh");
             }
 
-//            var bounds = new Bounds(center, new Vector3(radius * 2, float.Epsilon, radius * 2));
             var size = radius*2 + 5f;
             var bounds = new Bounds(center, new Vector3(size, float.Epsilon, size));
 
@@ -225,49 +195,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 
             }
         }
-        public override void RenderGeometry(RenderManager.CameraInfo cameraInfo)
-        {
-            base.RenderGeometry(cameraInfo);
-
-            var nodeId = GetCurrentNetNodeId();
-
-            if (!m_toolController.IsInsideUI && Cursor.visible && IsValidRoadNode(nodeId))
-            {
-
-            }
-        }
-
-        private bool _controlPointSet = false;
-        private NetTool.ControlPoint _controlPoint;
-        public override void SimulationStep()
-        {
-            base.SimulationStep();
-
-            var nodeId = GetCurrentNetNodeId();
-
-            if (m_mouseRayValid && IsValidRoadNode(nodeId))
-            {
-                var node = GetNetNode(nodeId);
-                var info = node.Info;
-
-                NetTool.ControlPoint p;
-                if (NetTool.MakeControlPoint(this.m_mouseRay, this.m_mouseRayLength, info, false, GetNodeIgnoreFlags(),
-                    GetSegmentIgnoreFlags(), GetBuildingIgnoreFlags(), node.m_elevation, info.m_netAI.IsUnderground(), out p))
-                {
-                    _controlPoint = p;
-                    _controlPointSet = true;
-                }
-                else
-                {
-                    _controlPointSet = false;
-                }
-
-            }
-            else
-            {
-                _controlPointSet = false;
-            }
-        }
 
         #endregion
 
@@ -279,14 +206,14 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 
             var info = node.Info;
 
-//            var color = GetToolColor(false, false);
-//            //http://paletton.com/#uid=13r0u0k++++qKZWAF+V+VAFZWqK
-//            color = HasTrafficLights(node.m_flags) 
-//                    ? new Color(0.2f, 0.749f, 0.988f, color.a) 
-//                    : new Color(0.0f, 0.369f, 0.525f, color.a);
-            var color = HasTrafficLights(node.m_flags)
-                ? new Color(0.2f, 0.749f, 0.988f, 1f)
-                : new Color(0.0f, 0.369f, 0.525f, 1f);
+            var color = GetToolColor(false, false);
+            //http://paletton.com/#uid=13r0u0k++++qKZWAF+V+VAFZWqK
+            color = HasTrafficLights(node.m_flags) 
+                    ? new Color(0.2f, 0.749f, 0.988f, color.a) 
+                    : new Color(0.0f, 0.369f, 0.525f, color.a);
+//            var color = HasTrafficLights(node.m_flags)
+//                ? new Color(0.2f, 0.749f, 0.988f, 1f)
+//                : new Color(0.0f, 0.369f, 0.525f, 1f);
 
 //            ++Singleton<ToolManager>.instance.m_drawCallData.m_overlayCalls;
 //            Singleton<RenderManager>.instance.OverlayEffect.DrawCircle(cameraInfo, color, position, info.m_halfWidth * 2, -1f, 1280f, false, false);
@@ -296,10 +223,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 //            {
 //            }
 
-//            ++Singleton<ToolManager>.instance.m_drawCallData.m_overlayCalls;
             DrawCircle(cameraInfo, position, info.m_halfWidth, color);
-//            DrawCircleImpl(cameraInfo, color, position, info.m_halfWidth, -1, 1025f, false, false);
-//            DrawCircleImpl2(cameraInfo, color, position, info.m_halfWidth, -1025f, 1025f, false, false);
         }
         #endregion
 
