@@ -50,5 +50,15 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
 
             return mesh;
         }
+
+
+        public static Mesh CreateCircle(int numberOfSides)
+        {
+
+
+
+
+            throw new NotImplementedException();
+        }
     }
 }
