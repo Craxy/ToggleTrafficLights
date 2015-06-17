@@ -22,13 +22,13 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
         {
             base.OnEnable();
 
-            Options.instance.GroundModeChanged += OnGroundModeChanged;
+            Options.ToggleTrafficLightsTool.GroundMode.ValueChanged += OnGroundModeChanged;
             UpdateCheckBoxes();
         }
 
         public override void OnDisable()
         {
-            Options.instance.GroundModeChanged -= OnGroundModeChanged;
+            Options.ToggleTrafficLightsTool.GroundMode.ValueChanged -= OnGroundModeChanged;
 
             base.OnDisable();
 
@@ -61,8 +61,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
         public override void Start()
         {
             base.Start();
-
-            Options.Ensure();
 
             name = Name;
             backgroundSprite = "InfoPanelBack";
@@ -126,7 +124,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
         #endregion
 
         private bool _ignoreChangedEvents = false;
-        private void OnGroundModeChanged(Options.GroundMode groundMode)
+        private void OnGroundModeChanged(Options.GroundMode oldValue, Options.GroundMode newValue)
         {
             UpdateCheckBoxes();
         }
@@ -139,11 +137,11 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
 
                 if (_cbUnderground != null)
                 {
-                    _cbUnderground.isChecked = Options.instance.UsedGroundMode.IsFlagSet(Options.GroundMode.Underground);
+                    _cbUnderground.isChecked = Options.ToggleTrafficLightsTool.GroundMode.Value.IsFlagSet(Options.GroundMode.Underground);
                 }
                 if (_cbOverground != null)
                 {
-                    _cbOverground.isChecked = Options.instance.UsedGroundMode.IsFlagSet(Options.GroundMode.Ground);
+                    _cbOverground.isChecked = Options.ToggleTrafficLightsTool.GroundMode.Value.IsFlagSet(Options.GroundMode.Ground);
                 }
             }
             finally
@@ -172,8 +170,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
             var u = _cbUnderground.isChecked;
 
             // nothing changed
-            if (o == Options.instance.UsedGroundMode.IsFlagSet(Options.GroundMode.Ground) 
-                && u == Options.instance.UsedGroundMode.IsFlagSet(Options.GroundMode.Underground))
+            if (o == Options.ToggleTrafficLightsTool.GroundMode.Value.IsFlagSet(Options.GroundMode.Ground)
+                && u == Options.ToggleTrafficLightsTool.GroundMode.Value.IsFlagSet(Options.GroundMode.Underground))
             {
                 return;
             }
@@ -206,7 +204,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
                 mode = Options.GroundMode.Underground;
             }
 
-            Options.instance.UsedGroundMode = mode;
+            Options.ToggleTrafficLightsTool.GroundMode.Value = mode;
         }
     }
 }

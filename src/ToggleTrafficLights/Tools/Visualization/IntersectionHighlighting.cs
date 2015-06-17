@@ -7,6 +7,7 @@ using UnityEngine;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools.Visualization
 {
+    [Obsolete]
     public class IntersectionHighlighting
     {
         #region fields

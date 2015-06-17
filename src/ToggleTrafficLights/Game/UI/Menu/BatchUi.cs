@@ -111,8 +111,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
         [UsedImplicitly]
         private void OnEnable()
         {
-            Options.Ensure();
-
             DebugLog.Info("BatchUi: OnEnable");
 
             _updateStatisticsCounter = 0;
@@ -195,7 +193,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
             using (Layout.Vertical())
             {
                 GUILayout.Label("<size=15><b>Toggle Traffic Lights tool</b></size>");
-                GUILayout.Label(string.Format("<size=9>Current Mode: {0}</size>", Options.instance.UsedGroundMode.ToString()));
                 GUILayout.Space(8f);
                 GUILayout.Label("<b>Usage</b>:");
                 {
@@ -203,9 +200,9 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
                     {
                         Tuple.Create("Left Click", "Toggle Traffic Lights"),
                         Tuple.Create("Right Click", "Reset to default"),
-                        Tuple.Create(Options.instance.ElevationDown.ToString(), "Only Underground"),
-                        Tuple.Create(Options.instance.ElevationUp.ToString(), "Only Overground"),
-                        Tuple.Create(string.Format("{0}+{1}", Options.instance.ElevationDown.ToString(), Options.instance.ElevationUp.ToString()), "Both Overground & Underground"),
+                        Tuple.Create(Options.InputKeys.ElevationDown.ToString(), "Only Underground"),
+                        Tuple.Create(Options.InputKeys.ElevationUp.ToString(), "Only Overground"),
+                        Tuple.Create(string.Format("{0}+{1}", Options.InputKeys.ElevationDown.ToString(), Options.InputKeys.ElevationUp.ToString()), "Both Overground & Underground"),
                     };
 
                     var skin = new GUIStyle(GUI.skin.label) {fontSize = 11};

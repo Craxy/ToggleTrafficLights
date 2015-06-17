@@ -5,6 +5,7 @@ using ColossalFramework;
 using ColossalFramework.Math;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Game;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu;
+using Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu.Experimental;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Ui;
@@ -40,13 +41,11 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 
         protected override void OnEnable()
         {
-            Options.Ensure();
-
             base.OnEnable();
 
-            ActivateGroundMode(Options.instance.UsedGroundMode);
+            ActivateGroundMode(Options.ToggleTrafficLightsTool.GroundMode);
             UndergroundModePanel.GetOrCreate().Show(true);
-            Options.instance.GroundModeChanged += ActivateGroundMode;
+            Options.ToggleTrafficLightsTool.GroundMode.ValueChanged += OnGroundModeChanged;
 
             OnOnEnabledChanged(true);
 
@@ -55,7 +54,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 
         protected override void OnDisable()
         {
-            Options.instance.GroundModeChanged -= ActivateGroundMode;
+            Options.ToggleTrafficLightsTool.GroundMode.ValueChanged -= OnGroundModeChanged;
             UndergroundModePanel.GetOrCreate().Hide();
             ActivateGroundMode(Options.GroundMode.Ground);
 
@@ -138,6 +137,11 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 //                HighlightAllIntersections();
 //            }
 
+            if (Options.HighlightIntersections.Enabled)
+            {
+                HighlightIntersections(cameraInfo, Options.HighlightIntersections.IntersectionsToHighlight);
+            }
+
             if (OnRenderOverlay != null)
             {
                 foreach (var action in OnRenderOverlay)
@@ -154,7 +158,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 
         private Mesh _mesh = null;
         private Material _material = null;
-        private void DrawCircle(RenderManager.CameraInfo cameraInfo, Vector3 center, float radius, Color color)
+        private void DrawCircle(RenderManager.CameraInfo cameraInfo, Vector3 center, float radius, float height, Color color)
         {
 
             if (_mesh == null)
@@ -166,8 +170,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
                 _mesh.hideFlags = HideFlags.DontSave;
             }
 
-            var size = radius*2 + 5f;
-            var bounds = new Bounds(center, new Vector3(size, float.Epsilon, size));
+            var size = radius;
+            var bounds = new Bounds(center, new Vector3(size, height, size));
 
             if (!bounds.Intersects(cameraInfo.m_bounds))
             {
@@ -206,15 +210,18 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 
             var info = node.Info;
 
-            var color = GetToolColor(false, false);
-            //http://paletton.com/#uid=13r0u0k++++qKZWAF+V+VAFZWqK
-            color = HasTrafficLights(node.m_flags) 
-                    ? new Color(0.2f, 0.749f, 0.988f, color.a) 
-                    : new Color(0.0f, 0.369f, 0.525f, color.a);
+//            var color = GetToolColor(false, false);
+//            //http://paletton.com/#uid=13r0u0k++++qKZWAF+V+VAFZWqK
+//            color = HasTrafficLights(node.m_flags) 
+//                    ? new Color(0.2f, 0.749f, 0.988f, color.a) 
+//                    : new Color(0.0f, 0.369f, 0.525f, color.a);
+            var color = HasTrafficLights(node.m_flags)
+                        ? Options.ToggleTrafficLightsTool.HasTrafficLightsColor
+                        : Options.ToggleTrafficLightsTool.HasNoTrafficLightsColor;
 
             if (info.m_netAI.IsUnderground())
             {
-                DrawCircle(cameraInfo, position, info.m_halfWidth, color);
+                DrawCircle(cameraInfo, position, info.m_halfWidth + 2.0f, float.Epsilon, color);
             }
             else
             {
@@ -222,6 +229,37 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
                 Singleton<RenderManager>.instance.OverlayEffect.DrawCircle(cameraInfo, color, position, info.m_halfWidth * 2, -1f, 1280f, false, false);
             }
 
+        }
+        private void HighlightIntersections(RenderManager.CameraInfo cameraInfo, Options.GroundMode intersectionsToHighlight)
+        {
+            var nm = Singleton<NetManager>.instance;
+            for (ushort i = 0; i < nm.m_nodes.m_size; i++)
+            {
+                var node = nm.m_nodes.m_buffer[i];
+
+                //test for highlighting
+                if (node.m_flags.IsFlagSet(GetNodeIgnoreFlags())
+                    || !node.m_flags.IsFlagSet(GetNodeIncludeFlags())
+                    || !IsValidRoadNode(node))
+                {
+                    continue;
+                }
+
+                var isUnderground = node.Info.m_netAI.IsUnderground();
+
+                if ((isUnderground && intersectionsToHighlight.IsFlagSet(Options.GroundMode.Underground) && Options.ToggleTrafficLightsTool.GroundMode.Value.IsFlagSet(Options.GroundMode.Underground))
+                    || !isUnderground && intersectionsToHighlight.IsFlagSet(Options.GroundMode.Ground))
+                {
+
+                    var color = HasTrafficLights(node.m_flags)
+                        ? Options.HighlightIntersections.HasTrafficLightsColor
+                        : Options.HighlightIntersections.HasNoTrafficLightsColor;
+
+//                    DrawCircle(cameraInfo, node.m_position, node.Info.m_halfWidth / 2.0f, color);
+//                    DrawCircle(cameraInfo, node.m_position, 5f, 3.0f, color);
+                    DrawCircle(cameraInfo, node.m_position, Options.HighlightIntersections.MarkerRadius, Options.HighlightIntersections.MarkerHeight, color);
+                }
+            }
         }
         #endregion
 
@@ -267,18 +305,17 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
         #region Underground
         private void HandleGroundModeKeys()
         {
-            var os = Options.instance;
-            if (os.ElevationUp.IsPressed() && os.ElevationDown.IsPressed())
+            if (Options.InputKeys.ElevationUp.IsPressed() && Options.InputKeys.ElevationDown.IsPressed())
             {
                 ChangeGroundMode(Options.GroundMode.All);
                 DebugLog.Info("ToggleTrafficLightsTool: Changed ground mode to {0}", Options.GroundMode.All);
             }
-            else if(os.ElevationUp.IsPressed())
+            else if (Options.InputKeys.ElevationUp.IsPressed())
             {
                 ChangeGroundMode(Options.GroundMode.Ground);
                 DebugLog.Info("ToggleTrafficLightsTool: Changed ground mode to {0}", Options.GroundMode.Ground);
             }
-            else if (os.ElevationDown.IsPressed())
+            else if (Options.InputKeys.ElevationDown.IsPressed())
             {
                 ChangeGroundMode(Options.GroundMode.Underground);
                 DebugLog.Info("ToggleTrafficLightsTool: Changed ground mode to {0}", Options.GroundMode.Underground);
@@ -288,15 +325,19 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 
         public void ChangeGroundMode(Options.GroundMode groundMode)
         {
-            if (groundMode == Options.instance.UsedGroundMode)
+            if (groundMode == Options.ToggleTrafficLightsTool.GroundMode.Value)
             {
                 return;
             }
 
-            Options.instance.UsedGroundMode = groundMode;
+            Options.ToggleTrafficLightsTool.GroundMode.Value = groundMode;
             ActivateGroundMode(groundMode);
         }
 
+        private void OnGroundModeChanged(Options.GroundMode oldMode, Options.GroundMode newMode)
+        {
+            ActivateGroundMode(newMode);
+        }
         private void ActivateGroundMode(Options.GroundMode groundMode)
         {
             switch (groundMode)

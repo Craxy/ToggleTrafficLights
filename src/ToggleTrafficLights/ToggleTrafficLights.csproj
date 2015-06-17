@@ -106,6 +106,7 @@
     <Compile Include="Utils\Log.cs" />
     <Compile Include="Utils\MeshHelper.cs" />
     <Compile Include="Utils\Option.cs" />
+    <Compile Include="Utils\ChangingValue.cs" />
     <Compile Include="Utils\Tuple.cs" />
     <Compile Include="Utils\UiHelper.cs" />
     <Compile Include="Utils\Ui\ValueParser.cs" />
