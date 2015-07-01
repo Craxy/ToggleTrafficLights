@@ -4,11 +4,11 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Ui
 {
     public static class ValueParser
     {
-        public static ValueParser<TResult> Create<TResult>(Func<string, IOption<TResult>> parse, string initialInput)
+        public static ValueParser<TResult> Create<TResult>(Func<string, Option<TResult>> parse, string initialInput)
         {
             return new ValueParser<TResult>(parse, initialInput);
         }        
-        public static ValueParser<TResult> Create<TResult>(Func<string, IOption<TResult>> parse, TResult initialInput)
+        public static ValueParser<TResult> Create<TResult>(Func<string, Option<TResult>> parse, TResult initialInput)
         {
             return Create(parse, initialInput.ToString());
         }
@@ -16,9 +16,9 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Ui
     public sealed class ValueParser<TResult>
     {
         private string _input;
-        private IOption<TResult> _lastParseResult;
+        private Option<TResult> _lastParseResult;
 
-        public ValueParser(Func<string, IOption<TResult>> parse, string initialInput)
+        public ValueParser(Func<string, Option<TResult>> parse, string initialInput)
         {
             Parse = parse;
             
@@ -46,7 +46,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Ui
             }
         }
 
-        public IOption<TResult> LastParseResult
+        public Option<TResult> LastParseResult
         {
             get { return _lastParseResult; }
             private set
@@ -73,12 +73,12 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Ui
             get { return LastParseResult.IsSome(); }
         }
 
-        public Func<string, IOption<TResult>> Parse { get; private set; }
+        public Func<string, Option<TResult>> Parse { get; private set; }
     }
 
     public static class Parser
     {
-        public static IOption<float> ParseFloat(string value)
+        public static Option<float> ParseFloat(string value)
         {
             float v;
             if (float.TryParse(value, out v))
@@ -90,7 +90,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Ui
                 return Option.None<float>();
             }
         }
-        public static IOption<int> ParseInt(string value)
+        public static Option<int> ParseInt(string value)
         {
             int v;
             if (int.TryParse(value, out v))
@@ -102,7 +102,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Ui
                 return Option.None<int>();
             }
         }         
-        public static IOption<byte> ParseByte(string value)
+        public static Option<byte> ParseByte(string value)
         {
             byte v;
             if (byte.TryParse(value, out v))

@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿using System.Globalization;
+using System.Reflection;
+using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using ICities;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights
@@ -21,5 +23,10 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights
                 ;
             }
         }
+
+        // do not use option menu since options for elements are extremly limited...
+//        public void OnSettingsUI(UIHelperBase helper)
+//        {
+//        }
     }
 }

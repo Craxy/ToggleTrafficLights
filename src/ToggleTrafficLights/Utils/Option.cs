@@ -2,15 +2,23 @@
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
 {
-    public interface IOption<T>
+// ReSharper disable once InconsistentNaming
+    public interface Option<T>
     {
     }
 
-    public sealed class None<T> : IOption<T>
+    public sealed class None<T> : Option<T>
     {
-        
+        #region Overrides of Object
+
+        public override string ToString()
+        {
+            return "None";
+        }
+
+        #endregion
     }
-    public sealed class Some<T> : IOption<T>
+    public sealed class Some<T> : Option<T>
     {
         public Some(T value)
         {
@@ -18,6 +26,15 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
         }
 
         public T Value { get; private set; }
+
+        #region Overrides of Object
+
+        public override string ToString()
+        {
+            return string.Format("Some({0})", Value);
+        }
+
+        #endregion
     }
 
     public static class Option
@@ -32,15 +49,15 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
             return new None<T>();
         }
 
-        public static bool IsSome<T>(this IOption<T> option)
+        public static bool IsSome<T>(this Option<T> option)
         {
             return option is Some<T>;
         }
-        public static bool IsNone<T>(this IOption<T> option)
+        public static bool IsNone<T>(this Option<T> option)
         {
             return option is None<T>;
         }
-        public static T GetValue<T>(this IOption<T> option)
+        public static T GetValue<T>(this Option<T> option)
         {
             var some = option as Some<T>;
             if (some != null)

@@ -56,7 +56,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
         {
             Options.ToggleTrafficLightsTool.GroundMode.ValueChanged -= OnGroundModeChanged;
             UndergroundModePanel.GetOrCreate().Hide();
-            ActivateGroundMode(Options.GroundMode.Ground);
+            ActivateGroundMode(Options.GroundMode.Overground);
 
             base.OnDisable();
 
@@ -137,7 +137,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 //                HighlightAllIntersections();
 //            }
 
-            if (Options.HighlightIntersections.Enabled)
+            if (Options.HighlightIntersections.IntersectionsToHighlight.Value != Options.GroundMode.None)
             {
                 HighlightIntersections(cameraInfo, Options.HighlightIntersections.IntersectionsToHighlight);
             }
@@ -232,6 +232,11 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
         }
         private void HighlightIntersections(RenderManager.CameraInfo cameraInfo, Options.GroundMode intersectionsToHighlight)
         {
+            if (intersectionsToHighlight == Options.GroundMode.None)
+            {
+                return;
+            }
+
             var nm = Singleton<NetManager>.instance;
             for (ushort i = 0; i < nm.m_nodes.m_size; i++)
             {
@@ -248,7 +253,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
                 var isUnderground = node.Info.m_netAI.IsUnderground();
 
                 if ((isUnderground && intersectionsToHighlight.IsFlagSet(Options.GroundMode.Underground) && Options.ToggleTrafficLightsTool.GroundMode.Value.IsFlagSet(Options.GroundMode.Underground))
-                    || !isUnderground && intersectionsToHighlight.IsFlagSet(Options.GroundMode.Ground))
+                    || (!isUnderground && intersectionsToHighlight.IsFlagSet(Options.GroundMode.Overground) && Options.ToggleTrafficLightsTool.GroundMode.Value.IsFlagSet(Options.GroundMode.Overground)))
                 {
 
                     var color = HasTrafficLights(node.m_flags)
@@ -312,8 +317,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
             }
             else if (Options.InputKeys.ElevationUp.IsPressed())
             {
-                ChangeGroundMode(Options.GroundMode.Ground);
-                DebugLog.Info("ToggleTrafficLightsTool: Changed ground mode to {0}", Options.GroundMode.Ground);
+                ChangeGroundMode(Options.GroundMode.Overground);
+                DebugLog.Info("ToggleTrafficLightsTool: Changed ground mode to {0}", Options.GroundMode.Overground);
             }
             else if (Options.InputKeys.ElevationDown.IsPressed())
             {
@@ -342,7 +347,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
         {
             switch (groundMode)
             {
-                case Options.GroundMode.Ground:
+                case Options.GroundMode.Overground:
                     _nodeLayerIncludeFlags = ItemClass.Layer.Default;
                     ActivateGroundInfoView();
                     break;

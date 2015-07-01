@@ -66,7 +66,11 @@
     <Compile Include="Game\Serialization.cs" />
     <Compile Include="Game\UI\Menu\Components\GuiControls.cs" />
     <Compile Include="Game\UI\Menu\Components\RadioButtonGroup.cs" />
+    <Compile Include="Game\UI\Menu\Components\UICaption.cs" />
+    <Compile Include="Game\UI\Menu\Components\UIColorPanel.cs" />
+    <Compile Include="Game\UI\Menu\Components\UIWindow.cs" />
     <Compile Include="Game\UI\Menu\Experimental\HighlightIntersectionsUi.cs" />
+    <Compile Include="Game\UI\Menu\OptionsUi.cs" />
     <Compile Include="Game\UI\Menu\UndergroundModePanel.cs" />
     <Compile Include="Game\UI\MyHighlightTestTool.cs" />
     <Compile Include="Game\UI\KeyHelper.cs" />
@@ -100,6 +104,7 @@
     <Compile Include="Utils\EventArgs.cs" />
     <Compile Include="Utils\Extensions\AttributeExtensions.cs" />
     <Compile Include="Utils\Extensions\CitiesExtensions.cs" />
+    <Compile Include="Utils\Extensions\ColorExtensions.cs" />
     <Compile Include="Utils\Extensions\ReflectionExtensions.cs" />
     <Compile Include="Utils\Extensions\StringBuilderExtensions.cs" />
     <Compile Include="Utils\Extensions\StringExtensions.cs" />
@@ -107,8 +112,10 @@
     <Compile Include="Utils\MeshHelper.cs" />
     <Compile Include="Utils\Option.cs" />
     <Compile Include="Utils\ChangingValue.cs" />
+    <Compile Include="Utils\Result.cs" />
     <Compile Include="Utils\Tuple.cs" />
     <Compile Include="Utils\UiHelper.cs" />
+    <Compile Include="Utils\Ui\UIControls.cs" />
     <Compile Include="Utils\Ui\ValueParser.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -141,7 +141,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
                 }
                 if (_cbOverground != null)
                 {
-                    _cbOverground.isChecked = Options.ToggleTrafficLightsTool.GroundMode.Value.IsFlagSet(Options.GroundMode.Ground);
+                    _cbOverground.isChecked = Options.ToggleTrafficLightsTool.GroundMode.Value.IsFlagSet(Options.GroundMode.Overground);
                 }
             }
             finally
@@ -170,7 +170,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
             var u = _cbUnderground.isChecked;
 
             // nothing changed
-            if (o == Options.ToggleTrafficLightsTool.GroundMode.Value.IsFlagSet(Options.GroundMode.Ground)
+            if (o == Options.ToggleTrafficLightsTool.GroundMode.Value.IsFlagSet(Options.GroundMode.Overground)
                 && u == Options.ToggleTrafficLightsTool.GroundMode.Value.IsFlagSet(Options.GroundMode.Underground))
             {
                 return;
@@ -190,14 +190,14 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
                 return;
             }
 
-            var mode = Options.GroundMode.Ground;
+            var mode = Options.GroundMode.Overground;
             if(o && u)
             {
                 mode = Options.GroundMode.All;
             }
             else if (o)
             {
-                mode = Options.GroundMode.Ground;
+                mode = Options.GroundMode.Overground;
             }
             else if (u)
             {

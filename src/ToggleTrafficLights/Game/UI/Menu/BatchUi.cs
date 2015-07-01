@@ -194,6 +194,16 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
             {
                 GUILayout.Label("<size=15><b>Toggle Traffic Lights tool</b></size>");
                 GUILayout.Space(8f);
+                {
+                    if (GUILayout.Button("Options"))
+                    {
+                        var view = UIView.GetAView();
+                        var oui = view.FindUIComponent<OptionsUi>(OptionsUi.Name) ?? view.AddUIComponent(typeof(OptionsUi));
+                        oui.Show(true);
+                    }
+
+                    GUILayout.Space(8f);
+                }
                 GUILayout.Label("<b>Usage</b>:");
                 {
                     var usages = new[]

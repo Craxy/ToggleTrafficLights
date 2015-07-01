@@ -122,7 +122,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu.Components
             }
         }
 
-        public static bool TryInputField<T>(string id, string title, ref T value, Func<string, IOption<T>> parse, float textBoxWidth = 100, float indent = 0.0f)
+        public static bool TryInputField<T>(string id, string title, ref T value, Func<string, Option<T>> parse, float textBoxWidth = 100, float indent = 0.0f)
         {
             var changed = false;
 
@@ -152,7 +152,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu.Components
             return changed;
         }
 
-        public static void InputField<T>(string id, string title, T value, Action<T> onInputChanged, Func<string, IOption<T>> parse, float textBoxWidth = 100, float indent = 0.0f)
+        public static void InputField<T>(string id, string title, T value, Action<T> onInputChanged, Func<string, Option<T>> parse, float textBoxWidth = 100, float indent = 0.0f)
         {
             if (TryInputField(id, title, ref value, parse, textBoxWidth, indent))
             {

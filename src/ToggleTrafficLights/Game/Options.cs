@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Xml.Linq;
 using ColossalFramework;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using UnityEngine;
@@ -12,9 +13,10 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
         [Flags]
         public enum GroundMode
         {
-            Ground = 1,
+            None = 0,
+            Overground = 1,
             Underground = 2,
-            All = Ground | Underground,
+            All = Overground | Underground,
         }
 
         #endregion
@@ -31,7 +33,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
         #region Traffic Lights Tool
         public static class ToggleTrafficLightsTool
         {
-            public static readonly ChangingValue<GroundMode> GroundMode = ChangingValue.Create<GroundMode>(Options.GroundMode.Ground);
+            public static readonly ChangingValue<GroundMode> GroundMode = ChangingValue.Create<GroundMode>(Options.GroundMode.Overground);
 
             public static readonly ChangingValue<Color> HasTrafficLightsColor = ChangingValue.Create(new Color(0.2f, 0.749f, 0.988f, 1.0f));
             public static readonly ChangingValue<Color> HasNoTrafficLightsColor = ChangingValue.Create(new Color(0.0f, 0.369f, 0.525f, 1.0f));
@@ -42,8 +44,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
 
         public static class HighlightIntersections
         {
-            public static readonly ChangingValue<bool> Enabled = ChangingValue.Create(true);
-            public static readonly ChangingValue<GroundMode> IntersectionsToHighlight = ChangingValue.Create(GroundMode.Underground | GroundMode.Ground);
+            public static readonly ChangingValue<GroundMode> IntersectionsToHighlight = ChangingValue.Create(GroundMode.Underground);
 
             public static readonly ChangingValue<Color> HasTrafficLightsColor = ChangingValue.Create(Color.white);
             public static readonly ChangingValue<Color> HasNoTrafficLightsColor = ChangingValue.Create(Color.black);
@@ -60,13 +61,33 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
 
         public static void Serialize(string path)
         {
-            
+            throw new NotImplementedException();
+
+//            try
+//            {
+//                var xml = new XElement(typeof (Options).Name,
+//                    new XElement(typeof(Options.ToggleTrafficLightsTool).Name,
+//                            Options.ToggleTrafficLightsTool.GroundMode.ToXml()
+//                        )
+//                    );
+//
+//            }
+//            catch (Exception e)
+//            {
+//                Log.Error("Error while saving the options to '{0}': {1}", path, e.ToString());
+//            }
         }
 
         public static void Deserialzie(string path)
         {
-            
+            throw new NotImplementedException();
         }
         #endregion
+
+        private static XElement ToXml<T>(this ChangingValue<T> v, string name, Func<T,string> toString)
+        {
+            return new XElement(name, toString(v.Value));
+        }
+
     }
 }
