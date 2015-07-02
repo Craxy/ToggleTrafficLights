@@ -189,6 +189,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu.Components
             _tfHex.maxLength = 8;
             _tfHex.horizontalAlignment = UIHorizontalAlignment.Center;
             _tfHex.relativePosition = new Vector3(_lblHashtag.relativePosition.x + _lblHashtag.width + 1.0f, ((height - _tfHex.height) / 2.0f));
+            _tfHex.readOnly = true;
 
             //register events
             ColorChanged += OnColorChanged;

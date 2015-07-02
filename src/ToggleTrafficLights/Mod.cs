@@ -16,7 +16,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights
         {
             get
             {
-                return "Remove or add traffic lights at intersections. Tool can be selected in the roads menu."
+                return "Remove or add traffic lights at intersections."
 #if DEBUG
                     + " v." + Assembly.GetExecutingAssembly().GetName().Version.ToString()
 #endif

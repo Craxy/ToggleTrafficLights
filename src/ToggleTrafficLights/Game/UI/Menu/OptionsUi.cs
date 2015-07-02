@@ -18,14 +18,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
 
         #region Overrides of UIWindow
 
-        public void DoThrow()
-        {
-            throw new NotImplementedException("Not yet here...");
-        }
-        public void ThrowStuff()
-        {
-            DoThrow();
-        }
         public override void Start()
         {
             base.Start();
@@ -36,10 +28,11 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
             height = 500.0f;
             relativePosition = new Vector3(Mathf.Floor((((float) GetUIView().fixedWidth) - width) / 2.0f), Mathf.Floor((((float)GetUIView().fixedHeight) - height) / 2.0f));
 
-            canFocus = true;
+            canFocus = true; 
             isInteractive = true;
 
-            ShowCloseButton = false;
+//            ShowCloseButton = false;
+            ShowCloseButton = true;
             Title = "ToggleTrafficLights options";
 
 
@@ -54,6 +47,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
             save.pressedBgSprite = "ButtonMenuPressed";
             save.relativePosition = new Vector3(width - save.width - 15.0f, height - save.height - offsetBetweenGroups);
             save.eventClick += (_, __) => OnCloseRequested();
+            save.isVisible = false;
 
             // background
             var panel = AddUIComponent<UIPanel>();
@@ -174,9 +168,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
         {
             //todo: save
             Hide();
-
-            DoThrow();
-
         }
 
         #endregion
