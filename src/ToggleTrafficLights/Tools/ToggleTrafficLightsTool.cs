@@ -250,12 +250,17 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
                     continue;
                 }
 
+
+                if (!cameraInfo.Intersect(node.m_bounds))
+                {
+                    continue;
+                }
+
                 var isUnderground = node.Info.m_netAI.IsUnderground();
 
                 if ((isUnderground && intersectionsToHighlight.IsFlagSet(Options.GroundMode.Underground) && Options.ToggleTrafficLightsTool.GroundMode.Value.IsFlagSet(Options.GroundMode.Underground))
                     || (!isUnderground && intersectionsToHighlight.IsFlagSet(Options.GroundMode.Overground) && Options.ToggleTrafficLightsTool.GroundMode.Value.IsFlagSet(Options.GroundMode.Overground)))
                 {
-
                     var color = HasTrafficLights(node.m_flags)
                         ? Options.HighlightIntersections.HasTrafficLightsColor
                         : Options.HighlightIntersections.HasNoTrafficLightsColor;

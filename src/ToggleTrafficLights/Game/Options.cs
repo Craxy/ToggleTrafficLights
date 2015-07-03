@@ -44,7 +44,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
 
         public static class HighlightIntersections
         {
-            public static readonly ChangingValue<GroundMode> IntersectionsToHighlight = ChangingValue.Create(GroundMode.Underground);
+            public static readonly ChangingValue<GroundMode> IntersectionsToHighlight = ChangingValue.Create(GroundMode.None);
 
             public static readonly ChangingValue<Color> HasTrafficLightsColor = ChangingValue.Create(Color.white);
             public static readonly ChangingValue<Color> HasNoTrafficLightsColor = ChangingValue.Create(Color.black);
