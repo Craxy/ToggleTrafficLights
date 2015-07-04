@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using ColossalFramework;
 using ColossalFramework.Math;
@@ -237,6 +238,82 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
                 return;
             }
 
+            if (_nodesToHighlight == null || _nodesToHighlight.Length == 0)
+            {
+                return;
+            }
+
+            var nm = Singleton<NetManager>.instance;
+            foreach (var i in _nodesToHighlight)
+            {
+                var node = nm.m_nodes.m_buffer[i];
+
+                if (!cameraInfo.Intersect(node.m_bounds))
+                {
+                    continue;
+                }
+
+                var color = HasTrafficLights(node.m_flags)
+                    ? Options.HighlightIntersections.HasTrafficLightsColor
+                    : Options.HighlightIntersections.HasNoTrafficLightsColor;
+
+                DrawCircle(cameraInfo, node.m_position, Options.HighlightIntersections.MarkerRadius, Options.HighlightIntersections.MarkerHeight, color);
+            }
+
+
+//            var nm = Singleton<NetManager>.instance;
+//            for (ushort i = 0; i < nm.m_nodes.m_size; i++)
+//            {
+//                var node = nm.m_nodes.m_buffer[i];
+//
+//                if (!cameraInfo.Intersect(node.m_bounds))
+//                {
+//                    continue;
+//                }
+//
+//                //test for highlighting
+//                if (node.m_flags.IsFlagSet(GetNodeIgnoreFlags())
+//                    || !node.m_flags.IsFlagSet(GetNodeIncludeFlags())
+//                    || !IsValidRoadNode(node)
+//                    )
+//                {
+//                    continue;
+//                }
+//
+//
+//                var isUnderground = node.Info.m_netAI.IsUnderground();
+//
+//                if ((isUnderground && intersectionsToHighlight.IsFlagSet(Options.GroundMode.Underground) && Options.ToggleTrafficLightsTool.GroundMode.Value.IsFlagSet(Options.GroundMode.Underground))
+//                    || (!isUnderground && intersectionsToHighlight.IsFlagSet(Options.GroundMode.Overground) && Options.ToggleTrafficLightsTool.GroundMode.Value.IsFlagSet(Options.GroundMode.Overground)))
+//                {
+//                    var color = HasTrafficLights(node.m_flags)
+//                        ? Options.HighlightIntersections.HasTrafficLightsColor
+//                        : Options.HighlightIntersections.HasNoTrafficLightsColor;
+//
+////                    DrawCircle(cameraInfo, node.m_position, node.Info.m_halfWidth / 2.0f, color);
+////                    DrawCircle(cameraInfo, node.m_position, 5f, 3.0f, color);
+//                    DrawCircle(cameraInfo, node.m_position, Options.HighlightIntersections.MarkerRadius, Options.HighlightIntersections.MarkerHeight, color);
+//                }
+//            }
+        }
+
+        #region Overrides of DefaultToolWithNetNodeDetection
+
+        private int[] _nodesToHighlight = null;
+
+        public override void SimulationStep()
+        {
+            base.SimulationStep();
+
+            var intersectionsToHighlight = Options.HighlightIntersections.IntersectionsToHighlight.Value;
+            if (intersectionsToHighlight != Options.GroundMode.None)
+            {
+                _nodesToHighlight = IterateIntersections(intersectionsToHighlight).ToArray();
+            }
+        }
+
+        private IEnumerable<int> IterateIntersections(Options.GroundMode intersectionsToHighlight)
+        {
             var nm = Singleton<NetManager>.instance;
             for (ushort i = 0; i < nm.m_nodes.m_size; i++)
             {
@@ -245,32 +322,25 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
                 //test for highlighting
                 if (node.m_flags.IsFlagSet(GetNodeIgnoreFlags())
                     || !node.m_flags.IsFlagSet(GetNodeIncludeFlags())
-                    || !IsValidRoadNode(node))
+                    || !IsValidRoadNode(node)
+                    )
                 {
                     continue;
                 }
 
-
-                if (!cameraInfo.Intersect(node.m_bounds))
-                {
-                    continue;
-                }
 
                 var isUnderground = node.Info.m_netAI.IsUnderground();
 
                 if ((isUnderground && intersectionsToHighlight.IsFlagSet(Options.GroundMode.Underground) && Options.ToggleTrafficLightsTool.GroundMode.Value.IsFlagSet(Options.GroundMode.Underground))
                     || (!isUnderground && intersectionsToHighlight.IsFlagSet(Options.GroundMode.Overground) && Options.ToggleTrafficLightsTool.GroundMode.Value.IsFlagSet(Options.GroundMode.Overground)))
                 {
-                    var color = HasTrafficLights(node.m_flags)
-                        ? Options.HighlightIntersections.HasTrafficLightsColor
-                        : Options.HighlightIntersections.HasNoTrafficLightsColor;
-
-//                    DrawCircle(cameraInfo, node.m_position, node.Info.m_halfWidth / 2.0f, color);
-//                    DrawCircle(cameraInfo, node.m_position, 5f, 3.0f, color);
-                    DrawCircle(cameraInfo, node.m_position, Options.HighlightIntersections.MarkerRadius, Options.HighlightIntersections.MarkerHeight, color);
+                    yield return i;
                 }
             }
         }
+
+        #endregion
+
         #endregion
 
         #region Events

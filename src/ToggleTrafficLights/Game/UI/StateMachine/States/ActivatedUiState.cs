@@ -36,7 +36,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
             {
                 //gets enabled automatically
                 var toolControl = Singleton<ToolManager>.instance;
-                _ui = toolControl.gameObject.AddComponent<BatchUi>();
+                _ui = toolControl.GetComponent<BatchUi>() ?? toolControl.gameObject.AddComponent<BatchUi>();
             }
             _ui.IntersectionHightlighting = IntersectionHighlighting;
             _ui.enabled = true;
