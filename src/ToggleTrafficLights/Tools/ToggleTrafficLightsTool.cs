@@ -37,6 +37,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
                 Destroy(ump.gameObject);
             }
 
+            _nodesToHighlight = null;
+
             DebugLog.Message("ToggleTrafficLightsTool destroyed");
         }
 
@@ -48,6 +50,9 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
             UndergroundModePanel.GetOrCreate().Show(true);
             Options.ToggleTrafficLightsTool.GroundMode.ValueChanged += OnGroundModeChanged;
 
+            Options.HighlightIntersections.IntersectionsToHighlight.ValueChanged += OnIntersectionsToHighlightChanged;
+            UpdateNodesToHighlight();
+
             OnOnEnabledChanged(true);
 
             DebugLog.Message("ToggleTrafficLightsTool enabled");
@@ -58,6 +63,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
             Options.ToggleTrafficLightsTool.GroundMode.ValueChanged -= OnGroundModeChanged;
             UndergroundModePanel.GetOrCreate().Hide();
             ActivateGroundMode(Options.GroundMode.Overground);
+
+            Options.HighlightIntersections.IntersectionsToHighlight.ValueChanged -= OnIntersectionsToHighlightChanged;
 
             base.OnDisable();
 
@@ -211,11 +218,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 
             var info = node.Info;
 
-//            var color = GetToolColor(false, false);
-//            //http://paletton.com/#uid=13r0u0k++++qKZWAF+V+VAFZWqK
-//            color = HasTrafficLights(node.m_flags) 
-//                    ? new Color(0.2f, 0.749f, 0.988f, color.a) 
-//                    : new Color(0.0f, 0.369f, 0.525f, color.a);
+            //http://paletton.com/#uid=13r0u0k++++qKZWAF+V+VAFZWqK
             var color = HasTrafficLights(node.m_flags)
                         ? Options.ToggleTrafficLightsTool.HasTrafficLightsColor
                         : Options.ToggleTrafficLightsTool.HasNoTrafficLightsColor;
@@ -248,67 +251,36 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
             {
                 var node = nm.m_nodes.m_buffer[i];
 
-                if (!cameraInfo.Intersect(node.m_bounds))
-                {
-                    continue;
-                }
-
                 var color = HasTrafficLights(node.m_flags)
                     ? Options.HighlightIntersections.HasTrafficLightsColor
                     : Options.HighlightIntersections.HasNoTrafficLightsColor;
 
                 DrawCircle(cameraInfo, node.m_position, Options.HighlightIntersections.MarkerRadius, Options.HighlightIntersections.MarkerHeight, color);
             }
-
-
-//            var nm = Singleton<NetManager>.instance;
-//            for (ushort i = 0; i < nm.m_nodes.m_size; i++)
-//            {
-//                var node = nm.m_nodes.m_buffer[i];
-//
-//                if (!cameraInfo.Intersect(node.m_bounds))
-//                {
-//                    continue;
-//                }
-//
-//                //test for highlighting
-//                if (node.m_flags.IsFlagSet(GetNodeIgnoreFlags())
-//                    || !node.m_flags.IsFlagSet(GetNodeIncludeFlags())
-//                    || !IsValidRoadNode(node)
-//                    )
-//                {
-//                    continue;
-//                }
-//
-//
-//                var isUnderground = node.Info.m_netAI.IsUnderground();
-//
-//                if ((isUnderground && intersectionsToHighlight.IsFlagSet(Options.GroundMode.Underground) && Options.ToggleTrafficLightsTool.GroundMode.Value.IsFlagSet(Options.GroundMode.Underground))
-//                    || (!isUnderground && intersectionsToHighlight.IsFlagSet(Options.GroundMode.Overground) && Options.ToggleTrafficLightsTool.GroundMode.Value.IsFlagSet(Options.GroundMode.Overground)))
-//                {
-//                    var color = HasTrafficLights(node.m_flags)
-//                        ? Options.HighlightIntersections.HasTrafficLightsColor
-//                        : Options.HighlightIntersections.HasNoTrafficLightsColor;
-//
-////                    DrawCircle(cameraInfo, node.m_position, node.Info.m_halfWidth / 2.0f, color);
-////                    DrawCircle(cameraInfo, node.m_position, 5f, 3.0f, color);
-//                    DrawCircle(cameraInfo, node.m_position, Options.HighlightIntersections.MarkerRadius, Options.HighlightIntersections.MarkerHeight, color);
-//                }
-//            }
         }
 
         #region Overrides of DefaultToolWithNetNodeDetection
 
+        private void OnIntersectionsToHighlightChanged(Options.GroundMode oldValue, Options.GroundMode newValue)
+        {
+            UpdateNodesToHighlight();
+        }
         private int[] _nodesToHighlight = null;
 
-        public override void SimulationStep()
+        public void UpdateNodesToHighlight()
         {
-            base.SimulationStep();
-
+            //TODO: in thread auslagern
             var intersectionsToHighlight = Options.HighlightIntersections.IntersectionsToHighlight.Value;
             if (intersectionsToHighlight != Options.GroundMode.None)
             {
                 _nodesToHighlight = IterateIntersections(intersectionsToHighlight).ToArray();
+                DebugLog.Info("Intersections to highlight updated -- {0} node found", _nodesToHighlight.Length);
+            }
+            else
+            {
+                DebugLog.Info("Intersections to highlight updated -- set no None");
+
+                _nodesToHighlight = null;
             }
         }
 
