@@ -12,6 +12,7 @@ using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Ui;
 using JetBrains.Annotations;
 using UnityEngine;
+using UnityEngine.Rendering;
 using Object = UnityEngine.Object;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
@@ -23,6 +24,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
         [UsedImplicitly]
         private void Start()
         {
+            name = "ToggleTrafficLightsTool";
             DebugLog.Message("ToggleTrafficLightsTool start");
         }
 
@@ -65,6 +67,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
             ActivateGroundMode(Options.GroundMode.Overground);
 
             Options.HighlightIntersections.IntersectionsToHighlight.ValueChanged -= OnIntersectionsToHighlightChanged;
+            DestroyCylindersToHighlight();
 
             base.OnDisable();
 
@@ -236,6 +239,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
         }
         private void HighlightIntersections(RenderManager.CameraInfo cameraInfo, Options.GroundMode intersectionsToHighlight)
         {
+            return;
+
             if (intersectionsToHighlight == Options.GroundMode.None)
             {
                 return;
@@ -266,21 +271,41 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
             UpdateNodesToHighlight();
         }
         private int[] _nodesToHighlight = null;
+        private GameObject[] _cylindersToHighlight = new GameObject[0];
 
         public void UpdateNodesToHighlight()
         {
+            DestroyCylindersToHighlight();
+
+
             //TODO: in thread auslagern
             var intersectionsToHighlight = Options.HighlightIntersections.IntersectionsToHighlight.Value;
             if (intersectionsToHighlight != Options.GroundMode.None)
             {
-                _nodesToHighlight = IterateIntersections(intersectionsToHighlight).ToArray();
-                DebugLog.Info("Intersections to highlight updated -- {0} node found", _nodesToHighlight.Length);
+//                _nodesToHighlight = IterateIntersections(intersectionsToHighlight).ToArray();
+//                DebugLog.Info("Intersections to highlight updated -- {0} node found", _nodesToHighlight.Length);
+
+                _cylindersToHighlight = CreateIntersectionHighlighting(intersectionsToHighlight).ToArray();
+                DebugLog.Info("Intersections to highlight updated -- {0} node found", _cylindersToHighlight.Length);
+
             }
             else
             {
                 DebugLog.Info("Intersections to highlight updated -- set no None");
 
-                _nodesToHighlight = null;
+//                _nodesToHighlight = null;
+                _cylindersToHighlight = new GameObject[0];
+            }
+        }
+
+        private void DestroyCylindersToHighlight()
+        {
+            if (_cylinderMesh != null)
+            {
+                foreach (var c in _cylindersToHighlight)
+                {
+                    Destroy(c);
+                }
             }
         }
 
@@ -307,6 +332,110 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
                     || (!isUnderground && intersectionsToHighlight.IsFlagSet(Options.GroundMode.Overground) && Options.ToggleTrafficLightsTool.GroundMode.Value.IsFlagSet(Options.GroundMode.Overground)))
                 {
                     yield return i;
+                }
+            }
+        }
+
+        private Mesh _cylinderMesh = null;
+        private IEnumerable<GameObject> CreateIntersectionHighlighting(Options.GroundMode intersectionsToHighlight)
+        {
+            {
+                var hasLightsMaterial = new Material(Shader.Find("Diffuse"))
+                {
+                    color = Options.HighlightIntersections.HasTrafficLightsColor
+                };
+                var hasNoLightsMaterial = new Material(Shader.Find("Diffuse"))
+                {
+                    color = Options.HighlightIntersections.HasNoTrafficLightsColor
+                };
+
+                if (_cylinderMesh == null)
+                {
+                    _cylinderMesh = MeshHelper.CreateCylinder3(10.0f, 5f, 9);
+                }
+
+                var nm = Singleton<NetManager>.instance;
+                for (ushort i = 0; i < nm.m_nodes.m_size; i++)
+                {
+                    var node = nm.m_nodes.m_buffer[i];
+
+                    //test for highlighting
+                    if (node.m_flags.IsFlagSet(GetNodeIgnoreFlags())
+                        || !node.m_flags.IsFlagSet(GetNodeIncludeFlags())
+                        || !IsValidRoadNode(node)
+                        )
+                    {
+                        continue;
+                    }
+
+                    var isUnderground = node.Info.m_netAI.IsUnderground();
+                    if ((isUnderground && intersectionsToHighlight.IsFlagSet(Options.GroundMode.Underground) 
+                            && Options.ToggleTrafficLightsTool.GroundMode.Value.IsFlagSet(Options.GroundMode.Underground))
+                        ||
+                        (!isUnderground && intersectionsToHighlight.IsFlagSet(Options.GroundMode.Overground) 
+                            && Options.ToggleTrafficLightsTool.GroundMode.Value.IsFlagSet(Options.GroundMode.Overground)))
+                    {
+                        var material = HasTrafficLights(node.m_flags)
+                                        ? hasLightsMaterial
+                                        : hasNoLightsMaterial;
+
+                        var obj = new GameObject("IntersectionHighlighting");
+                        
+                        var meshRenderer = obj.AddComponent<MeshRenderer>();
+                        meshRenderer.shadowCastingMode = ShadowCastingMode.Off;
+                        
+                        var filter = obj.AddComponent<MeshFilter>();
+                        filter.mesh = _cylinderMesh;
+                        filter.name = "IntersectionHighlightingFilter";
+                        
+                        obj.transform.localPosition = node.m_position;
+//                        obj.transform.localRotation = Quaternion.identity;
+
+                        obj.GetComponent<Renderer>().material = material;
+
+                        yield return obj;
+                    }
+                }
+            }
+
+            yield break;
+
+            {
+                var nm = Singleton<NetManager>.instance;
+                for (ushort i = 0; i < nm.m_nodes.m_size; i++)
+                {
+                    var node = nm.m_nodes.m_buffer[i];
+
+                    //test for highlighting
+                    if (node.m_flags.IsFlagSet(GetNodeIgnoreFlags())
+                        || !node.m_flags.IsFlagSet(GetNodeIncludeFlags())
+                        || !IsValidRoadNode(node)
+                        )
+                    {
+                        continue;
+                    }
+
+
+                    var isUnderground = node.Info.m_netAI.IsUnderground();
+
+                    if ((isUnderground && intersectionsToHighlight.IsFlagSet(Options.GroundMode.Underground) && Options.ToggleTrafficLightsTool.GroundMode.Value.IsFlagSet(Options.GroundMode.Underground))
+                        || (!isUnderground && intersectionsToHighlight.IsFlagSet(Options.GroundMode.Overground) && Options.ToggleTrafficLightsTool.GroundMode.Value.IsFlagSet(Options.GroundMode.Overground)))
+                    {
+
+                        var position = node.m_position;
+
+                        var go = new GameObject("Intersection");
+                        var meshRenderer = go.AddComponent<MeshRenderer>();
+                        meshRenderer.shadowCastingMode = ShadowCastingMode.Off;
+
+                        var filter = go.AddComponent<MeshFilter>();
+                        filter.mesh = _cylinderMesh;
+                        filter.name = "Intersection";
+
+                        go.transform.localPosition = position;
+
+                        yield return go;
+                    }
                 }
             }
         }
