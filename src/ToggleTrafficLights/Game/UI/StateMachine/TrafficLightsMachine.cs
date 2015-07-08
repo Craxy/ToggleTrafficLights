@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States;
-using Craxy.CitiesSkylines.ToggleTrafficLights.Tools.Visualization;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine
@@ -11,7 +10,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine
         #region fields
 
         private bool _firstUpdate = true;
-        private IntersectionHighlighting _intersectionHighlighting = null;
         #endregion
 
         public TrafficLightsMachine()
@@ -52,16 +50,15 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine
                 new Transition(State.ActivatedUiState, Command.PressShortcut, State.ActivatedToHidden),
                 new Transition(State.ActivatedUiState, Command.PressInvisibleShortcut, State.Deactivated),
             };
-            _intersectionHighlighting = new IntersectionHighlighting();
             States = new List<IState>
             {
                 new HiddenState(),
                 new Deactivated(),
-                new ActivatedState(_intersectionHighlighting),
+                new ActivatedState(),
                 new HiddenToActivatedState(),
                 new ActivatedToHiddenState(),
                 new HiddenActivatedState(),
-                new ActivatedUiState(_intersectionHighlighting),
+                new ActivatedUiState(),
             };
         }
 
@@ -131,12 +128,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine
             {
                 s.Destroy();
             }
-
-            if (_intersectionHighlighting != null && _intersectionHighlighting.Enabled)
-            {
-                _intersectionHighlighting.Deactivate();
-            }
-            _intersectionHighlighting = null;
         }
     }
 }

@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Globalization;
 using System.Linq;
 using ColossalFramework;
 using ColossalFramework.UI;
-using Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu.Components;
 using Craxy.CitiesSkylines.ToggleTrafficLights.ModTools;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Tools;
-using Craxy.CitiesSkylines.ToggleTrafficLights.Tools.Visualization;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
-using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions;
 using JetBrains.Annotations;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
 {
@@ -41,12 +36,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
              Padding = 5f, 
         };
 
-        public IntersectionHighlighting IntersectionHightlighting { get; set; }
         private ColorPicker _hasTrafficLightsColorPicker;
         private ColorPicker _doesNotHaveTrafficLightsColor;
-        private RadioButtonGroup<IntersectionHighlighting.HighlightingModes.InfoType> _infoTypeSelector;
-        private RadioButtonGroup<IntersectionHighlighting.HighlightingModes.HighlightingMode> _highlightModeSelector; 
-        private RadioButtonGroup<IntersectionHighlighting.HighlightingModes.IntersectionsToHighlight> _intersectionsToHighlightSelector; 
         #endregion
 
         #region MonoBehaviour
@@ -61,28 +52,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
             _backgroundTexture = new Texture2D(1, 1);
             _backgroundTexture.SetPixel(0, 0, new Color(0.321f, 0.321f, 0.321f, 1.0f));
             _backgroundTexture.Apply();
-
-            _infoTypeSelector = new RadioButtonGroup<IntersectionHighlighting.HighlightingModes.InfoType>()
-            {
-                Title = IntersectionHighlighting.HighlightingModes.GetEnumName<IntersectionHighlighting.HighlightingModes.InfoType>(),
-                Items = ((IntersectionHighlighting.HighlightingModes.InfoType[]) Enum.GetValues(typeof(IntersectionHighlighting.HighlightingModes.InfoType))),
-                SelectedItem = IntersectionHightlighting.InfoType,
-                CalcItemName = IntersectionHighlighting.HighlightingModes.GetEnumValueName,
-            };            
-            _highlightModeSelector = new RadioButtonGroup<IntersectionHighlighting.HighlightingModes.HighlightingMode>()
-            {
-                Title = IntersectionHighlighting.HighlightingModes.GetEnumName<IntersectionHighlighting.HighlightingModes.HighlightingMode>(),
-                Items = (IntersectionHighlighting.HighlightingModes.HighlightingMode[])Enum.GetValues(typeof(IntersectionHighlighting.HighlightingModes.HighlightingMode)),
-                SelectedItem = IntersectionHightlighting.HighlightingMode,
-                CalcItemName = IntersectionHighlighting.HighlightingModes.GetEnumValueName,
-            };
-            _intersectionsToHighlightSelector = new RadioButtonGroup<IntersectionHighlighting.HighlightingModes.IntersectionsToHighlight>()
-            {
-                Title = IntersectionHighlighting.HighlightingModes.GetEnumName<IntersectionHighlighting.HighlightingModes.IntersectionsToHighlight>(),
-                Items = (IntersectionHighlighting.HighlightingModes.IntersectionsToHighlight[])Enum.GetValues(typeof(IntersectionHighlighting.HighlightingModes.IntersectionsToHighlight)),
-                SelectedItem = IntersectionHightlighting.IntersectionsToHighlight,
-                CalcItemName = IntersectionHighlighting.HighlightingModes.GetEnumValueName,
-            };
         }
 
         [UsedImplicitly]
@@ -299,54 +268,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
                 {
                     _changedStatistics.DrawGuiTable();
                     _updateChangedStatisticsCounter--;
-                }
-            }
-        }
-
-        public void ShowIntersectionHighlightingGui()
-        {
-            using (Layout.Vertical())
-            {
-                var enbld = GUILayout.Toggle(IntersectionHightlighting.Enabled, "Highlight intersections");
-                if (enbld != IntersectionHightlighting.Enabled)
-                {
-                    if (enbld)
-                    {
-                        IntersectionHightlighting.Activate();
-                    }
-                    else
-                    {
-                        IntersectionHightlighting.Deactivate();
-                    }
-                }
-
-                if (IntersectionHightlighting.Enabled)
-                {
-                    //colors
-                    string hasLightsColorName = string.Empty;
-                    string hasNoLightsColorName = string.Empty;
-                    switch (IntersectionHightlighting.HighlightingMode)
-                    {
-                        case IntersectionHighlighting.HighlightingModes.HighlightingMode.TrafficLights:
-                        case IntersectionHighlighting.HighlightingModes.HighlightingMode.Default:
-                            hasLightsColorName = "Traffic Lights";
-                            hasNoLightsColorName = "No Traffic Lights";
-                            break;
-                        case IntersectionHighlighting.HighlightingModes.HighlightingMode.DifferenceToDefault:
-                            hasLightsColorName = "Same";
-                            hasNoLightsColorName = "Changed";
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-
-                    GuiControls.ColorField("HasTrafficLightsColor", hasLightsColorName, IntersectionHightlighting.HasTrafficLightsColor, _hasTrafficLightsColorPicker, color => IntersectionHightlighting.HasTrafficLightsColor = color);
-                    GuiControls.ColorField("DoesNotHaveTrafficLightsColor", hasNoLightsColorName, IntersectionHightlighting.DoesNotHaveTrafficLightsColor, _doesNotHaveTrafficLightsColor, color => IntersectionHightlighting.DoesNotHaveTrafficLightsColor = color);
-
-                    //types
-                    _highlightModeSelector.Show((value, _) => IntersectionHightlighting.HighlightingMode = value);
-                    _intersectionsToHighlightSelector.Show((value, _) => IntersectionHightlighting.IntersectionsToHighlight = value);
-                    _infoTypeSelector.Show((value, _) => IntersectionHightlighting.InfoType = value);
                 }
             }
         }
