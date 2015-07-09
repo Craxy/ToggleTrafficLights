@@ -1,37 +1,43 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using ColossalFramework;
-using ColossalFramework.Math;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Game;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu;
-using Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu.Experimental;
+using Craxy.CitiesSkylines.ToggleTrafficLights.Tools.Visualization;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions;
-using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Ui;
 using JetBrains.Annotations;
 using UnityEngine;
-using UnityEngine.Rendering;
-using Object = UnityEngine.Object;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 {
     public class ToggleTrafficLightsTool : DefaultToolWithNetNodeDetection
     {
+        private IntersectionHighlighting _intersectionHighlighting;
+
         #region Start/End
 
         [UsedImplicitly]
-        private void Start()
+        protected override void Awake()
         {
+            base.Awake();
+
             name = "ToggleTrafficLightsTool";
-            DebugLog.Message("ToggleTrafficLightsTool start");
+
+            _intersectionHighlighting = new IntersectionHighlighting(this);
+            _intersectionHighlighting.Awake();
+
+            DebugLog.Message("ToggleTrafficLightsTool awake");
         }
 
 
         protected override void OnDestroy()
         {
             base.OnDestroy();
+
+            _intersectionHighlighting.OnDestroy();
+            _intersectionHighlighting = null;
 
             var ump = UndergroundModePanel.Get();
             if (ump != null)
@@ -50,8 +56,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
             UndergroundModePanel.GetOrCreate().Show(true);
             Options.ToggleTrafficLightsTool.GroundMode.ValueChanged += OnGroundModeChanged;
 
-            Options.HighlightIntersections.IntersectionsToHighlight.ValueChanged += OnIntersectionsToHighlightChanged;
-            UpdateNodesToHighlight();
+            _intersectionHighlighting.OnEnable();
 
             OnOnEnabledChanged(true);
 
@@ -60,12 +65,11 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 
         protected override void OnDisable()
         {
+            _intersectionHighlighting.OnDisable();
+
             Options.ToggleTrafficLightsTool.GroundMode.ValueChanged -= OnGroundModeChanged;
             UndergroundModePanel.GetOrCreate().Hide();
             ActivateGroundMode(Options.GroundMode.Overground);
-
-            Options.HighlightIntersections.IntersectionsToHighlight.ValueChanged -= OnIntersectionsToHighlightChanged;
-            DestroyCylindersToHighlight();
 
             base.OnDisable();
 
@@ -119,6 +123,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
                 if (current.type == EventType.MouseDown && current.button == 0)
                 {
                     ToggleTrafficLights(nodeId);
+                    _intersectionHighlighting.OnTrafficLightsToggled(nodeId);
                 }
                 else if (current.type == EventType.MouseDown && current.button == 1)
                 {
@@ -128,6 +133,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
                     if (hasLights != wantLights)
                     {
                         ToggleTrafficLights(nodeId);
+                        _intersectionHighlighting.OnTrafficLightsToggled(nodeId);
                     }
                 }
             }
@@ -239,110 +245,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
         {
             // is done via gameobject for each intersection
         }
-
-        #region Overrides of DefaultToolWithNetNodeDetection
-
-        private void OnIntersectionsToHighlightChanged(Options.GroundMode oldValue, Options.GroundMode newValue)
-        {
-            UpdateNodesToHighlight();
-        }
-
-        public void UpdateNodesToHighlight()
-        {
-            DestroyCylindersToHighlight();
-
-
-            //TODO: in thread auslagern
-            var intersectionsToHighlight = Options.HighlightIntersections.IntersectionsToHighlight.Value;
-            if (intersectionsToHighlight != Options.GroundMode.None)
-            {
-                _cylindersToHighlight = CreateIntersectionHighlighting(intersectionsToHighlight).ToArray();
-                DebugLog.Info("Intersections to highlight updated -- {0} node found", _cylindersToHighlight.Length);
-
-            }
-            else
-            {
-                DebugLog.Info("Intersections to highlight updated -- set no None");
-
-                _cylindersToHighlight = new GameObject[0];
-            }
-        }
-
-        private void DestroyCylindersToHighlight()
-        {
-            if (_cylinderMesh != null)
-            {
-                foreach (var c in _cylindersToHighlight)
-                {
-                    Destroy(c);
-                }
-            }
-        }
-
-        private Mesh _cylinderMesh = null;
-        private GameObject[] _cylindersToHighlight = new GameObject[0];
-        private IEnumerable<GameObject> CreateIntersectionHighlighting(Options.GroundMode intersectionsToHighlight)
-        {
-            {
-                var hasLightsMaterial = new Material(Shader.Find("Diffuse"))
-                {
-                    color = Options.HighlightIntersections.HasTrafficLightsColor
-                };
-                var hasNoLightsMaterial = new Material(Shader.Find("Diffuse"))
-                {
-                    color = Options.HighlightIntersections.HasNoTrafficLightsColor
-                };
-
-                if (_cylinderMesh == null)
-                {
-                    _cylinderMesh = MeshHelper.CreateCylinder(10.0f, 5f, 9);
-                }
-
-                var nm = Singleton<NetManager>.instance;
-                for (ushort i = 0; i < nm.m_nodes.m_size; i++)
-                {
-                    var node = nm.m_nodes.m_buffer[i];
-
-                    //test for highlighting
-                    if (node.m_flags.IsFlagSet(GetNodeIgnoreFlags())
-                        || !node.m_flags.IsFlagSet(GetNodeIncludeFlags())
-                        || !IsValidRoadNode(node)
-                        )
-                    {
-                        continue;
-                    }
-
-                    var isUnderground = node.Info.m_netAI.IsUnderground();
-                    if ((isUnderground && intersectionsToHighlight.IsFlagSet(Options.GroundMode.Underground) 
-                            && Options.ToggleTrafficLightsTool.GroundMode.Value.IsFlagSet(Options.GroundMode.Underground))
-                        ||
-                        (!isUnderground && intersectionsToHighlight.IsFlagSet(Options.GroundMode.Overground) 
-                            && Options.ToggleTrafficLightsTool.GroundMode.Value.IsFlagSet(Options.GroundMode.Overground)))
-                    {
-                        var material = HasTrafficLights(node.m_flags)
-                                        ? hasLightsMaterial
-                                        : hasNoLightsMaterial;
-
-                        var obj = new GameObject("IntersectionHighlighting");
-                        
-                        var meshRenderer = obj.AddComponent<MeshRenderer>();
-                        meshRenderer.shadowCastingMode = ShadowCastingMode.Off;
-                        
-                        var filter = obj.AddComponent<MeshFilter>();
-                        filter.mesh = _cylinderMesh;
-                        filter.name = "IntersectionHighlightingFilter";
-                        
-                        obj.transform.localPosition = node.m_position;
-
-                        obj.GetComponent<Renderer>().material = material;
-
-                        yield return obj;
-                    }
-                }
-            }
-        }
-
-        #endregion
 
         #endregion
 
@@ -474,7 +376,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 
         #region Node
 
-        private static bool IsValidRoadNode(int nodeId)
+        public static bool IsValidRoadNode(int nodeId)
         {
             if (nodeId == 0)
             {
@@ -483,7 +385,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 
             var node = GetNetNode(nodeId);
             return IsValidRoadNode(node);
-
         }
 
         public static bool IsValidRoadNode(NetNode node)
@@ -499,7 +400,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
             return m_hoverInstance.NetNode;
         }
 
-        private static NetNode GetNetNode(int nodeId)
+        public static NetNode GetNetNode(int nodeId)
         {
             if (nodeId == 0)
             {

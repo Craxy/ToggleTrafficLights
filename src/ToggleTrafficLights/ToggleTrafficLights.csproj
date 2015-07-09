@@ -57,8 +57,9 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="UnityEngine">
-      <HintPath>C:\Spiele\Steam Games\SteamApps\common\Cities_Skylines\Cities_Data\Managed\UnityEngine.dll</HintPath>
+    <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>D:\Spiele\Steam\SteamApps\common\Cities_Skylines\Cities_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -98,6 +99,7 @@
     <Compile Include="Serializer\SerializerV1.cs" />
     <Compile Include="Tools\DefaultToolWithNetNodeDetection.cs" />
     <Compile Include="Tools\ToggleTrafficLightsTool.cs" />
+    <Compile Include="Tools\Visualization\IntersectionHighlighting.cs" />
     <Compile Include="Utils\ChangedValue.cs" />
     <Compile Include="Utils\CitiesHelper.cs" />
     <Compile Include="Utils\EventArgs.cs" />
@@ -132,7 +134,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Game\UI\Visualization\" />
-    <Folder Include="Tools\Visualization\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
