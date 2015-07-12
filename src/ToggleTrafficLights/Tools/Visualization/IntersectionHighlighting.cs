@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mime;
 using ColossalFramework;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Game;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
@@ -106,7 +107,7 @@ Shader ""Underground Intersection Shader""
 {
     Properties 
     { 
-            _Color (""Main Color"", Color) = (1,1,1,1) 
+            _Color (""Main Color"", Color) = (1.0,1.0,1.0,1.0) 
     }
     SubShader 
     {
@@ -117,36 +118,53 @@ Shader ""Underground Intersection Shader""
             Cull Back
             // depth buffer. off for semitransparent effects
             ZWrite Off
-            // ? rec by nvdia
+            // ? rec by some nvdia presentation
             ZTest Always
 
-
-            Lighting Off
+            // Lighting for underground
+            Lighting On
             Color [_Color]
-            //Material { Diffuse [_Color] Ambient [_Color] }
-            SetTexture [_Dummy] { combine primary double, primary }
+            Material { Ambient [_Color] }
+            //brighten up color: double: not bright enough
+            SetTexture [_Dummy] { combine primary quad }
         }
-        FallBack ""Diffuse""
     }
 }";
+
         private void CreateMaterials()
         {
+            //Shader.Find("Diffuse")
             _hasTrafficLightsOvergroundMaterial = new Material(Shader.Find("Diffuse"))
             {
-                color = HasTrafficLightsColor
+                color = HasTrafficLightsColor,
             };
             _hasNoTrafficLightsOvergroundMaterial = new Material(Shader.Find("Diffuse"))
             {
-                color = HasNoTrafficLightsColor
+                color = HasNoTrafficLightsColor,
             };
             _hasTrafficLightsUndergroundMaterial = new Material(UndergroundShader)
             {
-                color = HasTrafficLightsColor
+                color = HasTrafficLightsColor,
             };
             _hasNoTrafficLightsUndergroundMaterial = new Material(UndergroundShader)
             {
-                color = HasNoTrafficLightsColor
+                color = HasNoTrafficLightsColor,
             };
+        }
+
+        private void UpdateMaterialColors()
+        {
+            if (_hasTrafficLightsOvergroundMaterial == null)
+            {
+                CreateMaterials();
+            }
+            else
+            {
+                _hasNoTrafficLightsOvergroundMaterial.color = HasTrafficLightsColor;
+                _hasNoTrafficLightsOvergroundMaterial.color = HasNoTrafficLightsColor;
+                _hasTrafficLightsUndergroundMaterial.color = HasTrafficLightsColor;
+                _hasNoTrafficLightsUndergroundMaterial.color = HasNoTrafficLightsColor;
+            }
         }
 
         #region Events
@@ -221,7 +239,7 @@ Shader ""Underground Intersection Shader""
             DestroyCylindersToHighlight();
             if (updateMaterial)
             {
-                CreateMaterials();
+                UpdateMaterialColors();
             }
             if (updateMesh)
             {
