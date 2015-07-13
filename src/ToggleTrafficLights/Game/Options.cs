@@ -46,13 +46,13 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
         {
             public static readonly ChangingValue<GroundMode> IntersectionsToHighlight = ChangingValue.Create(GroundMode.All);
 
-            public static readonly ChangingValue<Color> HasTrafficLightsColor = ChangingValue.Create(new Color(0.0f,1.0f,0.0f,0.75f));
-            public static readonly ChangingValue<Color> HasNoTrafficLightsColor = ChangingValue.Create(new Color(1.0f, 0.0f, 0.0f, 0.75f));
+            public static readonly ChangingValue<Color> HasTrafficLightsColor = ChangingValue.Create(new Color(0.56f, 1.0f, 0.56f, 1.0f));
+            public static readonly ChangingValue<Color> HasNoTrafficLightsColor = ChangingValue.Create(new Color(0.55f, 0.05f, 0.0f, 1.0f));
 
             public static readonly ChangingValue<float> MarkerHeight = ChangingValue.Create(2.0f);
             public static readonly ChangingValue<float> MarkerRadius = ChangingValue.Create(5.0f);
 
-            public static readonly ChangingValue<int> NumberOfMarkerSides = ChangingValue.Create(7);
+            public static readonly ChangingValue<int> NumberOfMarkerSides = ChangingValue.Create(13);
 
         }
         #endregion

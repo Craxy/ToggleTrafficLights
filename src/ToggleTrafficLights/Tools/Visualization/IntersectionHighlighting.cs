@@ -75,7 +75,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools.Visualization
         }
         public void OnEnable()
         {
-            UpdateIntersectionsToHighlight(true, true);
+            UpdateIntersectionsToHighlight(updateMaterialColors: true, updateMesh: true, updatePositions: true);
             SubscribeEvents();
         }
 
@@ -191,23 +191,31 @@ Shader ""Underground Intersection Shader""
         }
         private void OnGroundModeChanged(Options.GroundMode oldValue, Options.GroundMode newValue)
         {
-            UpdateIntersectionsToHighlight(false, false);
+            UpdateIntersectionsToHighlight(updateMaterialColors: false, updateMesh: false, updatePositions: true);
         }
         private void OnIntersectionsToHighlightChanged(Options.GroundMode oldValue, Options.GroundMode newValue)
         {
-            UpdateIntersectionsToHighlight(false, false);
+            if (oldValue == Options.GroundMode.None)
+            {
+                //if change from grounmode.none to others: update all (changes might not be reflected)
+                UpdateIntersectionsToHighlight(updateMaterialColors: true, updateMesh: true, updatePositions: true);
+            }
+            else
+            {
+                UpdateIntersectionsToHighlight(updateMaterialColors: false, updateMesh: false, updatePositions: true);
+            }
         }
         private void OnColorChanged(Color oldValue, Color newValue)
         {
-            UpdateIntersectionsToHighlight(true, false);
+            UpdateIntersectionsToHighlight(updateMaterialColors: true, updateMesh: false);
         }
         private void OnMarkerSizeChanged(float oldValue, float newValue)
         {
-            UpdateIntersectionsToHighlight(false, true);
+            UpdateIntersectionsToHighlight(updateMaterialColors: false, updateMesh: true);
         }
         private void OnMarkerChanged(int oldValue, int newValue)
         {
-            UpdateIntersectionsToHighlight(false, true);
+            UpdateIntersectionsToHighlight(updateMaterialColors: false, updateMesh: true);
         }
         #endregion
         #endregion
@@ -226,18 +234,18 @@ Shader ""Underground Intersection Shader""
             }
         }
 
-        private void UpdateIntersectionsToHighlight(bool updateMaterial, bool updateMesh)
+        private void UpdateIntersectionsToHighlight(bool updateMaterialColors, bool updateMesh, bool updatePositions = true)
         {
-            if (IntersectionsToHighlight == Options.GroundMode.None)
-            {
-                _cylindersToHighlight = EmptyGameObjectsArray;
-                return;
-            }
+//            if (IntersectionsToHighlight == Options.GroundMode.None)
+//            {
+//                DestroyCylindersToHighlight();
+//                _cylindersToHighlight = EmptyGameObjectsArray;
+//                return;
+//            }
 
             DebugLog.Info("IntersectionHighlighting: Updating intersections...");
 
-            DestroyCylindersToHighlight();
-            if (updateMaterial)
+            if (updateMaterialColors)
             {
                 UpdateMaterialColors();
             }
@@ -245,13 +253,17 @@ Shader ""Underground Intersection Shader""
             {
                 CreateMesh();
             }
-            PlaceCylindersToHighlight();
+            if (updatePositions)
+            {
+                PlaceCylindersToHighlight();
+            }
 
             DebugLog.Info("IntersectionHighlighting: Intersections updated: {0}", _cylindersToHighlight.Length);
         }
 
         private void PlaceCylindersToHighlight()
         {
+            DestroyCylindersToHighlight();
             var intersectionsToHighlight = IntersectionsToHighlight;
             _cylindersToHighlight = intersectionsToHighlight == Options.GroundMode.None 
                 ? EmptyGameObjectsArray 
