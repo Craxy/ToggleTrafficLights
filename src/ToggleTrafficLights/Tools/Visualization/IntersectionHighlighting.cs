@@ -160,7 +160,7 @@ Shader ""Underground Intersection Shader""
             }
             else
             {
-                _hasNoTrafficLightsOvergroundMaterial.color = HasTrafficLightsColor;
+                _hasTrafficLightsOvergroundMaterial.color = HasTrafficLightsColor;
                 _hasNoTrafficLightsOvergroundMaterial.color = HasNoTrafficLightsColor;
                 _hasTrafficLightsUndergroundMaterial.color = HasTrafficLightsColor;
                 _hasNoTrafficLightsUndergroundMaterial.color = HasNoTrafficLightsColor;
@@ -255,6 +255,7 @@ Shader ""Underground Intersection Shader""
             }
             if (updatePositions)
             {
+                DestroyCylindersToHighlight();
                 PlaceCylindersToHighlight();
             }
 
@@ -263,7 +264,6 @@ Shader ""Underground Intersection Shader""
 
         private void PlaceCylindersToHighlight()
         {
-            DestroyCylindersToHighlight();
             var intersectionsToHighlight = IntersectionsToHighlight;
             _cylindersToHighlight = intersectionsToHighlight == Options.GroundMode.None 
                 ? EmptyGameObjectsArray 
