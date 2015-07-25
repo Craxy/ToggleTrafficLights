@@ -97,6 +97,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu.Components
                 }
             }
         }
+
         public event EventHandler<EventArgs<Color>> ColorChanged;
         protected virtual void OnColorChanged(Color c)
         {

@@ -72,6 +72,7 @@
     <Compile Include="Game\UI\Menu\Components\UIWindow.cs" />
     <Compile Include="Game\UI\Menu\Experimental\HighlightIntersectionsUi.cs" />
     <Compile Include="Game\UI\Menu\OptionsUi.cs" />
+    <Compile Include="Game\UI\Menu\SettingsUi.cs" />
     <Compile Include="Game\UI\Menu\Sidemenu.cs" />
     <Compile Include="Game\UI\Menu\UndergroundModePanel.cs" />
     <Compile Include="Game\UI\KeyHelper.cs" />
@@ -116,6 +117,7 @@
     <Compile Include="Utils\Result.cs" />
     <Compile Include="Utils\Tuple.cs" />
     <Compile Include="Utils\UiHelper.cs" />
+    <Compile Include="Utils\Ui\SettingsUIControls.cs" />
     <Compile Include="Utils\Ui\UIControls.cs" />
     <Compile Include="Utils\Ui\ValueParser.cs" />
   </ItemGroup>
