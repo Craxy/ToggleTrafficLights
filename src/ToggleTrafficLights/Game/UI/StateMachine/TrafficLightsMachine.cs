@@ -2,6 +2,7 @@
 using System.Linq;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
+using UnityEngine;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine
 {
@@ -50,50 +51,47 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine
                 new Transition(State.ActivatedUiState, Command.PressShortcut, State.ActivatedToHidden),
                 new Transition(State.ActivatedUiState, Command.PressInvisibleShortcut, State.Deactivated),
             };
-            States = new List<IState>
+            States = new List<StateBase>
             {
-                new HiddenState(),
-                new Deactivated(),
-                new ActivatedState(),
-                new HiddenToActivatedState(),
-                new ActivatedToHiddenState(),
-                new HiddenActivatedState(),
-                new ActivatedUiState(),
+                gameObject.AddComponent<HiddenState>(),
+                gameObject.AddComponent<Deactivated>(),
+                gameObject.AddComponent<ActivatedState>(),
+                gameObject.AddComponent<HiddenToActivatedState>(),
+                gameObject.AddComponent<ActivatedToHiddenState>(),
+                gameObject.AddComponent<HiddenActivatedState>(),
+                gameObject.AddComponent<ActivatedUiState>(),
             };
+            
+            // added monobehaviours are enabled by default
+            foreach(var s in States)
+            {
+                if(s.State == CurrentState)
+                {
+                    s.enabled = true;
+                }
+                else
+                {
+                    s.enabled = false;
+                }
+            }
         }
 
-        public IList<IState> States { get; private set; }
+        public IList<StateBase> States { get; private set; }
         public IState GetCurrentState()
         {
             return States.Single(s => s.State == CurrentState);
         }
 
-        public void OnUpdate()
+        public void Update()
         {
             var state = GetCurrentState();
 
             if (_firstUpdate)
             {
                 DebugLog.Info("Initial state: {0}", CurrentState);
-                state.OnEntry();
+                state.Enable();
                 _firstUpdate = false;
             }
-
-//            Command? command = null;
-//            while ((command = state.CheckCommand()).HasValue)
-//            {
-//                //move to next state
-//                var transition = MoveNext(command.Value);
-//
-//                DebugLog.Info("Transition: {0}", transition);
-//
-//                //revert old state
-//                state.OnExit();
-//
-//                state = GetCurrentState();
-//                //activate new state
-//                state.OnEntry();
-//            }
 
             var command = state.CheckCommand();
             if (command.HasValue)
@@ -104,29 +102,30 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine
                 DebugLog.Info("Transition: {0}", transition);
                 
                 //revert old state
-                state.OnExit();
+                state.Disable();
                 
                 state = GetCurrentState();
                 //activate new state
-                state.OnEntry();
+                state.Enable();
             }
             else
             {
-                state.OnUpdate();
+                //update is called automatically in enabled monobehaviour
+                //state.OnUpdate();
             }
         }
 
-        public void Destroy()
+        public void OnDestroy()
         {
             if (!_firstUpdate)
             {
                 var state = GetCurrentState();
-                state.OnExit();
+                state.Disable();
             }
 
             foreach (var s in States)
             {
-                s.Destroy();
+                Destroy(s.gameObject);
             }
         }
     }

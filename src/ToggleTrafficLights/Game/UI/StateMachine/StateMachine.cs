@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine
 {
@@ -78,7 +79,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine
         }
     }
 
-    public class StateMachine
+    public class StateMachine : MonoBehaviour
     {
         public IList<Transition> Transitions { get; set; }
         public State CurrentState { get; private set; }

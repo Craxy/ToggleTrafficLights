@@ -11,21 +11,21 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
             get { return State.ActivatedToHidden; }
         }
 
-        public override void OnEntry()
+        public override void OnEnable()
         {
-            base.OnEntry();
+            base.OnEnable();
 
             CloseRoadPanel();
         }
 
-        public override void OnExit()
+        public override void OnDisable()
         {
-            base.OnExit();
+            base.OnDisable();
         }
 
-        public override void OnUpdate()
+        public override void Update()
         {
-            base.OnUpdate();
+            base.Update();
 
             CloseRoadPanel();
         }

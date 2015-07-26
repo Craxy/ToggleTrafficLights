@@ -4,12 +4,15 @@
     {
         State State { get; }
 
-        void OnEntry();
-        void OnExit();
+        void Enable();
+        void Disable();
 
-        void OnUpdate();
+        void OnEnable();
+        void OnDisable();
+
+        void Update();
         Command? CheckCommand();
 
-        void Destroy();
+        void OnDestroy();
     }
 }

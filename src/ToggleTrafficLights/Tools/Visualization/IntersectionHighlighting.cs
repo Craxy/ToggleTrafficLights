@@ -172,6 +172,7 @@ Shader ""Underground Intersection Shader""
         {
             Options.ToggleTrafficLightsTool.GroundMode.ValueChanged += OnGroundModeChanged;
             Options.HighlightIntersections.IntersectionsToHighlight.ValueChanged += OnIntersectionsToHighlightChanged;
+            Options.HighlightIntersections.RecalculateColorForAllIntersections += RecalculateColorForAllIntersections;
             Options.HighlightIntersections.HasTrafficLightsColor.ValueChanged += OnColorChanged;
             Options.HighlightIntersections.HasNoTrafficLightsColor.ValueChanged += OnColorChanged;
             Options.HighlightIntersections.MarkerHeight.ValueChanged += OnMarkerSizeChanged;
@@ -179,10 +180,13 @@ Shader ""Underground Intersection Shader""
             Options.HighlightIntersections.NumberOfMarkerSides.ValueChanged += OnMarkerChanged;
         }
 
+
+
         private void UnsubscribeEvents()
         {
             Options.ToggleTrafficLightsTool.GroundMode.ValueChanged -= OnGroundModeChanged;
             Options.HighlightIntersections.IntersectionsToHighlight.ValueChanged -= OnIntersectionsToHighlightChanged;
+            Options.HighlightIntersections.RecalculateColorForAllIntersections -= RecalculateColorForAllIntersections;
             Options.HighlightIntersections.HasTrafficLightsColor.ValueChanged -= OnColorChanged;
             Options.HighlightIntersections.HasNoTrafficLightsColor.ValueChanged -= OnColorChanged;
             Options.HighlightIntersections.MarkerHeight.ValueChanged -= OnMarkerSizeChanged;
@@ -204,6 +208,10 @@ Shader ""Underground Intersection Shader""
             {
                 UpdateIntersectionsToHighlight(updateMaterialColors: false, updateMesh: false, updatePositions: true);
             }
+        }
+        private void RecalculateColorForAllIntersections()
+        {
+            UpdateIntersectionsToHighlight(updateMaterialColors: false, updateMesh: false);
         }
         private void OnColorChanged(Color oldValue, Color newValue)
         {

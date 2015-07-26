@@ -11,19 +11,19 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
             get { return State.Hidden;}
         }
 
-        public override void OnEntry()
+        public override void OnEnable()
         {
-            base.OnEntry();
+            base.OnEnable();
         }
 
-        public override void OnExit()
+        public override void OnDisable()
         {
-            base.OnExit();
+            base.OnDisable();
         }
 
-        public override void OnUpdate()
+        public override void Update()
         {
-            base.OnUpdate();
+            base.Update();
         }
 
         public override Command? CheckCommand()

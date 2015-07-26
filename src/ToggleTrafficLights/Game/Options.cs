@@ -4,6 +4,7 @@ using System.Xml.Linq;
 using ColossalFramework;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using UnityEngine;
+using static Craxy.CitiesSkylines.ToggleTrafficLights.Utils.FunctionalHelper;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
 {
@@ -45,6 +46,16 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
         public static class HighlightIntersections
         {
             public static readonly ChangingValue<GroundMode> IntersectionsToHighlight = ChangingValue.Create(GroundMode.None);
+            // yeah....using a mistake (settings in static class) and add something that shoud neither be in a static class nor in a settings class...
+            public static event UnitToUnit RecalculateColorForAllIntersections;
+            public static void RequestRecalculateColorForAllIntersections()
+            {
+                var handler = RecalculateColorForAllIntersections;
+                if (handler != null)
+                {
+                    handler();
+                }
+            }
 
             public static readonly ChangingValue<Color> HasTrafficLightsColor = ChangingValue.Create(new Color(0.56f, 1.0f, 0.56f, 1.0f));
             public static readonly ChangingValue<Color> HasNoTrafficLightsColor = ChangingValue.Create(new Color(0.56f, 0.0f, 0.0f, 1.0f));

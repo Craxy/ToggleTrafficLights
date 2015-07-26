@@ -46,29 +46,31 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
 
         #region Overrides of StateBase
 
-        public override void OnEntry()
+        public override void OnEnable()
         {
-            base.OnEntry();
+            base.OnEnable();
 
             Initialize();
         }
 
-        public override void OnExit()
+        public override void OnDisable()
         {
             DestroyView();
 
-            base.OnExit();
+            base.OnDisable();
         }
 
-        public override void OnUpdate()
+        public override void Update()
         {
+            base.Update();
+
             if (!Initialized)
             {
                 Initialize();
             }
         }
 
-        public override void Destroy()
+        public override void OnDestroy()
         {
             if (Button != null)
             {
@@ -79,7 +81,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
                     RoadsOptionPanel.RemoveUIComponent(Button);
                 }
 
-                Object.Destroy(Button.gameObject);
+                Destroy(Button.gameObject);
             }
         }
 

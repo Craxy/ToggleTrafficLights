@@ -89,6 +89,7 @@
     <Compile Include="Game\UI\StateMachine\States\StateBase.cs" />
     <Compile Include="Game\UI\StateMachine\States\ActivatedUiState.cs" />
     <Compile Include="Game\UI\StateMachine\TrafficLightsMachine.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Mod.cs" />
     <Compile Include="Game\Simulation.cs" />
     <Compile Include="ModTools\ColorPicker.cs" />
@@ -110,6 +111,7 @@
     <Compile Include="Utils\Extensions\ReflectionExtensions.cs" />
     <Compile Include="Utils\Extensions\StringBuilderExtensions.cs" />
     <Compile Include="Utils\Extensions\StringExtensions.cs" />
+    <Compile Include="Utils\FunctionalHelper.cs" />
     <Compile Include="Utils\Log.cs" />
     <Compile Include="Utils\MeshHelper.cs" />
     <Compile Include="Utils\Option.cs" />

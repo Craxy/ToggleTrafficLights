@@ -329,6 +329,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
         public delegate bool ShouldHaveLights(ushort id, NetNode node, bool hasLights);
         public ChangedStatistics ChangeTrafficLights(ShouldHaveLights shouldHaveLights)
         {
+            //todo: must recalate colors of highlighted intersections
+
             var changes = new ChangedStatistics();
 
             var netManager = Singleton<NetManager>.instance;
@@ -368,6 +370,11 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
                     }
                     netManager.m_nodes.m_buffer[i] = node;
                 }
+            }
+
+            if(changes.NumberOfChanges > 0)
+            {
+                Options.HighlightIntersections.RequestRecalculateColorForAllIntersections();
             }
 
             return changes;

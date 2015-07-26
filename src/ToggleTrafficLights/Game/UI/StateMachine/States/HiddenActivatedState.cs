@@ -16,9 +16,9 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
             get { return State.HiddenActivatedState; }
         }
 
-        public override void OnEntry()
+        public override void OnEnable()
         {
-            base.OnEntry();
+            base.OnEnable();
 
             _previousTool = ToolsModifierControl.toolController.CurrentTool;
             _tool = ToolsModifierControl.toolController.gameObject.GetComponent<ToggleTrafficLightsTool>()
@@ -26,9 +26,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
             ToolsModifierControl.toolController.CurrentTool = _tool;
         }
 
-        public override void OnExit()
+        public override void OnDisable()
         {
-            base.OnExit();
 
             if (ToolsModifierControl.toolController.CurrentTool == null || ToolsModifierControl.toolController.CurrentTool == _tool)
             {
@@ -48,11 +47,13 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
             }
             _tool = null;
             _previousTool = null;
+
+            base.OnDisable();
         }
 
-        public override void OnUpdate()
+        public override void Update()
         {
-            base.OnUpdate();
+            base.Update();
         }
 
         public override Command? CheckCommand()

@@ -36,16 +36,16 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
             get { return ButtonBaseName + "Activated"; }
         }
 
-        public override void OnEntry()
+        public override void OnEnable()
         {
-            base.OnEntry();
+            base.OnEnable();
 
             _tool = ToolsModifierControl.toolController.gameObject.GetComponent<ToggleTrafficLightsTool>() 
                     ?? ToolsModifierControl.toolController.gameObject.AddComponent<ToggleTrafficLightsTool>();
             ToolsModifierControl.toolController.CurrentTool = _tool;
         }
 
-        public override void OnExit()
+        public override void OnDisable()
         {
             //TODO: remember previous tool
             //reset tools
@@ -94,12 +94,12 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
             _selectedIndexChanged = false;
             _originalSelectIndex = 0;
 
-            base.OnExit();
+            base.OnDisable();
         }
 
-        public override void OnUpdate()
+        public override void Update()
         {
-            base.OnUpdate();
+            base.Update();
 
             if (BuiltinTabstrip != null && BuiltinTabstrip.selectedIndex >= 0)
             {
@@ -126,16 +126,16 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
 
         #region Overrides of ButtonStateBase
 
-        public override void Destroy()
+        public override void OnDestroy()
         {
             if (_tool != null)
             {
                 _tool.ClearRenderOverlay();
-                UnityEngine.Object.Destroy(_tool.gameObject);
+                Destroy(_tool.gameObject);
             }
             _tool = null;
 
-            base.Destroy();
+            base.OnDestroy();
         }
 
         #endregion

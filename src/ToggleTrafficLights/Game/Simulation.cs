@@ -104,7 +104,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
         {
             get
             {
-                return this.LoadingManager.managers;
+                return LoadingManager.managers;
             }
         }
 
@@ -127,7 +127,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
             }
 #endif
 
-            _stateMachine.OnUpdate();
+            //state machine is update automatically because monobehaviour
+            //_stateMachine.OnUpdate();
         }
 
         #endregion
@@ -145,7 +146,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
         {
             if (_stateMachine != null)
             {
-                _stateMachine.Destroy();
+                _stateMachine.enabled = false;
+                UnityEngine.Object.Destroy(_stateMachine.gameObject);
             }
             _stateMachine = null;
                         
@@ -157,7 +159,9 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
 
             if (IsGameMode())
             {
-                _stateMachine = new TrafficLightsMachine();
+                var go = new GameObject("StateMachineGameObject");
+                _stateMachine = go.AddComponent<TrafficLightsMachine>();
+                _stateMachine.enabled = true;
                 DebugLog.Message("Level loaded");
             }
             else
@@ -170,7 +174,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
         {
             if (_stateMachine != null)
             {
-                _stateMachine.Destroy();
+                _stateMachine.enabled = false;
+                UnityEngine.Object.Destroy(_stateMachine.gameObject);
             }
             _stateMachine = null;
             DebugLog.Message("Level unloaded");
