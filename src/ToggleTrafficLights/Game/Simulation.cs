@@ -124,6 +124,11 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
             {
                 DebugLog.Info("Current State: {0}", _stateMachine.CurrentState);
                 DebugLog.Info("Current tool: {0}", ToolsModifierControl.toolController.CurrentTool);
+                //DebugLog.Info("States:");
+                //foreach (var s in _stateMachine.States)
+                //{
+                //    DebugLog.Info("      {0} -- enabled={1}", s.State, s.enabled);
+                //}
             }
 #endif
 

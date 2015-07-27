@@ -68,7 +68,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
             _intersectionHighlighting.OnDisable();
 
             Options.ToggleTrafficLightsTool.GroundMode.ValueChanged -= OnGroundModeChanged;
-            UndergroundModePanel.GetOrCreate().Hide();
+            UndergroundModePanel.Get()?.Hide();
             ActivateGroundMode(Options.GroundMode.Overground);
 
             base.OnDisable();
@@ -147,11 +147,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 
             var nodeId = GetCurrentNetNodeId();
 
-//            if (Options.HighlightAllIntersections)
-//            {
-//                HighlightAllIntersections();
-//            }
-
             if (Options.HighlightIntersections.IntersectionsToHighlight.Value != Options.GroundMode.None)
             {
                 HighlightIntersections(cameraInfo, Options.HighlightIntersections.IntersectionsToHighlight);
@@ -175,7 +170,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
         private Material _material = null;
         private void DrawCircle(RenderManager.CameraInfo cameraInfo, Vector3 center, float radius, float height, Color color)
         {
-
             if (_mesh == null)
             {
                 var cylinder = GameObject.CreatePrimitive(PrimitiveType.Cylinder);

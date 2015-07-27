@@ -3,6 +3,8 @@ using System.Linq;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using UnityEngine;
+using System.Diagnostics;
+using System;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine
 {
@@ -13,9 +15,9 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine
         private bool _firstUpdate = true;
         #endregion
 
-        public TrafficLightsMachine()
-            : base(initialState: State.Hidden)
+        protected override void Awake()
         {
+            CurrentState = State.Hidden;
             Transitions = new List<Transition>
             {
                 new Transition(State.Hidden, Command.DisplayRoadsPanel, State.Deactivated),
@@ -53,27 +55,15 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine
             };
             States = new List<StateBase>
             {
-                gameObject.AddComponent<HiddenState>(),
-                gameObject.AddComponent<Deactivated>(),
-                gameObject.AddComponent<ActivatedState>(),
-                gameObject.AddComponent<HiddenToActivatedState>(),
-                gameObject.AddComponent<ActivatedToHiddenState>(),
-                gameObject.AddComponent<HiddenActivatedState>(),
-                gameObject.AddComponent<ActivatedUiState>(),
+                // added monobehaviours are enabled by default
+                gameObject.AddMonoBehaviourDisabled<HiddenState>(),
+                gameObject.AddMonoBehaviourDisabled<Deactivated>(),
+                gameObject.AddMonoBehaviourDisabled<ActivatedState>(),
+                gameObject.AddMonoBehaviourDisabled<HiddenToActivatedState>(),
+                gameObject.AddMonoBehaviourDisabled<ActivatedToHiddenState>(),
+                gameObject.AddMonoBehaviourDisabled<HiddenActivatedState>(),
+                gameObject.AddMonoBehaviourDisabled<ActivatedUiState>(),
             };
-            
-            // added monobehaviours are enabled by default
-            foreach(var s in States)
-            {
-                if(s.State == CurrentState)
-                {
-                    s.enabled = true;
-                }
-                else
-                {
-                    s.enabled = false;
-                }
-            }
         }
 
         public IList<StateBase> States { get; private set; }
@@ -84,6 +74,11 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine
 
         public void Update()
         {
+            if(States == null)
+            {
+                return;
+            }
+
             var state = GetCurrentState();
 
             if (_firstUpdate)

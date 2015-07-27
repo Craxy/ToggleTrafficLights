@@ -79,14 +79,14 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine
         }
     }
 
-    public class StateMachine : MonoBehaviour
+    public abstract class StateMachine : MonoBehaviour
     {
         public IList<Transition> Transitions { get; set; }
-        public State CurrentState { get; private set; }
+        public State CurrentState { get; protected set; }
 
-        public StateMachine(State initialState)
+        protected virtual void Awake()
         {
-            CurrentState = initialState;
+            CurrentState = State.Hidden;
             Transitions = new List<Transition>(0);
         }
 

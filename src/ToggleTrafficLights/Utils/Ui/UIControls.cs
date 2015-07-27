@@ -58,7 +58,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Ui
             return cb;
         }
 
-        public static void DestroyAllComponents(UIComponent parent)
+        public static void DestroyAllComponents(this UIComponent parent)
         {
             foreach (var c in parent.GetComponentsInChildren<UIComponent>())
             {

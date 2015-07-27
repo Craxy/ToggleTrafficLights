@@ -4,6 +4,8 @@
     {
         State State { get; }
 
+        void Awake();
+
         void Enable();
         void Disable();
 

@@ -3,6 +3,7 @@ using ColossalFramework;
 using ColossalFramework.UI;
 using UnityEngine;
 using Object = UnityEngine.Object;
+using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Ui;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
 {
@@ -10,11 +11,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
     {
         private UICheckBox _cbUnderground;
         private UICheckBox _cbOverground;
-
-        public UndergroundModePanel()
-        {
-
-        }
 
         #region Overrides of Monobehavior
 
@@ -118,6 +114,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
 
         public override void OnDestroy()
         {
+            this.DestroyAllComponents();
+
             base.OnDestroy();
         }
 

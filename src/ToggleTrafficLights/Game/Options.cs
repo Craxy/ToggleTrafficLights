@@ -34,7 +34,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
         #region Traffic Lights Tool
         public static class ToggleTrafficLightsTool
         {
-            public static readonly ChangingValue<GroundMode> GroundMode = ChangingValue.Create<GroundMode>(Options.GroundMode.Overground);
+            public static readonly ChangingValue<GroundMode> GroundMode = ChangingValue.Create(Options.GroundMode.Overground);
 
             public static readonly ChangingValue<Color> HasTrafficLightsColor = ChangingValue.Create(new Color(0.2f, 0.749f, 0.988f, 1.0f));
             public static readonly ChangingValue<Color> HasNoTrafficLightsColor = ChangingValue.Create(new Color(0.0f, 0.369f, 0.525f, 1.0f));
@@ -45,7 +45,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
 
         public static class HighlightIntersections
         {
-            public static readonly ChangingValue<GroundMode> IntersectionsToHighlight = ChangingValue.Create(GroundMode.None);
+            public static readonly ChangingValue<GroundMode> IntersectionsToHighlight = ChangingValue.Create(GroundMode.Underground);
             // yeah....using a mistake (settings in static class) and add something that shoud neither be in a static class nor in a settings class...
             public static event UnitToUnit RecalculateColorForAllIntersections;
             public static void RequestRecalculateColorForAllIntersections()

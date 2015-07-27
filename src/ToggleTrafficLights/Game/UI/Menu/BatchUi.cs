@@ -211,16 +211,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
 
                 GUILayout.Space(10f);
                 ShowBatchCommandsGui();
-
-
-//                if (IntersectionHightlighting != null)
-//                {
-//                    GUILayout.Space(10f);
-//                    GUILayout.Box("", GUILayout.ExpandWidth(true), GUILayout.Height(1));
-//                    GUILayout.Space(10f);
-//
-//                    ShowIntersectionHighlightingGui();
-//                }
             }
         }
 
@@ -329,8 +319,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
         public delegate bool ShouldHaveLights(ushort id, NetNode node, bool hasLights);
         public ChangedStatistics ChangeTrafficLights(ShouldHaveLights shouldHaveLights)
         {
-            //todo: must recalate colors of highlighted intersections
-
             var changes = new ChangedStatistics();
 
             var netManager = Singleton<NetManager>.instance;

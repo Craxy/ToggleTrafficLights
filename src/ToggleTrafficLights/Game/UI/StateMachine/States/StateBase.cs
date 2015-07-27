@@ -34,6 +34,13 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
 
         public abstract State State { get; }
 
+        public virtual void Awake()
+        {
+            //"hack" to add the state-monobehaviours disabled
+            // else the OnEnable is called once when GameObject.AddComponent<StateBase>
+            Disable();
+        }
+
         public void Enable()
         {
             enabled = true;

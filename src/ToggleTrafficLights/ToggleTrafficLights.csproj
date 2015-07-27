@@ -114,6 +114,7 @@
     <Compile Include="Utils\FunctionalHelper.cs" />
     <Compile Include="Utils\Log.cs" />
     <Compile Include="Utils\MeshHelper.cs" />
+    <Compile Include="Utils\MonoBehaviorHelper.cs" />
     <Compile Include="Utils\Option.cs" />
     <Compile Include="Utils\ChangingValue.cs" />
     <Compile Include="Utils\Result.cs" />
