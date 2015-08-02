@@ -82,9 +82,11 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
             var g = UIHelper.AddUIGroup("Hallo Welt");
 
             g.AddUIButton("Hallo Welt", () => DebugLog.Info("LALALALA"));
-//            var withLights = g.AddUIColorPanel("with lights:", Options.ToggleTrafficLightsTool.HasTrafficLightsColor.Value);
-//                withLights.ColorChanged += (_, args) => Options.ToggleTrafficLightsTool.HasTrafficLightsColor.Value = args.Value;
-//                Options.ToggleTrafficLightsTool.HasTrafficLightsColor.ValueChanged += (_, c) => withLights.Color = c;
+
+            var withLights = g.AddUIColorPanel("with lights:", Options.ToggleTrafficLightsTool.HasTrafficLightsColor.Value);
+            withLights.name = "WithLights";
+            withLights.ColorChanged += (_, args) => Options.ToggleTrafficLightsTool.HasTrafficLightsColor.Value = args.Value;
+            Options.ToggleTrafficLightsTool.HasTrafficLightsColor.ValueChanged += (_, c) => withLights.Color = c;
 //                //
 //                //                var withoutLights = g.AddUIColorPanel("without lights:", Options.ToggleTrafficLightsTool.HasTrafficLightsColor.Value);
 //                //                withoutLights.ColorChanged += (_, args) => Options.ToggleTrafficLightsTool.HasTrafficLightsColor.Value = args.Value;

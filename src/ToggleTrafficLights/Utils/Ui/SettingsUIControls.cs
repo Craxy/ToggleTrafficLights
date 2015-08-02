@@ -82,6 +82,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Ui
         {
             var root = helper.GetRoot();
 
+            // UIColorPanel is not a available to copy in settings editor...
             var colorPanel = root.AddUIComponent<UIColorPanel>();
             colorPanel.Title = title;
             colorPanel.Color = defaultColor;

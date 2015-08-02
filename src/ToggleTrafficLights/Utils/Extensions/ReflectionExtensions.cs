@@ -5,12 +5,23 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions
 {
     public static class ReflectionExtensions
     {
+        public static TResult GetNonPublicStaticField<TSource, TResult>(this TSource obj, string name)
+        {
+            var fi = typeof(TSource).GetField(name, BindingFlags.Static | BindingFlags.NonPublic);
+            if (fi == null)
+            {
+                throw new ArgumentException("TSource does not contain the specified field", nameof(name));
+            }
+
+            return (TResult)fi.GetValue(null);
+        }
+
         public static TResult GetNonPublicField<TSource, TResult>(this TSource obj, string name)
         {
             var fi = typeof(TSource).GetField(name, BindingFlags.Instance | BindingFlags.NonPublic);
             if (fi == null)
             {
-                throw new ArgumentException("TSource does not contain the specified field", "name");
+                throw new ArgumentException("TSource does not contain the specified field", nameof(name));
             }
 
             return (TResult) fi.GetValue(obj);
@@ -20,7 +31,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions
             var fi = typeof(TSource).GetField(name, BindingFlags.Instance | BindingFlags.NonPublic);
             if (fi == null)
             {
-                throw new ArgumentException("TSource does not contain the specified field", "name");
+                throw new ArgumentException("TSource does not contain the specified field", nameof(name));
             }
 
             fi.SetValue(obj, value);
@@ -31,7 +42,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions
             var mi = typeof (TSource).GetMethod(name, BindingFlags.Instance | BindingFlags.NonPublic);
             if (mi == null)
             {
-                throw new ArgumentException("TSource does not contain the specified method", "name");
+                throw new ArgumentException("TSource does not contain the specified method", nameof(name));
             }
 
             mi.Invoke(obj, args);
@@ -41,7 +52,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions
             var mi = typeof (TSource).GetMethod(name, BindingFlags.Instance | BindingFlags.NonPublic);
             if (mi == null)
             {
-                throw new ArgumentException("TSource does not contain the specified method", "name");
+                throw new ArgumentException("TSource does not contain the specified method", nameof(name));
             }
 
             return (TResult) mi.Invoke(obj, args);
@@ -52,7 +63,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions
             var mi = typeof(TSource).GetMethod(name, BindingFlags.Static | BindingFlags.NonPublic);
             if (mi == null)
             {
-                throw new ArgumentException("TSource does not contain the specified method", "name");
+                throw new ArgumentException("TSource does not contain the specified method", nameof(name));
             }
 
             mi.Invoke(null, args);
@@ -62,7 +73,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions
             var mi = typeof(TSource).GetMethod(name, BindingFlags.Static | BindingFlags.NonPublic);
             if (mi == null)
             {
-                throw new ArgumentException("TSource does not contain the specified method", "name");
+                throw new ArgumentException("TSource does not contain the specified method", nameof(name));
             }
 
             return (TResult)mi.Invoke(null, args);

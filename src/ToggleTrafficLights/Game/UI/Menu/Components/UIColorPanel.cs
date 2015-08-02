@@ -154,21 +154,133 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu.Components
         {
             const float offset = 5.0f;
 
+            height = 25.0f;
+
             _lblTitle = AddUIComponent<UILabel>();
             _lblTitle.name = "Caption";
             _lblTitle.text = Title;
             _lblTitle.textScale = 0.9f;
             _lblTitle.relativePosition = new Vector3(0.0f, ((height - _lblTitle.height) / 2.0f));
 
-//            _cfColor = AddUIComponent<UIColorField>();
-            _cfColor = Instantiate(FindObjectOfType<UIColorField>().gameObject).GetComponent<UIColorField>();
-            AttachUIComponent(_cfColor.gameObject);
-            _cfColor.name = "Color";
+            //todo; UIColorField is not a available to copy in C:S settings menu...
+
+            /*
+            https://github.com/SamsamTS/CS-AdvancedVehicleOptions/blob/cad9857d393dc420c757d3e238f68fa848d4195b/AdvancedVehicleOptions/GUI/UIUtils.cs
+            https://github.com/Gurkenschreck/Skylines-ELESDE/blob/418d487413ec15b3bc8edd6f28a34009a349a109/ELESDE/ConfigurationButton.cs
+            https://steamcommunity.com/sharedfiles/filedetails/?id=408875519
+            */
+
+            _cfColor = AddUIComponent<UIColorField>();
+            _cfColor.name = "ColorField";
+            _cfColor.normalBgSprite = "ColorPickerOutline";
+            _cfColor.hoveredBgSprite = "ColorPickerOutlineHovered";
+            _cfColor.autoSize = false;
             _cfColor.size = new Vector2(40.0f, height);
             _cfColor.relativePosition = new Vector3(_lblTitle.width + offset, 0.0f);
             _cfColor.pickerPosition = UIColorField.ColorPickerPosition.RightAbove;
+            _cfColor.bringTooltipToFront = true;
+            _cfColor.builtinKeyNavigation = true;
+            _cfColor.canFocus = true;
+            _cfColor.enabled = true;
+            _cfColor.isInteractive = true;
+            _cfColor.isVisible = true;
+            _cfColor.pivot = UIPivotPoint.TopLeft;
+            _cfColor.useDropShadow = false;
+            _cfColor.useGradient = false;
+            _cfColor.useGUILayout = true;
+            _cfColor.useOutline = false;
+            _cfColor.verticalAlignment = UIVerticalAlignment.Top;
+            _cfColor.arbitraryPivotOffset = new Vector2(0, 0);
+            _cfColor.anchor = UIAnchorStyle.Left | UIAnchorStyle.Top;
             _cfColor.selectedColor = Color;
             _cfColor.eventSelectedColorChanged += (_, c) => Color = c;
+            {
+                // button with color and trigger for color picker
+                var btn = _cfColor.AddUIComponent<UIButton>();
+                btn.name = "ColorFieldButton";
+                btn.text = string.Empty;
+                btn.enabled = true;
+                btn.isEnabled = true;
+                btn.isInteractive = true;
+                btn.isVisible = true;
+                btn.useGradient = false;
+                btn.useDropShadow = false;
+                btn.useGUILayout = true;
+                btn.useOutline = false;
+                _cfColor.triggerButton = btn;
+            }
+            {
+                //ColorField requires a UIColorPicker
+                //doesn't have a parent when Instantiate(FindObjectOfType<UIColorField>().gameObject).GetComponent<UIColorField>();
+                var go = new GameObject();
+                //var cp = _cfColor.gameObject.AddComponent<UIColorPicker>();
+                var cp = go.AddComponent<UIColorPicker>();
+                cp.name = "ColorFieldColorPicker";
+                cp.enabled = true;
+                cp.useGUILayout = true;
+                {
+                    // requires slider, sprite & texturesprite
+                    {
+                        var slider = go.AddComponent<UISlider>();
+
+                        slider.anchor = UIAnchorStyle.Top | UIAnchorStyle.Left;
+                        slider.arbitraryPivotOffset = new Vector2(0.0f, 0.0f);
+                        slider.area = new Vector4(0.0f, 0.0f, 18.0f, 200.0f);
+                        slider.autoSize = false;
+                        slider.enabled = true;
+                        slider.isInteractive = true;
+                        slider.isVisible = true;
+                        slider.fillIndicatorObject = null;
+                        slider.fillMode = UIFillMode.Fill;
+                        slider.fillPadding = new RectOffset(1, 0, 0, 0);
+                        slider.minValue = 0;
+                        slider.maxValue = 1;
+
+                        cp.m_HueSlider = slider;
+                    }
+                    {
+                        var indicator = go.AddComponent<UISprite>();
+
+
+                        cp.m_Indicator = indicator;
+                    }
+
+                    var hsbField = go.AddComponent<UITextureSprite>();
+                    cp.m_HSBField = hsbField;
+                }
+                _cfColor.colorPicker = cp;
+            }
+
+
+            //////            _cfColor = AddUIComponent<UIColorField>();
+            ////_cfColor = Instantiate(FindObjectOfType<UIColorField>().gameObject).GetComponent<UIColorField>();
+            ////AttachUIComponent(_cfColor.gameObject);
+            ////_cfColor.name = "Color";
+            ////_cfColor.size = new Vector2(40.0f, height);
+            ////_cfColor.relativePosition = new Vector3(_lblTitle.width + offset, 0.0f);
+            ////_cfColor.pickerPosition = UIColorField.ColorPickerPosition.RightAbove;
+            ////_cfColor.selectedColor = Color;
+            ////_cfColor.eventSelectedColorChanged += (_, c) => Color = c;
+
+            //{
+            //    // get ColorField from DecorationsPropertiesPanel (Editor)
+            //    // template not available outside of editor
+            //    var templateName = ReflectionExtensions.GetNonPublicStaticField<DecorationPropertiesPanel, string>(null, "kColorPropertyTemplate");
+            //    DebugLog.Info("Using Template {0}", templateName);
+            //    var goTemplate = UITemplateManager.GetAsGameObject(templateName);
+            //    DebugLog.Info("Template is {0}", goTemplate);
+            //    var template = goTemplate.GetComponent<UIComponent>().Find<UIColorField>("Value");
+//
+            //    //copy to get autonomy from UITemplateManager
+            //    _cfColor = Instantiate(template.gameObject).GetComponent<UIColorField>();
+            //    AttachUIComponent(_cfColor.gameObject);
+            //    _cfColor.name = "ColorField";
+            //    _cfColor.size = new Vector2(40.0f, height);
+            //    _cfColor.relativePosition = new Vector3(_lblTitle.width + offset, 0.0f);
+            //    _cfColor.pickerPosition = UIColorField.ColorPickerPosition.RightBelow;
+            //    _cfColor.selectedColor = Color;
+            //    _cfColor.eventSelectedColorChanged += (_, c) => Color = c;
+            //}
 
             _lblHashtag = AddUIComponent<UILabel>();
             _lblHashtag.name = "Hashtag";

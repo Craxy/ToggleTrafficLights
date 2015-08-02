@@ -25,13 +25,12 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights
             }
         }
 
-        //// do not use option menu since options for elements are extremly limited...
-        //// called (AND):
-        ////  - loading main menu
-        ////  - loading level: before Deserializing (custom) data
-        //public void OnSettingsUI(UIHelperBase helper)
-        //{
-        //    //SettingsUi.Create(helper);
-        //}
+        // called (AND):
+        //  - loading main menu
+        //  - loading level: before deserializing (custom) data
+        public void OnSettingsUI(UIHelperBase helper)
+        {
+            SettingsUi.Create(helper);
+        }
     }
 }
