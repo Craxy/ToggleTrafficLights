@@ -2,7 +2,8 @@
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
 {
-// ReSharper disable once InconsistentNaming
+    // ReSharper disable once InconsistentNaming
+	// ReSharper disable once UnusedTypeParameter
     public interface Option<T>
     {
     }
@@ -31,7 +32,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
 
         public override string ToString()
         {
-            return string.Format("Some({0})", Value);
+            return $"Some({Value})";
         }
 
         #endregion
@@ -66,7 +67,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
             }
             else
             {
-                throw new ArgumentException("Option is not Some", "option");
+                throw new ArgumentException("Option is not Some", nameof(option));
             }
         }
         

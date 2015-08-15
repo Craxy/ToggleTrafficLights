@@ -1,19 +1,13 @@
-﻿using System.Globalization;
-using System.Reflection;
-using Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu;
-using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
+﻿using System.Reflection;
 using ICities;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights
 {
     public sealed class Mod : IUserMod
     {
-        public string Name
-        {
-            get { return "Toggle Traffic Lights"; }
-        }
+        public string Name => "Toggle Traffic Lights";
 
-        public string Description
+	    public string Description
         {
             get
             {
@@ -25,12 +19,15 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights
             }
         }
 
-        // called (AND):
-        //  - loading main menu
-        //  - loading level: before deserializing (custom) data
-        public void OnSettingsUI(UIHelperBase helper)
-        {
-            SettingsUi.Create(helper);
-        }
+        // I'm not using the Settings Windows in C:S: 
+        //      ColorFields are quite complicated to create from scratch
+        //      and no ColorField to copy is available in Settings Window
+//        // called (AND):
+//        //  - loading main menu
+//        //  - loading level: before deserializing (custom) data
+//        public void OnSettingsUI(UIHelperBase helper)
+//        {
+//            SettingsUi.Create(helper);
+//        }
     }
 }

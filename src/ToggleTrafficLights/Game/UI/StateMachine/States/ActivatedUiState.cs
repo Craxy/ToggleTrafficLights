@@ -1,10 +1,5 @@
-﻿using System;
-using System.Linq;
-using ColossalFramework;
-using ColossalFramework.UI;
+﻿using ColossalFramework.UI;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu;
-using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
-using Object = UnityEngine.Object;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
 {

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Reflection;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Serializer;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;

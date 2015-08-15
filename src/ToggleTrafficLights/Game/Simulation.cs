@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Reflection;
-using ColossalFramework;
-using ColossalFramework.Steamworks;
-using Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI;
-using Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu.Experimental;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions;
 using ICities;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
 {
@@ -152,7 +149,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
             if (_stateMachine != null)
             {
                 _stateMachine.enabled = false;
-                UnityEngine.Object.Destroy(_stateMachine.gameObject);
+                Object.Destroy(_stateMachine.gameObject);
             }
             _stateMachine = null;
                         
@@ -180,7 +177,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
             if (_stateMachine != null)
             {
                 _stateMachine.enabled = false;
-                UnityEngine.Object.Destroy(_stateMachine.gameObject);
+                Object.Destroy(_stateMachine.gameObject);
             }
             _stateMachine = null;
             DebugLog.Message("Level unloaded");

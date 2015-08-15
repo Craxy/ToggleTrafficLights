@@ -334,7 +334,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
                     ActivateAllInfoView();
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException("groundMode");
+                    throw new ArgumentOutOfRangeException(nameof(groundMode));
             }
         }
 

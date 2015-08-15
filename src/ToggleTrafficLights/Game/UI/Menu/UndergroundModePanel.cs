@@ -1,9 +1,7 @@
-﻿using System;
-using ColossalFramework;
+﻿using ColossalFramework;
 using ColossalFramework.UI;
-using UnityEngine;
-using Object = UnityEngine.Object;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Ui;
+using UnityEngine;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
 {
@@ -44,12 +42,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
         public static UndergroundModePanel Get()
         {
             var v = UIView.GetAView();
-            if (v == null)
-            {
-                return null;
-            }
 
-            return v.FindUIComponent<UndergroundModePanel>(Name);
+	        return v?.FindUIComponent<UndergroundModePanel>(Name);
         }
 
         public static string Name = "ToggleTrafficLightsUndergroundModePanel";

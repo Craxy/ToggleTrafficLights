@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using ColossalFramework.UI;
-using Craxy.CitiesSkylines.ToggleTrafficLights.ModTools;
-using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Ui;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu.Components
 {

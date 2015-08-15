@@ -53,7 +53,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Serializer
             if (!Serializers.TryGetValue(version, out s))
             {
                 //TODO: Fehlerbehandlung
-                throw new InvalidOperationException(string.Format("No Serializer with version {0} found!", version));
+                throw new InvalidOperationException($"No Serializer with version {version} found!");
             }
 
             //TODO: Fehlerhandlung?
@@ -75,7 +75,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Serializer
             if (!Serializers.TryGetValue(version, out s))
             {
                 //TODO: Fehlerbehandlung
-                throw new InvalidOperationException(string.Format("No Serializer with version {0} found!", version));
+                throw new InvalidOperationException($"No Serializer with version {version} found!");
             }
 
             DebugLog.Message("Serialize version {0}", version);

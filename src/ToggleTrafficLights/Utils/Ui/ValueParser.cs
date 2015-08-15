@@ -26,7 +26,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Ui
 
             if (LastParseResult.IsNone())
             {
-                throw new ArgumentException("Initial Input must parse to a valid value.", "initialInput");
+                throw new ArgumentException("Initial Input must parse to a valid value.", nameof(initialInput));
             }
         }
 
@@ -53,7 +53,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Ui
             {
                 if (value == null)
                 {
-                    throw new ArgumentException("Option can not be null.", "value");
+                    throw new ArgumentException("Option can not be null.", nameof(value));
                 }
 
                 if (value != LastParseResult)
@@ -73,7 +73,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Ui
             get { return LastParseResult.IsSome(); }
         }
 
-        public Func<string, Option<TResult>> Parse { get; private set; }
+        public Func<string, Option<TResult>> Parse { get; }
     }
 
     public static class Parser

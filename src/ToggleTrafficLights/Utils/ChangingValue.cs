@@ -1,7 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Xml.Linq;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
 {
@@ -45,10 +42,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
         protected virtual void OnValueChanged(T oldvalue, T newvalue)
         {
             var handler = ValueChanged;
-            if (handler != null)
-            {
-                handler(oldvalue, newvalue);
-            }
+	        handler?.Invoke(oldvalue, newvalue);
         }
 
         public static implicit operator T([NotNull] ChangingValue<T> v)

@@ -1,6 +1,4 @@
 ﻿using ColossalFramework;
-using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
-using UnityEngine;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 {
@@ -12,8 +10,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 
             if (m_mouseRayValid && GetNodeIgnoreFlags() != NetNode.Flags.All)
             {
-                var defaultService = new ToolBase.RaycastService(ItemClass.Service.Road, ItemClass.SubService.None, GetNodeLayerIncludeFlags());
-                var input = new ToolBase.RaycastInput(m_mouseRay, m_mouseRayLength)
+                var defaultService = new RaycastService(ItemClass.Service.Road, ItemClass.SubService.None, GetNodeLayerIncludeFlags());
+                var input = new RaycastInput(m_mouseRay, m_mouseRayLength)
                 {
                     m_rayRight = m_rayRight,
                     m_netService = defaultService,

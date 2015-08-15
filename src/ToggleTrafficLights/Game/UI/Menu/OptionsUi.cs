@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using ColossalFramework.UI;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu.Components;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;

@@ -2,9 +2,6 @@
 using System.Linq;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
-using UnityEngine;
-using System.Diagnostics;
-using System;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine
 {

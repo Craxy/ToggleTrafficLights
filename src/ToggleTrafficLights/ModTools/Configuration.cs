@@ -1,6 +1,4 @@
-﻿using System.IO;
-using System.Xml.Serialization;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.ModTools
 {

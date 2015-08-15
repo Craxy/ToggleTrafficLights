@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using ColossalFramework;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
-using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Serializer
 {

@@ -1,7 +1,5 @@
 ﻿using System;
-using ColossalFramework.Steamworks;
 using ColossalFramework.UI;
-using JetBrains.Annotations;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -89,16 +87,10 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
         private static readonly Layout _horizontal = new Layout(() => GUILayout.BeginHorizontal(), GUILayout.EndHorizontal);
         private static readonly Layout _vertical = new Layout(() => GUILayout.BeginVertical(), GUILayout.EndVertical);
 
-        public static Layout Horizontal()
-        {
-            return _horizontal.Begin();
-        }
-        public static Layout Vertical()
-        {
-            return _vertical.Begin();
-        }
+        public static Layout Horizontal() => _horizontal.Begin();
+	    public static Layout Vertical() => _vertical.Begin();
 
-        private readonly Action _begin;
+	    private readonly Action _begin;
         private readonly Action _end;
 
         private Layout(Action begin, Action end)

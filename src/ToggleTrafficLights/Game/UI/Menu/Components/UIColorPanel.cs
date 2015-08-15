@@ -4,7 +4,6 @@ using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Ui;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu.Components
 {

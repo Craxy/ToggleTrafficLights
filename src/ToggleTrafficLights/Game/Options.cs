@@ -51,10 +51,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
             public static void RequestRecalculateColorForAllIntersections()
             {
                 var handler = RecalculateColorForAllIntersections;
-                if (handler != null)
-                {
-                    handler();
-                }
+	            handler?.Invoke();
             }
 
             public static readonly ChangingValue<Color> HasTrafficLightsColor = ChangingValue.Create(new Color(0.56f, 1.0f, 0.56f, 1.0f));

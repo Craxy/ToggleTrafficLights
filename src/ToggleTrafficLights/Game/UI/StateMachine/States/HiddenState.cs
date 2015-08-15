@@ -1,6 +1,4 @@
-﻿using ColossalFramework.UI;
-
-namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
+﻿namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
 {
     public class HiddenState : StateBase
     {

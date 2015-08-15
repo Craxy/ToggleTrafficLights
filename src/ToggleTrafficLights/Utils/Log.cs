@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using ColossalFramework;
-using ColossalFramework.HTTP.Paradox;
 using ColossalFramework.Plugins;
 using JetBrains.Annotations;
+using Debug = UnityEngine.Debug;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
 {
@@ -13,12 +13,12 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
 
         internal static string AppendPrefix(string text)
         {
-            return string.Format("[{0}] {1}", Prefix, text);
+            return $"[{Prefix}] {text}";
         }
 
         internal static string FormatMessage(PluginManager.MessageType messageType, string text)
         {
-            return string.Format("[{0}][{1}] {2}", Prefix, messageType, text);
+            return $"[{Prefix}][{messageType}] {text}";
         }
 
         public static void Generic(PluginManager.MessageType messageType, string text)
@@ -28,7 +28,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
             DebugOutputPanel.AddMessage(messageType, msg);
 
 #if DEBUG
-            CODebugBase<LogChannel>.Log(LogChannel.Modding, string.Format("{0}: {1}", messageType.ToString("G"), msg));
+            CODebugBase<LogChannel>.Log(LogChannel.Modding, $"{messageType.ToString("G")}: {msg}");
 #endif
         }
 
@@ -83,16 +83,16 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
             switch (messageType)
             {
                 case PluginManager.MessageType.Error:
-                    UnityEngine.Debug.LogError(msg);
+                    Debug.LogError(msg);
                     break;
                 case PluginManager.MessageType.Warning:
-                    UnityEngine.Debug.LogWarning(msg);
+                    Debug.LogWarning(msg);
                     break;
                 case PluginManager.MessageType.Message:
-                    UnityEngine.Debug.Log(msg);
+                    Debug.Log(msg);
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException("messageType");
+                    throw new ArgumentOutOfRangeException(nameof(messageType));
             }
 
 //            CODebugBase<LogChannel>.Log(LogChannel.Modding, string.Format("{0}: {1}", messageType.ToString("G"), msg));
@@ -148,7 +148,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
     {
         public static void Generic(ErrorLevel errorLevel, string text)
         {
-            var msg = string.Format("[{0}] {1}", "ToggleTrafficLights", text);
+            var msg = $"[{"ToggleTrafficLights"}] {text}";
             CODebugBase<LogChannel>.Log(LogChannel.Modding, msg, errorLevel);
         }
 

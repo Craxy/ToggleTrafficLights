@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-using ColossalFramework.Steamworks;
-using ColossalFramework.UI;
+﻿using ColossalFramework.UI;
 using UnityEngine;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Ui
@@ -49,11 +47,11 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Ui
             btn.horizontalAlignment = UIHorizontalAlignment.Right;
             btn.verticalAlignment = UIVerticalAlignment.Middle;
 
-            cb.eventSizeChanged += new PropertyChangedEventHandler<Vector2>((c, t) =>
+            cb.eventSizeChanged += (c, t) =>
             {
-                btn.size = t; 
-                cb.listWidth = (int)t.x;
-            });
+	            btn.size = t; 
+	            cb.listWidth = (int)t.x;
+            };
 
             return cb;
         }

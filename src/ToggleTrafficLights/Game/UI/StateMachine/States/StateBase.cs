@@ -13,7 +13,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
 
 
         #region ctor
-        public StateBase()
+	    protected StateBase()
         {
             name = "State {0}".Format(State);
         }

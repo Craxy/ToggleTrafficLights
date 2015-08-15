@@ -1,6 +1,4 @@
-﻿using ColossalFramework.Steamworks;
-
-namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
+﻿namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
 {
     public struct ChangedValue<T>
     {

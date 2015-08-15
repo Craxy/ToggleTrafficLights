@@ -2,7 +2,8 @@
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
 {
-// ReSharper disable once InconsistentNaming
+	// ReSharper disable once InconsistentNaming
+	// ReSharper disable once UnusedTypeParameter
     public interface Result<T>
     {
          
@@ -14,7 +15,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
         {
             Reason = reason;
         }
-        public string Reason { get; private set; }
+        public string Reason { get; }
     }
     public sealed class Success<T> : Result<T>
     {
@@ -23,7 +24,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
             Value = value;
         }
 
-        public T Value { get; private set; }
+        public T Value { get; }
     }
 
     public static class Result
@@ -55,7 +56,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
             }
             else
             {
-                throw new ArgumentException("Result is not Success", "result");
+                throw new ArgumentException("Result is not Success", nameof(result));
             }
         }
         public static string GetFailureReason<T>(this Result<T> result)
@@ -67,7 +68,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
             }
             else
             {
-                throw new ArgumentException("Result is not Failure", "result");
+                throw new ArgumentException("Result is not Failure", nameof(result));
             }
         }
 
