@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using JetBrains.Annotations;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions
 {

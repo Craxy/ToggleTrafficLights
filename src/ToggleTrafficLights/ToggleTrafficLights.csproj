@@ -73,6 +73,7 @@
     <Compile Include="Game\UI\Menu\Experimental\HighlightIntersectionsUi.cs" />
     <Compile Include="Game\UI\Menu\OptionsUi.cs" />
     <Compile Include="Game\UI\Menu\SettingsUi.cs" />
+    <Compile Include="Game\UI\Menu\SideMenu.cs" />
     <Compile Include="Game\UI\Menu\UndergroundModePanel.cs" />
     <Compile Include="Game\UI\KeyHelper.cs" />
     <Compile Include="Game\UI\Menu\BatchUi.cs" />
@@ -101,6 +102,9 @@
     <Compile Include="Tools\DefaultToolWithNetNodeDetection.cs" />
     <Compile Include="Tools\ToggleTrafficLightsTool.cs" />
     <Compile Include="Tools\Visualization\IntersectionHighlighting.cs" />
+    <Compile Include="UI\UISideMenu.cs" />
+    <Compile Include="UI\UICaption.cs" />
+    <Compile Include="UI\UIWindow.cs" />
     <Compile Include="Utils\ChangedValue.cs" />
     <Compile Include="Utils\CitiesHelper.cs" />
     <Compile Include="Utils\EventArgs.cs" />
@@ -138,6 +142,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Game\UI\Visualization\" />
+    <Folder Include="UI\Components\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

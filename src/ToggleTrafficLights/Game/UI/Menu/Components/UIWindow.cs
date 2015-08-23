@@ -53,7 +53,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu.Components
         {
             base.OnDestroy();
 
-            UIControls.DestroyAllComponents(this);
+            this.DestroyAllComponents();
         }
 
         #endregion
