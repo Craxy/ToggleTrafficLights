@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Reflection;
+using Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions;
 using ICities;
 using UnityEngine;
 using Object = UnityEngine.Object;
+using SideMenu = Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu.SideMenu;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
 {
@@ -71,14 +73,25 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
 
             Simulation.OnUpdate(realTimeDelta, simulationTimeDelta);
 
-//#if DEBUG
-//            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.P))
-//            {
-////                MyHighlightTestTool.ToggleActivated();
-//                HighlightIntersectionsUi.ToggleShow();
-//            }
-//#endif
+#if DEBUG
+            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.P))
+            {
+                DebugLog.Info("Do Something MonoBehaviour");
+
+                var isEnabled = _mb != null && _mb.enabled;
+                if (_mb == null)
+                {
+                    DebugLog.Info("Created MonoBehaviour");
+                    var go = new GameObject("TestMonoBehaviour");
+                    _mb = go.AddComponent<SideMenu>();
+                }
+
+                _mb.enabled = !isEnabled;
+            }
+#endif
         }
+
+        private MonoBehaviour _mb = null;
 
         #endregion
     }
@@ -121,11 +134,11 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
             {
                 DebugLog.Info("Current State: {0}", _stateMachine.CurrentState);
                 DebugLog.Info("Current tool: {0}", ToolsModifierControl.toolController.CurrentTool);
-                //DebugLog.Info("States:");
-                //foreach (var s in _stateMachine.States)
-                //{
-                //    DebugLog.Info("      {0} -- enabled={1}", s.State, s.enabled);
-                //}
+//                DebugLog.Info("States:");
+//                foreach (var s in _stateMachine.States)
+//                {
+//                    DebugLog.Info("      {0} -- enabled={1}", s.State, s.enabled);
+//                }
             }
 #endif
 
