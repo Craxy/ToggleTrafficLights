@@ -104,7 +104,6 @@
     <Compile Include="Tools\Visualization\IntersectionHighlighting.cs" />
     <Compile Include="UI\SideMenu\Contents\TestContent.cs" />
     <Compile Include="UI\SideMenu\SideMenu.cs" />
-    <Compile Include="UI\SideMenu\SideMenuContent.cs" />
     <Compile Include="Utils\ChangedValue.cs" />
     <Compile Include="Utils\CitiesHelper.cs" />
     <Compile Include="Utils\EventArgs.cs" />

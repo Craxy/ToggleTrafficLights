@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
-using ColossalFramework.UI;
-using Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu.Components;
+﻿using ColossalFramework.UI;
 using Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu.Contents;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Ui;
 using JetBrains.Annotations;
 using UnityEngine;
+using Debug = System.Diagnostics.Debug;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu
 {
@@ -19,22 +18,31 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu
         private UITabContainer _container;
 
         #region tabs
-        private readonly IList<SideMenuContent> _contents = new List<SideMenuContent>();
-        public void AddContent<T>()
-            where T : SideMenuContent
-        {
-            var c = _contentPanel.AddUIComponent<T>();
-            c.isVisible = false;
-            AddTab(c);
-        }
 
-        private void AddTab<T>([NotNull] T content)
-            where T : SideMenuContent
+        public UIPanel AddTab(string title)
         {
-            _contents.Add(content);
 
-            var btn = _tabstrip.AddTab(content.Title);
-            //todo: setup
+            //use policies panel as template
+            var ts = ToolsModifierControl.policiesPanel.Find("Tabstrip") as UITabstrip;
+            Debug.Assert(ts != null, "ts != null");
+            var template = ts.tabs.FirstOrDefault(t => t is UIButton) as UIButton;
+
+            var btn = _tabstrip.AddTab(title, template, true);
+            // update with of tab buttons
+            {
+                var width = _tabstrip.width/ ((float)_tabstrip.tabCount);
+                _tabstrip.tabs.ForEach(t => t.width = width);
+            }
+
+            var page = _tabstrip.tabPages.components[_tabstrip.tabPages.childCount - 1];
+            page.relativePosition = new Vector3(0.0f, 0.0f);
+
+            //todo: scrollable panel
+            var pnl = page.AddUIComponent<UIPanel>();
+            pnl.name = "Content";
+            pnl.relativePosition = new Vector3(0.0f, 0.0f);
+            pnl.size = page.size;
+            return pnl;
         }
         #endregion
 
@@ -127,40 +135,61 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu
                 _tabstrip.relativePosition = new Vector3(marginLeft, fromTop);
                 _tabstrip.width = Width - marginLeft - marginRight;
 
-                _tabstrip.eventSelectedIndexChanged += OnSelectedMenuItemChanged;
-
-                // container
-                {
-                    _container = _root.AddUIComponent<UITabContainer>();
-                    _container.name = "ContentContainer";
-
-                    _container.backgroundSprite = "UnlockingPanel2";
-
-                    _container.relativePosition = new Vector3(marginLeft, fromTop);
-                    _container.size = new Vector2(_root.width - marginLeft - marginRight, _root.height - fromTop  - marginBottom);
-
-                    _tabstrip.tabContainer
-                }
-
                 fromTop += _tabstrip.height;
             }
-//            fromTop +=  marginTop;
-//            // content
-//            {
-//                _contentPanel = _root.AddUIComponent<UIScrollablePanel>();
-//                _contentPanel.name = "ContentPanel";
-//
-//                //todo: remove
-//                _contentPanel.backgroundSprite = "UnlockingPanel2";
-//
-//                _contentPanel.relativePosition = new Vector3(marginLeft, fromTop);
-//                _contentPanel.size = new Vector2(_root.width - marginLeft - marginRight, _root.height - fromTop  - marginBottom);
-//            }
+
+            fromTop += marginTop;
+            // content container
+            {
+                _container = _root.AddUIComponent<UITabContainer>();
+                _container.name = "ContentContainer";
+
+                _container.backgroundSprite = "UnlockingPanel2";
+
+                _container.relativePosition = new Vector3(marginLeft, fromTop);
+                _container.size = new Vector2(_root.width - marginLeft - marginRight, _root.height - fromTop - marginBottom);
+
+                // there are two properties that return the m_TabContainer: UITabstrip.tabContainer and UITabstrip.tabPages
+                //      but only tabPages has a setter -- and it wants a UITabContainer
+                //      because LOGIC...
+                _tabstrip.tabPages = _container;
+            }
+
+            //            fromTop +=  marginTop;
+            //            // content
+            //            {
+            //                _contentPanel = _root.AddUIComponent<UIScrollablePanel>();
+            //                _contentPanel.name = "ContentPanel";
+            //
+            //                //todo: remove
+            //                _contentPanel.backgroundSprite = "UnlockingPanel2";
+            //
+            //                _contentPanel.relativePosition = new Vector3(marginLeft, fromTop);
+            //                _contentPanel.size = new Vector2(_root.width - marginLeft - marginRight, _root.height - fromTop  - marginBottom);
+            //            }
 
             // add tabs
             {
-                AddContent<TestContent>();
-                AddContent<TestContent>();
+                {
+                    var page = AddTab("Test 1");
+                    page.AddUIComponent<TestContent>();
+                }
+
+                {
+                    var page = AddTab("Test 2");
+                    page.AddUIComponent<TestContent>();
+                }
+            }
+
+            _tabstrip.selectedIndex = 0;
+            {
+                var i = 0;
+                foreach (var p in _tabstrip.tabPages.components)
+                {
+                    p.isVisible = i == _tabstrip.selectedIndex;
+
+                    i++;
+                }
             }
 
         }
@@ -190,17 +219,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu
         private void OnDisable()
         {
             _root.isVisible = false;
-        }
-        #endregion
-
-        #region menu
-        private void OnSelectedMenuItemChanged(UIComponent component, int value)
-        {
-            OnSelectedMenuItemChanged(_contents[value]);
-        }
-        private void OnSelectedMenuItemChanged([NotNull] SideMenuContent selectedContent)
-        {
-            DebugLog.Info("Selected: {0}", selectedContent.Title);
         }
         #endregion
     }
