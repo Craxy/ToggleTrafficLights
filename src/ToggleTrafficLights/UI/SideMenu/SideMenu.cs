@@ -1,5 +1,6 @@
 ﻿using ColossalFramework.UI;
 using Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu.Contents;
+using Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu.Pages;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Ui;
 using JetBrains.Annotations;
@@ -144,7 +145,9 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu
                 _container = _root.AddUIComponent<UITabContainer>();
                 _container.name = "ContentContainer";
 
-                _container.backgroundSprite = "UnlockingPanel2";
+//                _container.backgroundSprite = "UnlockingPanel2";
+                _container.backgroundSprite = "GenericPanel";
+                _container.color = new Color32(91, 97, 106, 255);
 
                 _container.relativePosition = new Vector3(marginLeft, fromTop);
                 _container.size = new Vector2(_root.width - marginLeft - marginRight, _root.height - fromTop - marginBottom);
@@ -171,12 +174,17 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu
             // add tabs
             {
                 {
-                    var page = AddTab("Test 1");
+                    var page = AddTab("Batch cmds");
                     page.AddUIComponent<TestContent>();
                 }
 
                 {
-                    var page = AddTab("Test 2");
+                    var page = AddTab("Usage");
+                    page.AddUIComponent<UsageTab>();
+                }
+
+                {
+                    var page = AddTab("Options");
                     page.AddUIComponent<TestContent>();
                 }
             }

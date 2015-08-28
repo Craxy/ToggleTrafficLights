@@ -103,6 +103,7 @@
     <Compile Include="Tools\ToggleTrafficLightsTool.cs" />
     <Compile Include="Tools\Visualization\IntersectionHighlighting.cs" />
     <Compile Include="UI\SideMenu\Contents\TestContent.cs" />
+    <Compile Include="UI\SideMenu\Pages\UsageTab.cs" />
     <Compile Include="UI\SideMenu\SideMenu.cs" />
     <Compile Include="Utils\ChangedValue.cs" />
     <Compile Include="Utils\CitiesHelper.cs" />
@@ -110,6 +111,7 @@
     <Compile Include="Utils\Extensions\AttributeExtensions.cs" />
     <Compile Include="Utils\Extensions\CitiesExtensions.cs" />
     <Compile Include="Utils\Extensions\ColorExtensions.cs" />
+    <Compile Include="Utils\Extensions\ListExtensions.cs" />
     <Compile Include="Utils\Extensions\ReflectionExtensions.cs" />
     <Compile Include="Utils\Extensions\StringBuilderExtensions.cs" />
     <Compile Include="Utils\Extensions\StringExtensions.cs" />
