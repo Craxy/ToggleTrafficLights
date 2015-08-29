@@ -14,18 +14,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components
         public abstract class Component
         {
         }
-
-
-//        public class VerticalSpace : Component
-//        {
-//            public float Height { get; }
-//
-//            public VerticalSpace(float height)
-//            {
-//                Height = height;
-//            }
-//
-//        }
         public class Row : Component
         {
             public UIComponent[] Columns { get; }
