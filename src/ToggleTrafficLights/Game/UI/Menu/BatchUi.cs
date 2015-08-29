@@ -181,7 +181,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu
                         Tuple.Create("Right Click", "Reset to default"),
                         Tuple.Create(Options.InputKeys.ElevationDown.ToString(), "Only Underground"),
                         Tuple.Create(Options.InputKeys.ElevationUp.ToString(), "Only Overground"),
-                        Tuple.Create(string.Format("{0}+{1}", Options.InputKeys.ElevationDown.ToString(), Options.InputKeys.ElevationUp.ToString()), "Both Overground & Underground"),
+                        Tuple.Create(string.Format("{0}+{1}", Options.InputKeys.ElevationDown, Options.InputKeys.ElevationUp), "Both Overground & Underground"),
                     };
 
                     var skin = new GUIStyle(GUI.skin.label) {fontSize = 11};

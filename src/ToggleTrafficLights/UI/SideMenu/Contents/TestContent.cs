@@ -1,4 +1,6 @@
-﻿using ColossalFramework.UI;
+﻿using System;
+using System.Linq;
+using ColossalFramework.UI;
 using UnityEngine;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu.Contents
@@ -19,10 +21,12 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu.Contents
             size = parent.size;
 
             var lbl = AddUIComponent<UILabel>();
-            lbl.text = "Hallo Welt " + _i++;
-            lbl.textScale = 2.0f;
-
             lbl.relativePosition = new Vector3(10.0f, 10.0f);
+            //            lbl.anchor = UIAnchorStyle.All;
+            lbl.wordWrap = true;
+            lbl.maximumSize = new Vector2(width - 20.0f, 0.0f);
+            lbl.text = "Hallo Welt " + _i++ + ( string.Join(" ", Enumerable.Repeat("blablabla", 10).ToArray()) );
+            lbl.textScale = 1.5f;
         }
 
         #endregion
