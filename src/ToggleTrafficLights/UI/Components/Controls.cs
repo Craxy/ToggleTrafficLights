@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using ColossalFramework.UI;
+using Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu.Pages;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -109,7 +110,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components
         #endregion
 
         #region placement
-        public static IList<Row> SpreadVertical(this IList<Row> rows)
+        public static IList<Row> SpreadVertical(this IList<Row> rows, ITabSettings settings)
         {
             var top = 0.0f;
 
@@ -122,13 +123,13 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components
 
                 top += row.Columns.Max(c => c.height);
 
-                top += 3.0f;
+                top += settings.VerticalSpaceBetweenLines;
             }
 
             return rows;
         }
 
-        public static IList<Row> SpreadHorizontal(this IList<Row> rows)
+        public static IList<Row> SpreadHorizontal(this IList<Row> rows, ITabSettings settings)
         {
             
                 foreach (var row in rows)
@@ -140,14 +141,14 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components
                         c.relativePosition = new Vector3(left, c.relativePosition.y);
                         left += c.relativePosition.x + c.width;
             
-                        left += 2.0f;
+                        left += settings.IndentationBetweenColumns;
                     }
                 }
             
                 return rows;
         }
 
-        public static IList<Row> LimitLastLabelsWidthToParent(this IList<Row> rows, UIComponent parent)
+        public static IList<Row> LimitLastComponentsWidthToParent(this IList<Row> rows, UIComponent parent, ITabSettings settings)
         {
             var w = parent.width;
 
@@ -171,7 +172,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components
             return rows;
         }
 
-        public static IList<Row> AlignColumns(this IList<Row> rows)
+        public static IList<Row> AlignColumns(this IList<Row> rows, ITabSettings settings)
         {
             //determine max length for each column
             var maxs = new float[rows.Max(r => r.Columns.Length)];
@@ -199,7 +200,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components
                     c.relativePosition = new Vector3(left, c.relativePosition.y);
                     
                     var max = maxs[i];
-                    left += max + 2.0f;
+                    left += max + settings.IndentationBetweenColumns;
 
                     i++;
                 }
@@ -207,6 +208,20 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components
 
             return rows;
         }
+
+        public static IList<Row> IndentRows(this IList<Row> rows, ITabSettings settings)
+        {
+            var indention = settings.ContentRowIndentation;
+            foreach (var row in rows)
+            {
+                foreach (var c in row.Columns)
+                {
+                    c.relativePosition = new Vector3(c.relativePosition.x + indention, c.relativePosition.y);
+                }
+            }
+
+            return rows;
+        } 
         #endregion
 
         #region functional-ish

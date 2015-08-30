@@ -12,28 +12,8 @@ using UnityEngine;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu.Pages
 {
-    public class UsageTab : UIPanel
+    public class UsageTab : TabBase
     {
-
-        #region settings
-
-        private float _left = 5.0f;
-        private float _top = 5.0f;
-
-        private float _verticalSpaceBetweenRows = 2.0f;
-        private float _verticalSpaceBetweenGroups = 2.0f * 3.5f;
-
-        private float _topNextLineIndention = 2.0f;
-        private float _leftRowIndention = 5.0f;
-        private float _minIndentionBetweenTitleAndSeparator = 2.0f;
-        private float _indentionBetweenSeparatorAndContent = 2.0f;
-
-        private string _rowSeparator = ":";
-
-        private float _rowTextScale = 0.8125f;
-        private float _headerTextScale = 1.0f;
-        #endregion
-
         #region Overrides of UIComponent
 
         public override void Start()
@@ -42,38 +22,34 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu.Pages
 
             name = "UsagePanel";
 
-            relativePosition = new Vector3(0.0f, 0.0f);
-            size = parent.size;
-
-//            var top = 5.0f;
-//            var left = 2.0f;
-//            var next = 3.0f;
-//
-//            var indention = 10.0f;
-//            var titleLeft = left + indention;
-//            var contentLeft = 150.0f;
-
-            Action<UILabel> setupHeader = lbl => lbl.TextScale(_headerTextScale).Ignore(); 
-            Action<UILabel> setupRow = lbl => lbl.TextScale(_rowTextScale).Ignore(); 
+            Action<UILabel> setupHeader = lbl => lbl.TextScale(Settings.HeaderRowTextScale).Ignore(); 
+            Action<UILabel> setupRow = lbl => lbl.TextScale(Settings.ContentRowTextScale).Ignore(); 
 
             
             var rows = new List<Controls.Row>();
             {
                 this.AddHeader("Menu", setupHeader).AddTo(rows);
-                this.AddStringRow("Left Click on button".And(_rowSeparator).And("Activate Toggle tool"), setupRow).AddTo(rows);
-                this.AddStringRow("Right Click on button".And(_rowSeparator).And("Activate Toggle tool and display this menu"), setupRow).AddTo(rows);
-                this.AddVerticalSpace(_verticalSpaceBetweenGroups).AddTo(rows);
+                this.AddStringRow("Left Click on button".And(Settings.DefaultRowSeparator).And("Activate TTL tool"), setupRow).AddTo(rows);
+                this.AddStringRow("Right Click on button".And(Settings.DefaultRowSeparator).And("Activate TTL tool and display this menu"), setupRow).AddTo(rows);
+                this.AddVerticalSpace(Settings.VerticalSpaceAfterGroup).AddTo(rows);
                 this.AddHeader("Toggle intersections", setupHeader).AddTo(rows);
-                this.AddStringRow("Left Click".And(_rowSeparator).And("Toggle Traffic Lights"), setupRow).AddTo(rows);
-                this.AddStringRow("Right Click".And(_rowSeparator).And("Reset to default"), setupRow).AddTo(rows);
-
-                //TODO: line weitder bringen
+                this.AddStringRow("Left Click".And(Settings.DefaultRowSeparator).And("Toggle Traffic Lights"), setupRow).AddTo(rows);
+                this.AddStringRow("Right Click".And(Settings.DefaultRowSeparator).And("Reset to default"), setupRow).AddTo(rows);
+                this.AddVerticalSpace(Settings.VerticalSpaceAfterGroup).AddTo(rows);
+                this.AddHeader("Shortcuts", setupHeader).AddTo(rows);
+                this.AddStringRow("Ctrl+T".And(Settings.DefaultRowSeparator).And("(De)Activate TTL (acts like clicking on TTL button)"), setupRow).AddTo(rows);
+                this.AddStringRow("Ctrl+Shift+T".And(Settings.DefaultRowSeparator).And("(De)Activate TTL without opening the Roads Menu"), setupRow).AddTo(rows);
+                this.AddStringRow(Options.InputKeys.ElevationUp.ToString().And(Settings.DefaultRowSeparator).And("Only Overground"), setupRow).AddTo(rows);
+                this.AddStringRow(Options.InputKeys.ElevationDown.ToString().And(Settings.DefaultRowSeparator).And("Only Underground"), setupRow).AddTo(rows);
+                this.AddStringRow($"{Options.InputKeys.ElevationDown}+{Options.InputKeys.ElevationUp}".And(Settings.DefaultRowSeparator).And("Overground and Underground"), setupRow).AddTo(rows);
+                this.AddVerticalSpace(Settings.VerticalSpaceAfterGroup * 10.0f).AddTo(rows);
+                this.AddHeader("A detailed description is available on the GitHub page of this mod: https://github.com/Craxy/ToggleTrafficLights", setupRow).AddTo(rows);
             }
-            rows.SpreadVertical().SpreadHorizontal();
-            rows.OfType<Controls.StringRow>().Cast<Controls.Row>().ToList().AlignColumns();
-            rows.LimitLastLabelsWidthToParent(this).SpreadVertical();
+            rows.SpreadVertical(Settings).SpreadHorizontal(Settings);
+            rows.OfType<Controls.StringRow>().Cast<Controls.Row>().ToList().AlignColumns(Settings).IndentRows(Settings);
+            rows.LimitLastComponentsWidthToParent(this, Settings).SpreadVertical(Settings);
 
-//            rows.SpreadVertical().LimitLastLabelsWidthToParent(this).SpreadVertical();
+//            rows.SpreadVertical().LimitLastComponentsWidthToParent(this).SpreadVertical();
 
 
 

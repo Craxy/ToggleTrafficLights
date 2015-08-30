@@ -11,11 +11,11 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu.Pages
         #region Settings
         public static TabSettings DefaultSettings = new TabSettings();
         public virtual ITabSettings Settings => DefaultSettings;
-
         #endregion
 
-        #region MonoBehaviour
+        protected UIPanel Content { get; private set; }
 
+        #region MonoBehaviour
         public override void Start()
         {
             base.Start();
@@ -24,6 +24,9 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu.Pages
 
             relativePosition = new Vector3(0.0f, 0.0f);
             size = parent.size;
+
+            Content = AddUIComponent<UIPanel>();
+            relativePosition = new Vector3();
         }
         #endregion
     }

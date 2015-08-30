@@ -41,8 +41,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu
             //todo: scrollable panel
             var pnl = page.AddUIComponent<UIPanel>();
             pnl.name = "Content";
-            pnl.relativePosition = new Vector3(0.0f, 0.0f);
-            pnl.size = page.size;
+            pnl.relativePosition = new Vector3(5.0f, 5.0f);
+            pnl.size = new Vector2(page.size.x - 10.0f, page.size.y - 10.0f);
             return pnl;
         }
         #endregion

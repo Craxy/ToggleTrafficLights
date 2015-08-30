@@ -104,6 +104,8 @@
     <Compile Include="Tools\Visualization\IntersectionHighlighting.cs" />
     <Compile Include="UI\Components\Controls.cs" />
     <Compile Include="UI\SideMenu\Contents\TestContent.cs" />
+    <Compile Include="UI\SideMenu\Pages\TabBase.cs" />
+    <Compile Include="UI\SideMenu\Pages\TabSettings.cs" />
     <Compile Include="UI\SideMenu\Pages\UsageTab.cs" />
     <Compile Include="UI\SideMenu\SideMenu.cs" />
     <Compile Include="Utils\ChangedValue.cs" />
