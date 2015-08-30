@@ -23,28 +23,37 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu.Pages
             name = "UsagePanel";
 
             Action<UILabel> setupHeader = lbl => lbl.TextScale(Settings.HeaderRowTextScale).Ignore(); 
-            Action<UILabel> setupRow = lbl => lbl.TextScale(Settings.ContentRowTextScale).Ignore(); 
+            Action<UILabel> setupRow = lbl => lbl.TextScale(Settings.ContentRowTextScale).Ignore();
 
-            
-            var rows = new List<Controls.Row>();
+
+            var rows = new List<Controls.Row>
             {
-                this.AddHeader("Menu", setupHeader).AddTo(rows);
-                this.AddStringRow("Left Click on button".And(Settings.DefaultRowSeparator).And("Activate TTL tool"), setupRow).AddTo(rows);
-                this.AddStringRow("Right Click on button".And(Settings.DefaultRowSeparator).And("Activate TTL tool and display this menu"), setupRow).AddTo(rows);
-                this.AddVerticalSpace(Settings.VerticalSpaceAfterGroup).AddTo(rows);
-                this.AddHeader("Toggle intersections", setupHeader).AddTo(rows);
-                this.AddStringRow("Left Click".And(Settings.DefaultRowSeparator).And("Toggle Traffic Lights"), setupRow).AddTo(rows);
-                this.AddStringRow("Right Click".And(Settings.DefaultRowSeparator).And("Reset to default"), setupRow).AddTo(rows);
-                this.AddVerticalSpace(Settings.VerticalSpaceAfterGroup).AddTo(rows);
-                this.AddHeader("Shortcuts", setupHeader).AddTo(rows);
-                this.AddStringRow("Ctrl+T".And(Settings.DefaultRowSeparator).And("(De)Activate TTL (acts like clicking on TTL button)"), setupRow).AddTo(rows);
-                this.AddStringRow("Ctrl+Shift+T".And(Settings.DefaultRowSeparator).And("(De)Activate TTL without opening the Roads Menu"), setupRow).AddTo(rows);
-                this.AddStringRow(Options.InputKeys.ElevationUp.ToString().And(Settings.DefaultRowSeparator).And("Only Overground"), setupRow).AddTo(rows);
-                this.AddStringRow(Options.InputKeys.ElevationDown.ToString().And(Settings.DefaultRowSeparator).And("Only Underground"), setupRow).AddTo(rows);
-                this.AddStringRow($"{Options.InputKeys.ElevationDown}+{Options.InputKeys.ElevationUp}".And(Settings.DefaultRowSeparator).And("Overground and Underground"), setupRow).AddTo(rows);
-                this.AddVerticalSpace(Settings.VerticalSpaceAfterGroup * 10.0f).AddTo(rows);
-                this.AddHeader("A detailed description is available on the GitHub page of this mod: https://github.com/Craxy/ToggleTrafficLights", setupRow).AddTo(rows);
-            }
+                this.AddHeader("Menu", setupHeader),
+                this.AddStringRow("Left Click on button".And(Settings.DefaultRowSeparator).And("Activate TTL tool"), setupRow),
+                this.AddStringRow("Right Click on button".And(Settings.DefaultRowSeparator).And("Activate TTL tool and display this menu"),
+                    setupRow),
+                this.AddVerticalSpace(Settings.VerticalSpaceAfterGroup),
+                this.AddHeader("Toggle intersections", setupHeader),
+                this.AddStringRow("Left Click".And(Settings.DefaultRowSeparator).And("Toggle Traffic Lights"), setupRow),
+                this.AddStringRow("Right Click".And(Settings.DefaultRowSeparator).And("Reset to default"), setupRow),
+                this.AddVerticalSpace(Settings.VerticalSpaceAfterGroup),
+                this.AddHeader("Shortcuts", setupHeader),
+                this.AddStringRow("Ctrl+T".And(Settings.DefaultRowSeparator).And("(De)Activate TTL (acts like clicking on TTL button)"),
+                    setupRow),
+                this.AddStringRow("Ctrl+Shift+T".And(Settings.DefaultRowSeparator).And("(De)Activate TTL without opening the Roads Menu"),
+                    setupRow),
+                this.AddStringRow(Options.InputKeys.ElevationUp.ToString().And(Settings.DefaultRowSeparator).And("Only Overground"),
+                    setupRow),
+                this.AddStringRow(Options.InputKeys.ElevationDown.ToString().And(Settings.DefaultRowSeparator).And("Only Underground"),
+                    setupRow),
+                this.AddStringRow(
+                    $"{Options.InputKeys.ElevationDown}+{Options.InputKeys.ElevationUp}".And(Settings.DefaultRowSeparator)
+                        .And("Overground and Underground"), setupRow),
+                this.AddVerticalSpace(Settings.VerticalSpaceAfterGroup*10.0f),
+                this.AddHeader(
+                    "A detailed description is available on the GitHub page of this mod: https://github.com/Craxy/ToggleTrafficLights",
+                    setupRow),
+            };
             rows.SpreadVertical(Settings).SpreadHorizontal(Settings);
             rows.OfType<Controls.StringRow>().Cast<Controls.Row>().ToList().AlignColumns(Settings).IndentRows(Settings);
             rows.LimitLastComponentsWidthToParent(this, Settings).SpreadVertical(Settings);
