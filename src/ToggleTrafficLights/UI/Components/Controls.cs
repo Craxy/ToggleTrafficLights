@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using ColossalFramework.UI;
+using Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.Menu.Components;
 using Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu.Pages;
-using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions;
 using JetBrains.Annotations;
 using UnityEngine;
 
@@ -44,6 +43,44 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components
             {
             }
         }
+        public class StringRow : Row
+        {
+            public UILabel[] Labels => (UILabel[])Columns;
+
+            internal StringRow([NotNull] UILabel[] columns)
+                : base((UILabel[])columns)
+            {
+            }
+        }
+
+        public class PanelRow : Row
+        {
+            public UIPanel Panel => (UIPanel) Columns.Single();
+
+            public PanelRow([NotNull] UIPanel panel) 
+                : base(new UIComponent[] { panel })
+            {
+            }
+        }
+        public class ButtonRow : Row
+        {
+            public UIButton Button => (UIButton)Columns.Single();
+
+            public ButtonRow([NotNull] UIButton button)
+                : base(new UIComponent[] { button })
+            {
+            }
+        }
+        public class ColorFieldRow : Row
+        {
+            public UILabel Title => (UILabel) Columns.First();
+            public UIColorField ColorPanel => Columns.OfType<UIColorField>().Single();
+
+            public ColorFieldRow([NotNull] UILabel colorRow)
+                : base(new UIComponent[] { colorRow })
+            {
+            }
+        }
 
         public static VerticalSpace AddVerticalSpace(this UIComponent parent, float height, Action<UIPanel> setup = null)
         {
@@ -56,15 +93,44 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components
             return new VerticalSpace(pnl);
         }
 
-        public class StringRow : Row
-        {
-            public UILabel[] Labels => (UILabel[]) Columns;
 
-            internal StringRow([NotNull] UILabel[] columns) 
-                : base((UILabel[])columns)
-            {
-            }
+
+        public static PanelRow AddPanel<T>(this UIComponent parent, Action<UIPanel> setup = null)
+            where T : UIPanel
+        {
+            var pnl = parent.AddUIComponent<T>();
+
+            setup?.Invoke(pnl);
+
+            return new PanelRow(pnl);
         }
+        public static ButtonRow AddButton(this UIComponent parent, string text, Action onClick, Action<UIButton> setup = null)
+        {
+            var btn = parent.AddUIComponent<UIButton>();
+            btn.text = text;
+            btn.normalBgSprite = "ButtonMenu";
+            btn.hoveredTextColor = new Color32(7, 132, 255, 255);
+
+            if (onClick != null)
+            {
+                btn.eventClick += (_, __) => onClick();
+            }
+
+            setup?.Invoke(btn);
+
+            return new ButtonRow(btn);
+        }
+        public static ColorFieldRow AddColorPicker(this UIComponent parent, string title, Color initialColor, Action<UIColorPanel> setup = null)
+        {
+            var cp = parent.AddUIComponent<UIColorPanel>();
+            cp.Title = title;
+            cp.Color = initialColor;
+
+            setup?.Invoke(cp);
+
+            return new ColorFieldRow(cp);
+        }
+
 
         private static UILabel CreateLabel(this UIComponent parent, string value, Action<UILabel> setup = null)
         {
@@ -99,18 +165,38 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components
             component.tooltip = text;
             return component;
         }
+        public static T Width<T>(this T component, float width)
+            where T : UIComponent
+        {
+            component.width = width;
+            return component;
+        }
+        public static T Height<T>(this T component, float height)
+            where T : UIComponent
+        {
+            component.height = height;
+            return component;
+        }
         #endregion
 
-        #region UILabel
-        public static UILabel TextScale(this UILabel lbl, float textScale)
+        #region TextComponent
+        public static T TextScale<T>(this T txt, float textScale)
+            where T : UITextComponent
         {
-            lbl.textScale = textScale;
-            return lbl;
+            txt.textScale = textScale;
+            return txt;
+        }
+        public static T TextColor<T>(this T txt, Color32 color)
+            where T : UITextComponent
+        {
+            txt.textColor = color;
+            return txt;
         }
         #endregion
 
         #region placement
-        public static IList<Row> SpreadVertical(this IList<Row> rows, ITabSettings settings)
+        public static IList<T> SpreadVertical<T>(this IList<T> rows, ITabSettings settings)
+            where T : Row
         {
             var top = 0.0f;
 
@@ -129,10 +215,12 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components
             return rows;
         }
 
-        public static IList<Row> SpreadHorizontal(this IList<Row> rows, ITabSettings settings)
+        public static IList<T> SpreadHorizontal<T>(this IList<T> rows, ITabSettings settings)
+            where T : Row
+
         {
-            
-                foreach (var row in rows)
+
+            foreach (var row in rows)
                 {
                     var left = 0.0f;
             
@@ -148,7 +236,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components
                 return rows;
         }
 
-        public static IList<Row> LimitLastComponentsWidthToParent(this IList<Row> rows, UIComponent parent, ITabSettings settings)
+        public static IList<T> LimitLastComponentsWidthToParent<T>(this IList<T> rows, UIComponent parent, ITabSettings settings)
+            where T : Row
         {
             var w = parent.width;
 
@@ -172,7 +261,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components
             return rows;
         }
 
-        public static IList<Row> AlignColumns(this IList<Row> rows, ITabSettings settings)
+        public static IList<T> AlignColumns<T>(this IList<T> rows, ITabSettings settings)
+            where T : Row
         {
             //determine max length for each column
             var maxs = new float[rows.Max(r => r.Columns.Length)];
@@ -209,9 +299,9 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components
             return rows;
         }
 
-        public static IList<Row> IndentRows(this IList<Row> rows, ITabSettings settings)
+        public static IList<T> IndentRows<T>(this IList<T> rows, float indention, ITabSettings settings)
+            where T : Row
         {
-            var indention = settings.ContentRowIndentation;
             foreach (var row in rows)
             {
                 foreach (var c in row.Columns)
@@ -221,15 +311,21 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components
             }
 
             return rows;
-        } 
+        }
+
+        public static IList<T> UpdateHeightOfParentToRows<T>(this IList<T> rows, UIComponent parent)
+            where T : Row
+        {
+            var maxHeight = rows.SelectMany(r => r.Columns)
+                                .Select(c => c.relativePosition.y + c.height)
+                                .Max();
+            parent.Height(maxHeight);
+
+            return rows;
+        }
         #endregion
 
         #region functional-ish
-        public static void Ignore<T>(this T _)
-        {
-            return;
-        }
-
         public static IEnumerable<T> And<T>(this IEnumerable<T> values, T value)
         {
             return values.Concat(new[] {value});

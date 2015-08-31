@@ -20,7 +20,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu.Pages
         {
             base.Start();
 
-            name = "UsagePanel";
+            name = "UsageTab";
 
             Action<UILabel> setupHeader = lbl => lbl.TextScale(Settings.HeaderRowTextScale).Ignore(); 
             Action<UILabel> setupRow = lbl => lbl.TextScale(Settings.ContentRowTextScale).Ignore();
@@ -55,7 +55,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu.Pages
                     setupRow),
             };
             rows.SpreadVertical(Settings).SpreadHorizontal(Settings);
-            rows.OfType<Controls.StringRow>().Cast<Controls.Row>().ToList().AlignColumns(Settings).IndentRows(Settings);
+            rows.OfType<Controls.StringRow>().Cast<Controls.Row>().ToList().AlignColumns(Settings).IndentRows(Settings.ContentRowIndentation, Settings);
             rows.LimitLastComponentsWidthToParent(this, Settings).SpreadVertical(Settings);
 
 //            rows.SpreadVertical().LimitLastComponentsWidthToParent(this).SpreadVertical();

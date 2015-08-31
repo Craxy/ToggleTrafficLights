@@ -22,7 +22,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu.Contents
 
             var lbl = AddUIComponent<UILabel>();
             lbl.relativePosition = new Vector3(10.0f, 10.0f);
-            //            lbl.anchor = UIAnchorStyle.All;
             lbl.wordWrap = true;
             lbl.maximumSize = new Vector2(width - 20.0f, 0.0f);
             lbl.text = "Hallo Welt " + _i++ + ( string.Join(" ", Enumerable.Repeat("blablabla", 10).ToArray()) );

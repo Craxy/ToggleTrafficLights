@@ -175,7 +175,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu
             {
                 {
                     var page = AddTab("Batch cmds");
-                    page.AddUIComponent<TestContent>();
+                    page.AddUIComponent<BatchTab>();
                 }
 
                 {
@@ -185,7 +185,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu
 
                 {
                     var page = AddTab("Options");
-                    page.AddUIComponent<TestContent>();
+                    page.AddUIComponent<OptionsTab>();
                 }
             }
 

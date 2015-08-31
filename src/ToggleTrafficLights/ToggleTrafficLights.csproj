@@ -103,7 +103,12 @@
     <Compile Include="Tools\ToggleTrafficLightsTool.cs" />
     <Compile Include="Tools\Visualization\IntersectionHighlighting.cs" />
     <Compile Include="UI\Components\Controls.cs" />
+    <Compile Include="UI\Components\Table.cs" />
     <Compile Include="UI\SideMenu\Contents\TestContent.cs" />
+    <Compile Include="UI\SideMenu\Pages\BatchTab.cs" />
+    <Compile Include="UI\SideMenu\Pages\Batch\BatchCommandsPanel.cs" />
+    <Compile Include="UI\SideMenu\Pages\Batch\StatisticsPanel.cs" />
+    <Compile Include="UI\SideMenu\Pages\OptionsTab.cs" />
     <Compile Include="UI\SideMenu\Pages\TabBase.cs" />
     <Compile Include="UI\SideMenu\Pages\TabSettings.cs" />
     <Compile Include="UI\SideMenu\Pages\UsageTab.cs" />
@@ -111,10 +116,12 @@
     <Compile Include="Utils\ChangedValue.cs" />
     <Compile Include="Utils\CitiesHelper.cs" />
     <Compile Include="Utils\EventArgs.cs" />
+    <Compile Include="Utils\Extensions\ArrayExtensions.cs" />
     <Compile Include="Utils\Extensions\AttributeExtensions.cs" />
     <Compile Include="Utils\Extensions\CitiesExtensions.cs" />
     <Compile Include="Utils\Extensions\ColorExtensions.cs" />
     <Compile Include="Utils\Extensions\EnumerableExtensions.cs" />
+    <Compile Include="Utils\Extensions\FunctionalishExtensions.cs" />
     <Compile Include="Utils\Extensions\ListExtensions.cs" />
     <Compile Include="Utils\Extensions\ReflectionExtensions.cs" />
     <Compile Include="Utils\Extensions\StringBuilderExtensions.cs" />
@@ -147,6 +154,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Game\UI\Visualization\" />
+    <Folder Include="UI\SideMenu\Pages\Options\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
