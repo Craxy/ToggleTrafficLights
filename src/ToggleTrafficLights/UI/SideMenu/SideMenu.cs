@@ -70,7 +70,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu
                 return;
             }
 
-            DebugLog.Info("ParentHeight: {0}", parent.height);
             // todo: why -Top necessary?
             _root.position = new Vector3(Left, -1.0f * Top);
             _root.size = new Vector2(Width, parent.height - Top - Bottom);

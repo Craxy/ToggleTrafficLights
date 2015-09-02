@@ -5,6 +5,7 @@ using ColossalFramework;
 using ColossalFramework.UI;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Tools;
 using Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components;
+using Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components.Table;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu.Pages.Batch
 {
@@ -23,29 +24,29 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu.Pages.Batch
             name = "StatisticsPanel";
             width = parent.width;
 
-            Action<UILabel> setupHeader = lbl => lbl.TextScale(Settings.HeaderRowTextScale).Ignore();
-            Action<UILabel> setupRow = lbl => lbl.TextScale(Settings.ContentRowTextScale).Ignore();
-            var rows = new List<Controls.Row>
-            {
-                this.AddHeader("Statistics", setupHeader),
-                this.AddStringRow("# used nodes".And(Settings.DefaultRowSeparator).And("1234567"), setupRow),
-                this.AddStringRow("# road nodes".And(Settings.DefaultRowSeparator).And("1234567"), setupRow),
-                this.AddStringRow("# intersections".And(Settings.DefaultRowSeparator).And("1234567"), setupRow),
-                this.AddStringRow("# intersections w/ lights".And(Settings.DefaultRowSeparator).And("1234567"), setupRow),
-                this.AddStringRow("# intersections w/out lights".And(Settings.DefaultRowSeparator).And("1234567"), setupRow),
-                this.AddStringRow("# intersections w/ lights by default".And(Settings.DefaultRowSeparator).And("1234567"), setupRow),
-                this.AddStringRow("# intersections w/out lights by default".And(Settings.DefaultRowSeparator).And("1234567"), setupRow),
-            };
-            rows.SpreadVertical(Settings).SpreadHorizontal(Settings);
-            rows.OfType<Controls.StringRow>().ToList()
-                .AlignColumns(Settings)
-                .IndentRows(Settings.ContentRowIndentation, Settings)
-                .LimitLastComponentsWidthToParent(this, Settings);
-            rows.SpreadVertical(Settings);
-
-            _statisticsLabels = rows.OfType<Controls.StringRow>().Select(r => r.Labels.Last()).ToList();
-
-            rows.UpdateHeightOfParentToRows(this);
+//            Action<UILabel> setupHeader = lbl => lbl.TextScale(Settings.HeaderRowTextScale).Ignore();
+//            Action<UILabel> setupRow = lbl => lbl.TextScale(Settings.ContentRowTextScale).Ignore();
+//            var rows = new List<Controls.Row>
+//            {
+//                this.AddHeader("Statistics", setupHeader),
+//                this.AddStringRow("# used nodes".And(Settings.DefaultRowSeparator).And("1234567"), setupRow),
+//                this.AddStringRow("# road nodes".And(Settings.DefaultRowSeparator).And("1234567"), setupRow),
+//                this.AddStringRow("# intersections".And(Settings.DefaultRowSeparator).And("1234567"), setupRow),
+//                this.AddStringRow("# intersections w/ lights".And(Settings.DefaultRowSeparator).And("1234567"), setupRow),
+//                this.AddStringRow("# intersections w/out lights".And(Settings.DefaultRowSeparator).And("1234567"), setupRow),
+//                this.AddStringRow("# intersections w/ lights by default".And(Settings.DefaultRowSeparator).And("1234567"), setupRow),
+//                this.AddStringRow("# intersections w/out lights by default".And(Settings.DefaultRowSeparator).And("1234567"), setupRow),
+//            };
+//            rows.SpreadVertical(Settings).SpreadHorizontal(Settings);
+//            rows.OfType<Controls.StringRow>().ToList()
+//                .AlignColumns(Settings)
+//                .IndentRows(Settings.ContentRowIndentation, Settings)
+//                .LimitLastComponentsWidthToParent(this, Settings);
+//            rows.SpreadVertical(Settings);
+//
+//            _statisticsLabels = rows.OfType<Controls.StringRow>().Select(r => r.Labels.Last()).ToList();
+//
+//            rows.UpdateHeightOfParentToRows(this);
         }
 
         public override void OnEnable()

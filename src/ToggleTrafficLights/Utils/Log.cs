@@ -95,7 +95,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
                     throw new ArgumentOutOfRangeException(nameof(messageType));
             }
 
-//            CODebugBase<LogChannel>.Log(LogChannel.Modding, string.Format("{0}: {1}", messageType.ToString("G"), msg));
+            CODebugBase<LogChannel>.Log(LogChannel.Modding, $"{messageType.ToString("G")}: {msg}");
         }
         [Conditional("DEBUG")]
         public static void Error(string text)

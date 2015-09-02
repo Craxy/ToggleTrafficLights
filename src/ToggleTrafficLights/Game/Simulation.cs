@@ -76,8 +76,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
 #if DEBUG
             if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.P))
             {
-                DebugLog.Info("Do Something MonoBehaviour");
-
                 var isEnabled = _mb != null && _mb.enabled;
                 if (_mb == null)
                 {
