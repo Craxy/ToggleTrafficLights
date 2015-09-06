@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using ColossalFramework.UI;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions;
 using JetBrains.Annotations;
@@ -14,6 +15,16 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components.Table.Extension
         {
             return Table.CreateEmpty(parent);
         }
+
+        public static Table Concat([NotNull] this Table front, [NotNull] Table back)
+        {
+            return Table.Concat(front, back);
+        }
+
+        public static Table CopyWith([NotNull] this Table table, [NotNull] Row[] rows)
+        {
+            return Table.CopyWith(table, rows);
+        }
         #endregion
 
         #region create row
@@ -27,9 +38,16 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components.Table.Extension
             var row = Row.CreateEmpty(table.Root).Pipe(fillRow);
             return Table.PrependRow(table, row);
         }
-        public static Table AddVerticalSpace([NotNull] this Table table, float height, [CanBeNull] Action<UIPanel> setup = null)
+        #endregion
+
+        #region remove row
+        public static Table RemoveLastRow([NotNull] this Table table)
         {
-            return table.AddRow(row => row.AddVerticalSpace(height, setup));
+            return Table.RemoveLastRow(table);
+        }
+        public static Table RemoveFirstRow([NotNull] this Table table)
+        {
+            return Table.RemoveFirstRow(table);
         }
         #endregion
 
@@ -38,6 +56,15 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components.Table.Extension
         public static Table Do([NotNull] this Table table, [CanBeNull] Action<IEnumerable<Row>> action = null)
         {
             action?.Invoke(table.Rows);
+
+            return table;
+        }
+        #endregion
+
+        #region Debug
+        public static Table DebugLog([NotNull] this Table table, [NotNull] string pre = "")
+        {
+            Utils.DebugLog.Info("{0}: {1}", pre, table.ToString());
 
             return table;
         }

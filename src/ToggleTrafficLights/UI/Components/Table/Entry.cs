@@ -10,6 +10,15 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components.Table
         {
             Component = component;
         }
+
+        #region Overrides of Object
+
+        public override string ToString()
+        {
+            return this.GetType().Name;
+        }
+
+        #endregion
     }
 
     public class Entry<T> : Entry

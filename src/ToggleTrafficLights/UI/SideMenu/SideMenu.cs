@@ -209,23 +209,19 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu
         [UsedImplicitly]
         private void OnDestroy()
         {
-            GetParent()?.RemoveUIComponent(_root);
-            _root?.DestroyAllComponents();
-            Destroy(_root);
-
             _root = null;
         }
 
         [UsedImplicitly]
         private void OnEnable()
         {
-            _root.isVisible = true;
+            _root.Show();
         }
 
         [UsedImplicitly]
         private void OnDisable()
         {
-            _root.isVisible = false;
+            _root?.Hide();
         }
         #endregion
     }

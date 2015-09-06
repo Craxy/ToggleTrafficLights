@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using ColossalFramework.UI;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
+using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions;
 using JetBrains.Annotations;
 using UnityEngine;
 
@@ -78,8 +79,14 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components.Table.Extension
         #endregion
 
         #region alignment
-        public static ICollection<Row> AlignEntriesInColumns(this ICollection<Row> rows, [NotNull] Func<Entry, Entry, float> calculateHorizontalSpaceBetweenEntries)
+        public static ICollection<Row> AlignEntriesInColumns([NotNull] this ICollection<Row> rows, [NotNull] Func<Entry, Entry, float> calculateHorizontalSpaceBetweenEntries)
         {
+            //max doesn't work with empty collections
+            if (rows.Count == 0)
+            {
+                return rows;
+            }
+
             //determine max length for each column
             var maxs = new float[rows.Max(r => r.NumberOfColumns)];
             foreach (var row in rows)
@@ -114,7 +121,9 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components.Table.Extension
 
                     c.relativePosition = new Vector3(left, c.relativePosition.y);
 
-                    left += maxs[i];
+                    left += maxs[i++];
+
+
                     preEntry = entry;
                 }
             }
@@ -128,10 +137,13 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components.Table.Extension
         }
         public static Table AlignEntriesInColumns([NotNull] this Table table, [NotNull] Func<Entry, Entry, float> calculateHorizontalSpaceBetweenEntries, [CanBeNull] Func<Row, bool> rowSelector = null)
         {
-            var selector = rowSelector ?? (_ => true);
-            var rows = table.Rows.Where(selector).ToArray();
+            var rows = table.Rows;
+            if (rowSelector != null)
+            {
+                rows = table.Rows.Where(rowSelector).ToArray();
+            }
 
-            AlignEntriesInColumns(rows, calculateHorizontalSpaceBetweenEntries);
+            rows.AlignEntriesInColumns(calculateHorizontalSpaceBetweenEntries);
 
             return table;
         }
@@ -153,6 +165,12 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components.Table.Extension
                 var maxWidth = Mathf.Max(w - start, 0.0f);
 
                 c.maximumSize = new Vector2(maxWidth, 0.0f);
+                //panels somehow disrespect maximumSize
+                // -> set width manually iff out of bounds
+                if (c.width > maxWidth)
+                {
+                    c.width = maxWidth;
+                }
 
                 if (wrapTooLongLabels)
                 {

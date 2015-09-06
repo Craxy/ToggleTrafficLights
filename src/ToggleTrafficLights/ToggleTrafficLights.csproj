@@ -103,6 +103,7 @@
     <Compile Include="Tools\ToggleTrafficLightsTool.cs" />
     <Compile Include="Tools\Visualization\IntersectionHighlighting.cs" />
     <Compile Include="UI\Components\Controls.cs" />
+    <Compile Include="UI\Components\Table\Entries\Create.cs" />
     <Compile Include="UI\Components\Table\Extensions\ChangeRowExtensions.cs" />
     <Compile Include="UI\Components\Table\Extensions\CompleteRowExtensions.cs" />
     <Compile Include="UI\Components\Table\Entries\Entries.cs" />
@@ -111,6 +112,7 @@
     <Compile Include="UI\Components\Table\Extensions\EntryExtensions.cs" />
     <Compile Include="UI\Components\Table\Extensions\PlacementExtensions.cs" />
     <Compile Include="UI\Components\Table\Extensions\RowExtensions.cs" />
+    <Compile Include="UI\Components\Table\Extensions\RowTag.cs" />
     <Compile Include="UI\Components\Table\Extensions\TableExtensions.cs" />
     <Compile Include="UI\Components\Table\Row.cs" />
     <Compile Include="UI\Components\Table\Table.cs" />

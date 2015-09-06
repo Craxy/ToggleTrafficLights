@@ -6,6 +6,9 @@ using ColossalFramework.UI;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Tools;
 using Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components;
 using Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components.Table;
+using Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components.Table.Extensions;
+using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions;
+using UnityEngine;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu.Pages.Batch
 {
@@ -24,29 +27,33 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu.Pages.Batch
             name = "StatisticsPanel";
             width = parent.width;
 
-//            Action<UILabel> setupHeader = lbl => lbl.TextScale(Settings.HeaderRowTextScale).Ignore();
-//            Action<UILabel> setupRow = lbl => lbl.TextScale(Settings.ContentRowTextScale).Ignore();
-//            var rows = new List<Controls.Row>
-//            {
-//                this.AddHeader("Statistics", setupHeader),
-//                this.AddStringRow("# used nodes".And(Settings.DefaultRowSeparator).And("1234567"), setupRow),
-//                this.AddStringRow("# road nodes".And(Settings.DefaultRowSeparator).And("1234567"), setupRow),
-//                this.AddStringRow("# intersections".And(Settings.DefaultRowSeparator).And("1234567"), setupRow),
-//                this.AddStringRow("# intersections w/ lights".And(Settings.DefaultRowSeparator).And("1234567"), setupRow),
-//                this.AddStringRow("# intersections w/out lights".And(Settings.DefaultRowSeparator).And("1234567"), setupRow),
-//                this.AddStringRow("# intersections w/ lights by default".And(Settings.DefaultRowSeparator).And("1234567"), setupRow),
-//                this.AddStringRow("# intersections w/out lights by default".And(Settings.DefaultRowSeparator).And("1234567"), setupRow),
-//            };
-//            rows.SpreadVertical(Settings).SpreadHorizontal(Settings);
-//            rows.OfType<Controls.StringRow>().ToList()
-//                .AlignColumns(Settings)
-//                .IndentRows(Settings.ContentRowIndentation, Settings)
-//                .LimitLastComponentsWidthToParent(this, Settings);
-//            rows.SpreadVertical(Settings);
-//
-//            _statisticsLabels = rows.OfType<Controls.StringRow>().Select(r => r.Labels.Last()).ToList();
-//
-//            rows.UpdateHeightOfParentToRows(this);
+            Action<UILabel> setupHeader = lbl => lbl.TextScale(Settings.HeaderRowTextScale).Ignore();
+            Action<UILabel> setupRow = lbl => lbl.TextScale(Settings.ContentRowTextScale).Ignore();
+
+            var table = this.CreateTable()
+                .AddHeaderRow("Statistics", setupHeader)
+#if DEBUG
+                .AddPropertyValueRow(name: "# used nodes", value: "1234567", separator: Settings.DefaultRowSeparator, indention: Settings.ContentRowIndentation, setup: setupRow)
+                .AddPropertyValueRow(name: "# road nodes", value: "1234567", separator: Settings.DefaultRowSeparator, indention: Settings.ContentRowIndentation, setup: setupRow)
+#endif
+                .AddPropertyValueRow(name: "# intersections", value: "1234567", separator: Settings.DefaultRowSeparator, indention: Settings.ContentRowIndentation, setup: setupRow)
+                .AddPropertyValueRow(name: "# intersections w/ lights", value: "1234567", separator: Settings.DefaultRowSeparator, indention: Settings.ContentRowIndentation, setup: setupRow)
+                .AddPropertyValueRow(name: "# intersections w/out lights", value: "1234567", separator: Settings.DefaultRowSeparator, indention: Settings.ContentRowIndentation, setup: setupRow)
+                .AddPropertyValueRow(name: "# intersections w/ lights by default", value: "1234567", separator: Settings.DefaultRowSeparator, indention: Settings.ContentRowIndentation, setup: setupRow)
+                .AddPropertyValueRow(name: "# intersections w/out lights by default", value: "1234567", separator: Settings.DefaultRowSeparator, indention: Settings.ContentRowIndentation, setup: setupRow)
+
+                .SpreadVertical(Settings.VerticalSpaceBetweenLines)
+                .SpreadHorizontal(Settings.IndentationBetweenColumns)
+                .AlignEntriesInColumns(Settings.IndentationBetweenColumns, RowTag.SelectRowWithTag(RowTag.PropertyValue))
+                .LimitWithToRootWidth(wrapTooLongLabels: false)
+                .SpreadVertical(Settings.VerticalSpaceBetweenLines)
+
+                .UpdateHeightOfRootToRowsHeight()
+
+//                .DebugLog(nameof(StatisticsPanel))
+                ;
+
+            _statisticsLabels = table.Rows.Skip(1).Select(r => r.Entries.Last().Component).Cast<UILabel>().ToArray();
         }
 
         public override void OnEnable()

@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mime;
 using ColossalFramework;
 using ColossalFramework.UI;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Game;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Tools;
 using Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components;
 using Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components.Table;
+using Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components.Table.Extensions;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions;
 using UnityEngine;
@@ -29,41 +31,53 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu.Pages.Batch
             name = "BatchCommandsPanel";
             width = parent.width;
 
-//            Action<UILabel> setupHeader = lbl => lbl.TextScale(Settings.HeaderRowTextScale).Ignore();
-//            Action<UILabel> setupRow = lbl => lbl.TextScale(Settings.ContentRowTextScale).Ignore();
-//            var buttonIntendation = Settings.ContentRowIndentation*2.0f;
-//            Action<UIButton> setupButton = btn => btn.TextScale(0.9f).Width(width - buttonIntendation * 2.0f).Height(32.0f).Ignore();
-//            var statisticsColor = new Color32(150, 150, 150, 255);
-//            Action<UILabel> setupStatisticsHeader = lbl => lbl.TextScale(Settings.HeaderRowTextScale).TextColor(statisticsColor).Ignore();
-//            Action<UILabel> setupStatisticsRow = lbl => lbl.TextScale(Settings.ContentRowTextScale).TextColor(statisticsColor).Ignore();
-//            var rows = new List<Controls.Row>
-//            {
-//                this.AddHeader("Commands", setupHeader),
-//                this.AddButton("Remove all traffic lights", RemoveAllTrafficLights, setupButton),
-//                this.AddButton("Add all traffic lights", AddAllTrafficLights, setupButton),
-//                this.AddButton("Reset all to default", ResetAllTrafficLights, setupButton),
-//                this.AddVerticalSpace(Settings.VerticalSpaceBetweenLines * 2.5f),
-//                this.AddHeader("Action", setupStatisticsHeader),
-//                this.AddStringRow("Lights changed".And(Settings.DefaultRowSeparator).And("1234"), setupStatisticsRow),
-//                this.AddStringRow("Lights added".And(Settings.DefaultRowSeparator).And("1234"), setupStatisticsRow),
-//                this.AddStringRow("Lights removed".And(Settings.DefaultRowSeparator).And("1234"), setupStatisticsRow),
-//            };
-//            rows.SpreadVertical(Settings).SpreadHorizontal(Settings);
-//            rows.OfType<Controls.ButtonRow>().ToList()
-//                .IndentRows(buttonIntendation, Settings)
-//                .LimitLastComponentsWidthToParent(this, Settings);
-//            rows.OfType<Controls.StringRow>().ToList()
-//                .AlignColumns(Settings)
-//                .IndentRows(Settings.ContentRowIndentation, Settings)
-//                .LimitLastComponentsWidthToParent(this, Settings);
-//            rows.Skip(5).ToList()
-//                .IndentRows(Settings.ContentRowIndentation*7.0f, Settings);
-//            rows.SpreadVertical(Settings).LimitLastComponentsWidthToParent(this, Settings);
-//
-//            _statisticsRows = rows.Skip(5).ToList();
-//            HideChangedStatistics();
-//
-//            rows.UpdateHeightOfParentToRows(this);
+            Action<UILabel> setupHeader = lbl => lbl.TextScale(Settings.HeaderRowTextScale).Ignore();
+            Action<UILabel> setupRow = lbl => lbl.TextScale(Settings.ContentRowTextScale).Ignore();
+            var buttonPadding = Settings.ContentRowIndentation*2.0f;
+            Action<UIButton> setupButton = btn => btn.TextScale(0.9f).Width(width - buttonPadding * 2.0f).Height(32.0f).HoveredTextColor(new Color32(7,132,255,255)).NormalBgSprite("ButtonMenu").Ignore();
+            var statisticsColor = new Color32(150, 150, 150, 255);
+            Action<UILabel> setupStatisticsHeader = lbl => lbl.TextScale(Settings.HeaderRowTextScale).TextColor(statisticsColor).Ignore();
+            Action<UILabel> setupStatisticsRow = lbl => lbl.TextScale(Settings.ContentRowTextScale).TextColor(statisticsColor).Ignore();
+
+
+            var statisticsTable = this.CreateTable()
+                .AddHeaderRow("Action", setupStatisticsHeader)
+                .AddPropertyValueRow(name: "Lights changed", value: "1234", separator: Settings.DefaultRowSeparator, indention: Settings.ContentRowIndentation, setup: setupStatisticsRow)
+                .AddPropertyValueRow(name: "Lights added", value: "1234", separator: Settings.DefaultRowSeparator, indention: Settings.ContentRowIndentation, setup: setupStatisticsRow)
+                .AddPropertyValueRow(name: "Lights removed", value: "1234", separator: Settings.DefaultRowSeparator, indention: Settings.ContentRowIndentation, setup: setupStatisticsRow)
+
+                .IndentAll(Settings.ContentRowIndentation * 7.0f)
+
+                .SpreadVertical(Settings.VerticalSpaceBetweenLines)
+                .SpreadHorizontal(Settings.IndentationBetweenColumns)
+                .AlignEntriesInColumns(Settings.IndentationBetweenColumns, RowTag.SelectRowWithTag(RowTag.PropertyValue))
+                .LimitWithToRootWidth(wrapTooLongLabels: false) //action gets changed and should not wrap
+                .SpreadVertical(Settings.VerticalSpaceBetweenLines)
+
+                ;
+
+            var table = this.CreateTable()
+                .AddHeaderRow("Commands", setupHeader)
+                .AddRow(row => row.AppendHorizontalSpace(buttonPadding).AppendButton("Remove all traffic lights", RemoveAllTrafficLights, setupButton))
+                .AddRow(row => row.AppendHorizontalSpace(buttonPadding).AppendButton("Add all traffic lights", AddAllTrafficLights, setupButton))
+                .AddRow(row => row.AppendHorizontalSpace(buttonPadding).AppendButton("Reset all to default", ResetAllTrafficLights, setupButton))
+                .AddVerticalSpace(Settings.VerticalSpaceBetweenLines * 2.5f)
+
+                .SpreadVertical(Settings.VerticalSpaceBetweenLines)
+                .SpreadHorizontal(Settings.IndentationBetweenColumns)
+                .LimitWithToRootWidth(wrapTooLongLabels: true)
+
+                .Concat(statisticsTable)
+                .SpreadVertical(Settings.IndentationBetweenColumns)
+
+                .UpdateHeightOfRootToRowsHeight()
+
+//                .DebugLog(nameof(BatchCommandsPanel))
+                ;
+
+
+            _statisticsRows = statisticsTable.Rows;
+            HideChangedStatistics();
         }
 
         public override void Update()
@@ -71,7 +85,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu.Pages.Batch
             base.Update();
 
             // hide update statistics after some time
-            if (_isChangedStatisticsShow)
+            if (_isChangedStatisticsShown)
             {
                 _hideChangedStatisticsIn -= Time.deltaTime;
 
@@ -195,42 +209,40 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu.Pages.Batch
 
         #region statistics
 
-        private bool _isChangedStatisticsShow = false;
+        private bool _isChangedStatisticsShown = false;
         private float _hideChangedStatisticsIn = 0;
 
-//        private IList<Controls.Row> _statisticsRows = new List<Controls.Row>(0); 
-//        private void UpdateChangedStatistics(ChangedStatistics stats)
-//        {
-//            var i = 0;
-//            foreach (var s in new[] { stats.Action, stats.NumberOfChanges.ToString(), stats.NumberOfAddedLights.ToString(), stats.NumberOfRemovedLights.ToString() })
-//            {
-//                ((UILabel) _statisticsRows[i++].Columns.Last()).text = s;
-//            }
-//            ShowChangedStatistics();
-//        }
-//
+        private IList<Row> _statisticsRows;
+        private void UpdateChangedStatistics(ChangedStatistics stats)
+        {
+            var i = 0;
+            foreach (var s in new[] { stats.Action, stats.NumberOfChanges.ToString(), stats.NumberOfAddedLights.ToString(), stats.NumberOfRemovedLights.ToString() })
+            {
+                ((UILabel) _statisticsRows[i++].Entries.Last().Component).text = s;
+            }
+            ShowChangedStatistics();
+        }
+
         private void SetChangedStatistics(string action, ChangedStatistics stats)
         {
             stats.Action = action;
-//            UpdateChangedStatistics(stats);
+            UpdateChangedStatistics(stats);
         }
-//
+
         public void ShowChangedStatistics() => ChangeVisibilityOfChangedStatistics(true);
-
         public void HideChangedStatistics() => ChangeVisibilityOfChangedStatistics(false);
-
         public void ChangeVisibilityOfChangedStatistics(bool visible)
         {
-//            foreach (var row in _statisticsRows)
-//            {
-//                foreach (var c in row.Columns)
-//                {
-//                    c.isVisible = visible;
-//                }
-//            }
+            foreach (var row in _statisticsRows)
+            {
+                foreach (var e in row.Entries)
+                {
+                    e.Component.isVisible = visible;
+                }
+            }
 
-            _isChangedStatisticsShow = visible;
-            if (_isChangedStatisticsShow)
+            _isChangedStatisticsShown = visible;
+            if (_isChangedStatisticsShown)
             {
                 _hideChangedStatisticsIn = HideChangedStatisticsAfterNSeconds;
             }

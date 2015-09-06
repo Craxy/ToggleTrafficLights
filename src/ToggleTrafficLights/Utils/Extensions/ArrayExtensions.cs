@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+﻿using System.Linq;
+using JetBrains.Annotations;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions
 {
@@ -62,6 +63,25 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions
             tailArray.CopyTo(newArray, headArray.Length);
 
             return newArray;
+        }
+
+        public static T[] ImmutableRemoveLast<T>([NotNull] this T[] array)
+        {
+            if (array.Length <= 1)
+            {
+                return new T[0];
+            }
+
+            return array.Take(array.Length - 1).ToArray();
+        }
+        public static T[] ImmutableRemoveFirst<T>([NotNull] this T[] array)
+        {
+            if (array.Length <= 1)
+            {
+                return new T[0];
+            }
+
+            return array.Skip(1).ToArray();
         }
     }
 }

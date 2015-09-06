@@ -40,6 +40,21 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components.Table.Extension
             label.textColor = color;
             return label;
         }
-        #endregion 
+        #endregion
+
+        #region Button
+        public static T NormalBgSprite<T>([NotNull] this T btn, string normalBgSprite)
+            where T : UIInteractiveComponent
+        {
+            btn.normalBgSprite = normalBgSprite;
+            return btn;
+        }
+        public static T HoveredTextColor<T>([NotNull] this T btn, Color hoveredTextColor)
+            where T : UIButton
+        {
+            btn.hoveredTextColor = hoveredTextColor;
+            return btn;
+        }
+        #endregion
     }
 }
