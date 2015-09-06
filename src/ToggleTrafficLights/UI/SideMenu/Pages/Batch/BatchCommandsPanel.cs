@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Mime;
 using ColossalFramework;
 using ColossalFramework.UI;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Game;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Tools;
-using Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components;
 using Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components.Table;
 using Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components.Table.Extensions;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
@@ -32,7 +30,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu.Pages.Batch
             width = parent.width;
 
             Action<UILabel> setupHeader = lbl => lbl.TextScale(Settings.HeaderRowTextScale).Ignore();
-            Action<UILabel> setupRow = lbl => lbl.TextScale(Settings.ContentRowTextScale).Ignore();
             var buttonPadding = Settings.ContentRowIndentation*2.0f;
             Action<UIButton> setupButton = btn => btn.TextScale(0.9f).Width(width - buttonPadding * 2.0f).Height(32.0f).HoveredTextColor(new Color32(7,132,255,255)).NormalBgSprite("ButtonMenu").Ignore();
             var statisticsColor = new Color32(150, 150, 150, 255);

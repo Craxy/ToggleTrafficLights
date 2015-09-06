@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using ColossalFramework.UI;
-using Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components;
-using Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components.Table;
-using Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components.Table.Extensions;
+﻿using Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components.Table.Extensions;
 using Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu.Pages.Batch;
-using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu.Pages
 {
@@ -18,9 +12,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu.Pages
             base.Start();
 
             name = "BatchTab";
-
-            Action<UILabel> setupHeader = lbl => lbl.TextScale(Settings.HeaderRowTextScale).Ignore();
-            Action<UILabel> setupRow = lbl => lbl.TextScale(Settings.ContentRowTextScale).Ignore();
 
             this.CreateTable()
                 .AddCustomPanelRow<BatchCommandsPanel>()

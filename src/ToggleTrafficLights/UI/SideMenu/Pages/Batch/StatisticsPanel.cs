@@ -4,11 +4,8 @@ using System.Linq;
 using ColossalFramework;
 using ColossalFramework.UI;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Tools;
-using Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components;
-using Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components.Table;
 using Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components.Table.Extensions;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions;
-using UnityEngine;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu.Pages.Batch
 {
