@@ -53,7 +53,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu.Pages
                     separator: Settings.DefaultRowSeparator,
                     indention: Settings.ContentRowIndentation,
                     setupText: setupText,
-                    setupDropDown: cb => cb.TextScale(txtScale).Width(115f).Height(18.0f),
+                    setupDropDown: cb => cb.TextScale(txtScale).Width(120f).Height(19.0f),
                     setupDropDownButton: btn => btn.TextScale(txtScale)
                     )
                 .AddColorFieldRow("with lights",
@@ -78,8 +78,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu.Pages
                 .LimitWithToRootWidth(false)
                 .SpreadVertical(Settings.VerticalSpaceBetweenLines)
                 .SpreadHorizontal(Settings.IndentationBetweenColumns)
-                //TODO: DropDownRow moves all other towards the end
-                .AlignEntriesInColumns(Settings.IndentationBetweenColumns, r => r.NumberOfColumns > 1)
+                .AlignEntriesInPropertyValueColumns(Settings.IndentationBetweenColumns, r => r.NumberOfColumns > 1)
                 .LimitWithToRootWidth(wrapTooLongLabels: true)
                 .SpreadVertical(Settings.VerticalSpaceBetweenLines)
                 ;

@@ -76,145 +76,10 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components.Table.Extension
         #endregion
 
         #region alignment
-
-        #region columns
-        public static ICollection<Row> AlignEntriesInColumns([NotNull] this ICollection<Row> rows,
-            [NotNull] Func<Entry, Entry, float> calculateHorizontalSpaceBetweenEntries)
-        {
-            //max doesn't work with empty collections
-            if (rows.Count == 0)
-            {
-                return rows;
-            }
-
-            //determine max length for each column
-            var maxs = new float[rows.Max(r => r.NumberOfColumns)];
-            foreach (var row in rows)
-            {
-                var i = 0;
-                foreach (var c in row.Entries.Select(Component))
-                {
-                    var width = c.width;
-
-                    var max = maxs[i];
-                    maxs[i] = Mathf.Max(max, width);
-
-                    i++;
-                }
-            }
-
-            //place elements according to max width of the columns
-            foreach (var row in rows)
-            {
-                Entry preEntry = null;
-
-                var left = 0.0f;
-                var i = 0;
-                foreach (var entry in row.Entries)
-                {
-                    if (preEntry != null)
-                    {
-                        left += calculateHorizontalSpaceBetweenEntries(preEntry, entry);
-                    }
-
-                    entry.RelativePosition = new Vector3(left, entry.RelativePosition.y);
-
-                    left += maxs[i++];
-
-
-                    preEntry = entry;
-                }
-            }
-
-            return rows;
-        }
-
-        public static ICollection<Row> AlignEntriesInColumns(this ICollection<Row> rows, float horizontalSpaceBetweenColumns)
-        {
-            return rows.AlignEntriesInColumns((_, __) => horizontalSpaceBetweenColumns);
-        }
-
-        public static Table AlignEntriesInColumns([NotNull] this Table table,
-            [NotNull] Func<Entry, Entry, float> calculateHorizontalSpaceBetweenEntries, [CanBeNull] Func<Row, bool> rowSelector = null)
-        {
-            var rows = table.Rows;
-            if (rowSelector != null)
-            {
-                rows = table.Rows.Where(rowSelector).ToArray();
-            }
-
-            rows.AlignEntriesInColumns(calculateHorizontalSpaceBetweenEntries);
-
-            return table;
-        }
-
         public static Table AlignEntriesInColumns([NotNull] this Table table, float horizontalSpaceBetweenColumns,
             [CanBeNull] Func<Row, bool> rowSelector = null)
         {
-            return table.AlignEntriesInColumns((_, __) => horizontalSpaceBetweenColumns, rowSelector);
-        }
-
-        #endregion
-
-        #region property-value
-        public static ICollection<Row> AlignEntriesInPropertyValueColumns([NotNull] this ICollection<Row> rows,
-            [NotNull] Func<Entry, Entry, float> calculateHorizontalSpaceBetweenEntries)
-        {
-            //max doesn't work with empty collections
-            if (rows.Count == 0)
-            {
-                return rows;
-            }
-
-            //determine max length for first 3 columns
-            var maxs = new float[Math.Min(3, rows.Max(r => r.NumberOfColumns))];
-            foreach (var row in rows)
-            {
-                var i = 0;
-                foreach (var c in row.Entries.Select(Component))
-                {
-                    if (i >= 3)
-                    {
-                        break;
-                    }
-
-                    var width = c.width;
-
-                    var max = maxs[i];
-                    maxs[i] = Mathf.Max(max, width);
-
-                    i++;
-                }
-            }
-
-            //place elements according to max width of the columns
-            foreach (var row in rows)
-            {
-                Entry preEntry = null;
-
-                var left = 0.0f;
-                var i = 0;
-                foreach (var entry in row.Entries)
-                {
-                    if (preEntry != null)
-                    {
-                        left += calculateHorizontalSpaceBetweenEntries(preEntry, entry);
-                    }
-
-                    entry.RelativePosition = new Vector3(left, entry.RelativePosition.y);
-
-                    left += maxs[i++];
-
-
-                    preEntry = entry;
-                }
-            }
-
-            return rows;
-        }
-        public static ICollection<Row> AlignEntriesInPropertyValueColumns(this ICollection<Row> rows, float horizontalSpaceBetweenColumns)
-        {
-            return rows.AlignEntriesInPropertyValueColumns((_, __) => horizontalSpaceBetweenColumns);
+            return table.AlignFirstNEntriesInColumns(Option.None<int>(), horizontalSpaceBetweenColumns, rowSelector);
         }
 
         /// <summary>
@@ -227,17 +92,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components.Table.Extension
         public static Table AlignEntriesInPropertyValueColumns([NotNull] this Table table, float horizontalSpaceBetweenColumns,
             [CanBeNull] Func<Row, bool> rowSelector = null)
         {
-            var rows = table.Rows;
-            if (rowSelector != null)
-            {
-                rows = table.Rows.Where(rowSelector).ToArray();
-            }
-
-            rows.AlignEntriesInColumns(horizontalSpaceBetweenColumns);
-
-            return table;
+            return table.AlignFirstNEntriesInColumns(Option.Some(3), horizontalSpaceBetweenColumns, rowSelector);
         }
-        #endregion
 
         #region variable number of columns
         public static ICollection<Row> AlignFirstNEntriesInColumns([NotNull] this ICollection<Row> rows, 
@@ -250,21 +106,21 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components.Table.Extension
                 return rows;
             }
 
-            var n = numberOfLeadingColumnsToAlign.IsSome() ? numberOfLeadingColumnsToAlign.GetValue() : -1;
+            var n = numberOfLeadingColumnsToAlign.IsSome() ? numberOfLeadingColumnsToAlign.GetValue() : rows.Max(r => r.NumberOfColumns);
 
             //determine max length for first numberOfLeadingColumnsToAlign columns
-            var maxs = new float[Math.Min(rows.Max(r => r.NumberOfColumns), 0)];
+            var maxs = new float[Math.Max(n, 0)];
             foreach (var row in rows)
             {
                 var i = 0;
-                foreach (var c in row.Entries.Select(Component))
+                foreach (var c in row.Entries)
                 {
                     if (i >= maxs.Length)
                     {
                         break;
                     }
 
-                    var width = c.width;
+                    var width = c.Width;
 
                     var max = maxs[i];
                     maxs[i] = Mathf.Max(max, width);
@@ -293,6 +149,10 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components.Table.Extension
                     {
                         left += maxs[i++];
                     }
+                    else
+                    {
+                        left += entry.Width;
+                    }
 
                     preEntry = entry;
                 }
@@ -301,7 +161,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components.Table.Extension
             return rows;
         }
 
-        public static Table AlignEntriesInColumns([NotNull] this Table table, 
+        public static Table AlignFirstNEntriesInColumns([NotNull] this Table table, 
             Option<int> numberOfLeadingColumnsToAlign,
             float horizontalSpaceBetweenEntries,
             [CanBeNull] Func<Row, bool> rowSelector = null)
@@ -319,7 +179,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components.Table.Extension
         }
 
         #endregion
-
+        #endregion
 
         #region root related
         public static Row LimitWidthToRootWidth([NotNull] this Row row, bool wrapTooLongLabels = true)

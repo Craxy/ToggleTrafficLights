@@ -173,6 +173,22 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components.Table.Entries
         public DropDownEntry([NotNull] UIDropDown component) : base(component)
         {
         }
+
+        #region Overrides of Entry
+        public override string ToString()
+        {
+            return $"{GetType().Name}(selected: {DropDown.selectedValue}; values:{string.Join(", ", DropDown.items)})";
+        }
+
+        /// <summary>
+        /// UIDropDown is slightly shifted down -> push DropDown 2px up
+        /// </summary>
+        public override Vector3 RelativePosition
+        {
+            get { return new Vector3(Component.relativePosition.x, Component.relativePosition.y + 2.0f); }
+            set { Component.relativePosition = new Vector3(value.x, value.y - 2.0f); }
+        }
+        #endregion
     }
 
     //todo: text field etc
