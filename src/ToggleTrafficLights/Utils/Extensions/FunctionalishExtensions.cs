@@ -5,6 +5,28 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions
 {
     public static class FunctionalishExtensions
     {
+        #region do
+        public static T Do<T>([NotNull] this T obj, [NotNull] Action<T> action)
+        {
+            return DoIf(obj, true, action);
+        }
+
+        public static T DoIf<T>([NotNull] this T obj, bool condition, [NotNull] Action<T> action)
+        {
+            if (condition)
+            {
+                action(obj);
+            }
+            return obj;
+        }
+
+        public static T DoIfNotNull<T, TCondition>([NotNull] this T obj, [CanBeNull] TCondition possibleNullObject, [NotNull] Action<T> action)
+            where TCondition : class
+        {
+            return DoIf(obj, possibleNullObject != null, action);
+        }
+        #endregion
+
         public static TResult Pipe<TSource, TResult>([NotNull] this TSource value, [NotNull] Func<TSource, TResult> mapFunc) => mapFunc(value);
         public static TResult _<TSource, TResult>([NotNull] this TSource value, [NotNull] Func<TSource, TResult> mapFunc) => Pipe(value, mapFunc);
         public static void Ignore<T>(this T _)

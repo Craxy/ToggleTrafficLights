@@ -31,7 +31,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions
             return value/255.0f;
         }
 
-        private static float FromHex(this string value)
+        private static float FromHexString(this string value)
         {
             return value.ToByte().ToFloat();
         }
@@ -70,10 +70,10 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions
             var match = HexColorRegex.Match(value);
             if (match.Success)
             {
-                var r = match.Groups["red"].Value.FromHex();
-                var g = match.Groups["green"].Value.FromHex();
-                var b = match.Groups["blue"].Value.FromHex();
-                var a = match.Groups["alpha"].Success ? match.Groups["alpha"].Value.FromHex() : 1.0f;
+                var r = match.Groups["red"].Value.FromHexString();
+                var g = match.Groups["green"].Value.FromHexString();
+                var b = match.Groups["blue"].Value.FromHexString();
+                var a = match.Groups["alpha"].Success ? match.Groups["alpha"].Value.FromHexString() : 1.0f;
 
                 color = new Color(r,g,b,a);
                 failureReason = string.Empty;
@@ -85,7 +85,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions
                 failureReason = "Value is not a valid hex color ([#]RRGGBB[AA]).";
                 return false;
             }
-
         }
     }
 }

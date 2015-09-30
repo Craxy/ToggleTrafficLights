@@ -15,7 +15,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.SideMenu.Pages
 
     public class TabSettings : ITabSettings
     {
-        public virtual float VerticalSpaceBetweenLines => 2.0f;
+        public virtual float VerticalSpaceBetweenLines => 3.0f;
         public virtual float VerticalSpaceAfterGroup => 5.0f;
 
         public virtual string DefaultRowSeparator => ":";

@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Linq;
 using ColossalFramework.UI;
+using Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components.Table.Entries;
+using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions;
 using JetBrains.Annotations;
+using UnityEngine;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components.Table.Extensions
 {
@@ -41,6 +45,63 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.UI.Components.Table.Extension
         {
             return table.AddRow(row => row.AppendCustomPanel(setup));
         }
+        public static Table AddColorFieldRow([NotNull] this Table table, 
+            [NotNull] string name, 
+            Color initialColor, [CanBeNull] Action<Color> onColorChanged, [CanBeNull] Action<Action<Color>> notifyColorChanged,  
+            [NotNull] string separator = ":", 
+            float indention = 0, 
+            [CanBeNull] Action<UILabel> setupText = null,
+            [CanBeNull] Action<UIColorField> setupColorField = null)
+        {
+            return table.AddRow(row =>
+            {
+                if(indention > 0.0f)
+                {
+                    row = row.AppendHorizontalSpace(indention);
+                }
 
+                row = row.AppendLabel(name, setupText)
+                    .AppendLabel(separator, setupText)
+                    .AppendColorField(initialColor, onColorChanged, 20.0f, 20.0f, setupColorField)
+                    .AppendLabel(initialColor.ToHex(true), setupText);
+
+                var cf = row.Entries.OfType<ColorFieldEntry>().Single();
+                var hex = (LabelEntry)row.Entries.Last();
+
+                //pass color changes to label
+                cf.ColorChanged += color =>
+                {
+                    hex.Text = color.ToHex(true);
+                };
+
+                //get notify when color changes somewhere outside
+                notifyColorChanged?.Invoke(color => cf.Color = color);
+
+                return row.Tag(RowTag.ColorField);
+            });
+        }
+
+        public static Table AddDropDownRow([NotNull] this Table table, [NotNull] string name, [NotNull] string[] values, int selectedIndex,
+            [CanBeNull] Action<int> onSelectedIndexChanged,
+            [NotNull] string separator = ":", float indention = 0, 
+            [CanBeNull] Action<UILabel> setupText = null,
+            [CanBeNull] Action<UIDropDown> setupDropDown = null,
+            [CanBeNull] Action<UIButton> setupDropDownButton = null
+            )
+        {
+            return table.AddRow(row =>
+            {
+                if (indention > 0.0f)
+                {
+                    row = row.AppendHorizontalSpace(indention);
+                }
+
+                row = row.AppendLabel(name, setupText)
+                    .AppendLabel(separator, setupText)
+                    .AppendDropDown(values, selectedIndex, onSelectedIndexChanged, 150.0f, 20.0f, setupDropDown, setupDropDownButton);
+
+                return row.Tag(RowTag.DropDown);
+            });
+        }
     }
 }
