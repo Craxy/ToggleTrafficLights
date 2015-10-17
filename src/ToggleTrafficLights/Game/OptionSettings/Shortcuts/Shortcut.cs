@@ -7,12 +7,12 @@ using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions;
 using JetBrains.Annotations;
 using UnityEngine;
 
-namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.OptionSettings.Options
+namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.OptionSettings.Shortcuts
 {
     // not SavedInputKey: don't want to save in C:S settings file, but instead in custom XML file
     // SavedInputKey doesn't work without a settings file
     // additional SavedInputKey can't handle multiple keys (excluding modifiers)
-    public class Shortcut : IEquatable<Shortcut>, IImmutable
+    public sealed class Shortcut : IEquatable<Shortcut>, IImmutable
     {
         //the unity key handling is just horrible: Event for GUI, Input for Update -- and of course both are totally different...
         // ergo: ignoring Event.... (I don't need it (yet...))
@@ -146,11 +146,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.OptionSettings.Options
 
             //more than 2 keys
             //all codes must be pressed exept one, which must be down
-            var status = KeyCodes.Where(key => key != KeyCode.None)
-                                 .Select(key => Tuple.Create(Input.GetKeyDown(key), Input.GetKey(key)));
-
-
-
             for (var i = 0; i < KeyCodes.Length; i++)
             {
                 var current = KeyCodes[i];
@@ -174,8 +169,18 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.OptionSettings.Options
                     }
                     var c = KeyCodes[j];
 
-//                    if()
+                    if (c == KeyCode.None)
+                    {
+                        continue;
+                    }
 
+
+                    match &= Input.GetKey(c) || Input.GetKeyDown(c);
+
+                    if (!match)
+                    {
+                        break;
+                    }
                 }
 
                 if (match)
@@ -288,19 +293,57 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.OptionSettings.Options
         }
         #endregion
 
-        #region Implementation of IEquatable<Shortcut>
+        #region Equality members
 
         public bool Equals(Shortcut other)
         {
-            if (other == null)
+            if (ReferenceEquals(null, other))
             {
                 return false;
             }
-
+            if (ReferenceEquals(this, other))
+            {
+                return true;
+            }
             return KeyCodes.SequenceEqual(other.KeyCodes)
                    && Alt == other.Alt
                    && Shift == other.Shift
                    && Control == other.Control;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj))
+            {
+                return false;
+            }
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+            return obj is Shortcut && Equals((Shortcut) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = KeyCodes.GetHashCode();
+                hashCode = (hashCode*397) ^ Alt.GetHashCode();
+                hashCode = (hashCode*397) ^ Shift.GetHashCode();
+                hashCode = (hashCode*397) ^ Control.GetHashCode();
+                return hashCode;
+            }
+        }
+
+        public static bool operator ==(Shortcut left, Shortcut right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(Shortcut left, Shortcut right)
+        {
+            return !Equals(left, right);
         }
 
         #endregion

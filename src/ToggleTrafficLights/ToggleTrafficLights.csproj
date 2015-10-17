@@ -172,8 +172,8 @@
     <Compile Include="Game\OptionSettings\IImmutable.cs" />
     <Compile Include="Game\OptionSettings\ISerializableOption.cs" />
     <Compile Include="Game\OptionSettings\OptionsGroup.cs" />
-    <Compile Include="Game\OptionSettings\Options\SavedShortcutOption.cs" />
-    <Compile Include="Game\OptionSettings\Options\Shortcut.cs" />
+    <Compile Include="Game\OptionSettings\Shortcuts\SavedShortcutOption.cs" />
+    <Compile Include="Game\OptionSettings\Shortcuts\Shortcut.cs" />
     <Compile Include="Game\OptionSettings\SavedOption.cs" />
     <Compile Include="Game\OptionSettings\Serializer.cs" />
     <Compile Include="Game\OptionSettings\ValueChangedEventArgs.cs" />

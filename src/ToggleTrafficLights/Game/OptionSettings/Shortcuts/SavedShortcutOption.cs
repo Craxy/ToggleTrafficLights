@@ -3,7 +3,7 @@ using System.Xml.Linq;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using JetBrains.Annotations;
 
-namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.OptionSettings.Options
+namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.OptionSettings.Shortcuts
 {
     public class SavedShortcutOption : SavedOption<Shortcut>
     {
