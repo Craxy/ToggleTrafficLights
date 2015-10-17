@@ -17,7 +17,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NET_2_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -25,20 +25,128 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;NET_2_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug without Serialize|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\Debug without Serialize\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NOSERIALIZATION</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NOSERIALIZATION NET_2_0</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\..\paket-files\mono26xmllinq\mono\mono\mcs\class\System.Xml.Linq\System.Xml.Linq\Extensions.cs">
+      <Paket>True</Paket>
+      <Link>Mono/System/Xml/Linq/Extensions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\paket-files\mono26xmllinq\mono\mono\mcs\class\System.Xml.Linq\System.Xml.Linq\LoadOptions.cs">
+      <Paket>True</Paket>
+      <Link>Mono/System/Xml/Linq/LoadOptions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\paket-files\mono26xmllinq\mono\mono\mcs\class\System.Xml.Linq\System.Xml.Linq\SaveOptions.cs">
+      <Paket>True</Paket>
+      <Link>Mono/System/Xml/Linq/SaveOptions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\paket-files\mono26xmllinq\mono\mono\mcs\class\System.Xml.Linq\System.Xml.Linq\XAttribute.cs">
+      <Paket>True</Paket>
+      <Link>Mono/System/Xml/Linq/XAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\paket-files\mono26xmllinq\mono\mono\mcs\class\System.Xml.Linq\System.Xml.Linq\XCData.cs">
+      <Paket>True</Paket>
+      <Link>Mono/System/Xml/Linq/XCData.cs</Link>
+    </Compile>
+    <Compile Include="..\..\paket-files\mono26xmllinq\mono\mono\mcs\class\System.Xml.Linq\System.Xml.Linq\XComment.cs">
+      <Paket>True</Paket>
+      <Link>Mono/System/Xml/Linq/XComment.cs</Link>
+    </Compile>
+    <Compile Include="..\..\paket-files\mono26xmllinq\mono\mono\mcs\class\System.Xml.Linq\System.Xml.Linq\XContainer.cs">
+      <Paket>True</Paket>
+      <Link>Mono/System/Xml/Linq/XContainer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\paket-files\mono26xmllinq\mono\mono\mcs\class\System.Xml.Linq\System.Xml.Linq\XDeclaration.cs">
+      <Paket>True</Paket>
+      <Link>Mono/System/Xml/Linq/XDeclaration.cs</Link>
+    </Compile>
+    <Compile Include="..\..\paket-files\mono26xmllinq\mono\mono\mcs\class\System.Xml.Linq\System.Xml.Linq\XDocument.cs">
+      <Paket>True</Paket>
+      <Link>Mono/System/Xml/Linq/XDocument.cs</Link>
+    </Compile>
+    <Compile Include="..\..\paket-files\mono26xmllinq\mono\mono\mcs\class\System.Xml.Linq\System.Xml.Linq\XDocumentType.cs">
+      <Paket>True</Paket>
+      <Link>Mono/System/Xml/Linq/XDocumentType.cs</Link>
+    </Compile>
+    <Compile Include="..\..\paket-files\mono26xmllinq\mono\mono\mcs\class\System.Xml.Linq\System.Xml.Linq\XElement.cs">
+      <Paket>True</Paket>
+      <Link>Mono/System/Xml/Linq/XElement.cs</Link>
+    </Compile>
+    <Compile Include="..\..\paket-files\mono26xmllinq\mono\mono\mcs\class\System.Xml.Linq\System.Xml.Linq\XIterators.cs">
+      <Paket>True</Paket>
+      <Link>Mono/System/Xml/Linq/XIterators.cs</Link>
+    </Compile>
+    <Compile Include="..\..\paket-files\mono26xmllinq\mono\mono\mcs\class\System.Xml.Linq\System.Xml.Linq\XName.cs">
+      <Paket>True</Paket>
+      <Link>Mono/System/Xml/Linq/XName.cs</Link>
+    </Compile>
+    <Compile Include="..\..\paket-files\mono26xmllinq\mono\mono\mcs\class\System.Xml.Linq\System.Xml.Linq\XNamespace.cs">
+      <Paket>True</Paket>
+      <Link>Mono/System/Xml/Linq/XNamespace.cs</Link>
+    </Compile>
+    <Compile Include="..\..\paket-files\mono26xmllinq\mono\mono\mcs\class\System.Xml.Linq\System.Xml.Linq\XNode.cs">
+      <Paket>True</Paket>
+      <Link>Mono/System/Xml/Linq/XNode.cs</Link>
+    </Compile>
+    <Compile Include="..\..\paket-files\mono26xmllinq\mono\mono\mcs\class\System.Xml.Linq\System.Xml.Linq\XNodeDocumentOrderComparer.cs">
+      <Paket>True</Paket>
+      <Link>Mono/System/Xml/Linq/XNodeDocumentOrderComparer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\paket-files\mono26xmllinq\mono\mono\mcs\class\System.Xml.Linq\System.Xml.Linq\XNodeEqualityComparer.cs">
+      <Paket>True</Paket>
+      <Link>Mono/System/Xml/Linq/XNodeEqualityComparer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\paket-files\mono26xmllinq\mono\mono\mcs\class\System.Xml.Linq\System.Xml.Linq\XNodeNavigator.cs">
+      <Paket>True</Paket>
+      <Link>Mono/System/Xml/Linq/XNodeNavigator.cs</Link>
+    </Compile>
+    <Compile Include="..\..\paket-files\mono26xmllinq\mono\mono\mcs\class\System.Xml.Linq\System.Xml.Linq\XNodeReader.cs">
+      <Paket>True</Paket>
+      <Link>Mono/System/Xml/Linq/XNodeReader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\paket-files\mono26xmllinq\mono\mono\mcs\class\System.Xml.Linq\System.Xml.Linq\XNodeWriter.cs">
+      <Paket>True</Paket>
+      <Link>Mono/System/Xml/Linq/XNodeWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\paket-files\mono26xmllinq\mono\mono\mcs\class\System.Xml.Linq\System.Xml.Linq\XObject.cs">
+      <Paket>True</Paket>
+      <Link>Mono/System/Xml/Linq/XObject.cs</Link>
+    </Compile>
+    <Compile Include="..\..\paket-files\mono26xmllinq\mono\mono\mcs\class\System.Xml.Linq\System.Xml.Linq\XObjectChange.cs">
+      <Paket>True</Paket>
+      <Link>Mono/System/Xml/Linq/XObjectChange.cs</Link>
+    </Compile>
+    <Compile Include="..\..\paket-files\mono26xmllinq\mono\mono\mcs\class\System.Xml.Linq\System.Xml.Linq\XObjectChangeEventArgs.cs">
+      <Paket>True</Paket>
+      <Link>Mono/System/Xml/Linq/XObjectChangeEventArgs.cs</Link>
+    </Compile>
+    <Compile Include="..\..\paket-files\mono26xmllinq\mono\mono\mcs\class\System.Xml.Linq\System.Xml.Linq\XProcessingInstruction.cs">
+      <Paket>True</Paket>
+      <Link>Mono/System/Xml/Linq/XProcessingInstruction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\paket-files\mono26xmllinq\mono\mono\mcs\class\System.Xml.Linq\System.Xml.Linq\XStreamingElement.cs">
+      <Paket>True</Paket>
+      <Link>Mono/System/Xml/Linq/XStreamingElement.cs</Link>
+    </Compile>
+    <Compile Include="..\..\paket-files\mono26xmllinq\mono\mono\mcs\class\System.Xml.Linq\System.Xml.Linq\XText.cs">
+      <Paket>True</Paket>
+      <Link>Mono/System/Xml/Linq/XText.cs</Link>
+    </Compile>
+    <Compile Include="..\..\paket-files\mono26xmllinq\mono\mono\mcs\class\System.Xml.Linq\System.Xml.Linq\XUtil.cs">
+      <Paket>True</Paket>
+      <Link>Mono/System/Xml/Linq/XUtil.cs</Link>
+    </Compile>
     <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>D:\Games\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\Assembly-CSharp.dll</HintPath>
@@ -53,9 +161,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -64,6 +169,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Game\Options.cs" />
+    <Compile Include="Game\OptionSettings\IImmutable.cs" />
+    <Compile Include="Game\OptionSettings\ISerializableOption.cs" />
+    <Compile Include="Game\OptionSettings\OptionsGroup.cs" />
+    <Compile Include="Game\OptionSettings\Options\SavedShortcutOption.cs" />
+    <Compile Include="Game\OptionSettings\Options\Shortcut.cs" />
+    <Compile Include="Game\OptionSettings\SavedOption.cs" />
+    <Compile Include="Game\OptionSettings\Serializer.cs" />
+    <Compile Include="Game\OptionSettings\ValueChangedEventArgs.cs" />
     <Compile Include="Game\Serialization.cs" />
     <Compile Include="Game\UI\Menu\Components\GuiControls.cs" />
     <Compile Include="Game\UI\Menu\Components\RadioButtonGroup.cs" />

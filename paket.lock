@@ -1,4 +1,37 @@
 NUGET
   remote: https://nuget.org/api/v2
   specs:
-    FAKE (3.28.0)
+    NUnit (2.6.4)
+
+GROUP Mono26XmlLinq
+
+GITHUB
+  remote: mono/mono
+  specs:
+    mcs/class/System.Xml.Linq/System.Xml.Linq/Extensions.cs (8af1fc09c4d46a26aab37ae15863e6d114ca6a2d)
+    mcs/class/System.Xml.Linq/System.Xml.Linq/LoadOptions.cs (8af1fc09c4d46a26aab37ae15863e6d114ca6a2d)
+    mcs/class/System.Xml.Linq/System.Xml.Linq/SaveOptions.cs (8af1fc09c4d46a26aab37ae15863e6d114ca6a2d)
+    mcs/class/System.Xml.Linq/System.Xml.Linq/XAttribute.cs (8af1fc09c4d46a26aab37ae15863e6d114ca6a2d)
+    mcs/class/System.Xml.Linq/System.Xml.Linq/XCData.cs (8af1fc09c4d46a26aab37ae15863e6d114ca6a2d)
+    mcs/class/System.Xml.Linq/System.Xml.Linq/XComment.cs (8af1fc09c4d46a26aab37ae15863e6d114ca6a2d)
+    mcs/class/System.Xml.Linq/System.Xml.Linq/XContainer.cs (8af1fc09c4d46a26aab37ae15863e6d114ca6a2d)
+    mcs/class/System.Xml.Linq/System.Xml.Linq/XDeclaration.cs (8af1fc09c4d46a26aab37ae15863e6d114ca6a2d)
+    mcs/class/System.Xml.Linq/System.Xml.Linq/XDocument.cs (8af1fc09c4d46a26aab37ae15863e6d114ca6a2d)
+    mcs/class/System.Xml.Linq/System.Xml.Linq/XDocumentType.cs (8af1fc09c4d46a26aab37ae15863e6d114ca6a2d)
+    mcs/class/System.Xml.Linq/System.Xml.Linq/XElement.cs (8af1fc09c4d46a26aab37ae15863e6d114ca6a2d)
+    mcs/class/System.Xml.Linq/System.Xml.Linq/XIterators.cs (8af1fc09c4d46a26aab37ae15863e6d114ca6a2d)
+    mcs/class/System.Xml.Linq/System.Xml.Linq/XName.cs (8af1fc09c4d46a26aab37ae15863e6d114ca6a2d)
+    mcs/class/System.Xml.Linq/System.Xml.Linq/XNamespace.cs (8af1fc09c4d46a26aab37ae15863e6d114ca6a2d)
+    mcs/class/System.Xml.Linq/System.Xml.Linq/XNode.cs (8af1fc09c4d46a26aab37ae15863e6d114ca6a2d)
+    mcs/class/System.Xml.Linq/System.Xml.Linq/XNodeDocumentOrderComparer.cs (8af1fc09c4d46a26aab37ae15863e6d114ca6a2d)
+    mcs/class/System.Xml.Linq/System.Xml.Linq/XNodeEqualityComparer.cs (8af1fc09c4d46a26aab37ae15863e6d114ca6a2d)
+    mcs/class/System.Xml.Linq/System.Xml.Linq/XNodeNavigator.cs (8af1fc09c4d46a26aab37ae15863e6d114ca6a2d)
+    mcs/class/System.Xml.Linq/System.Xml.Linq/XNodeReader.cs (8af1fc09c4d46a26aab37ae15863e6d114ca6a2d)
+    mcs/class/System.Xml.Linq/System.Xml.Linq/XNodeWriter.cs (8af1fc09c4d46a26aab37ae15863e6d114ca6a2d)
+    mcs/class/System.Xml.Linq/System.Xml.Linq/XObject.cs (8af1fc09c4d46a26aab37ae15863e6d114ca6a2d)
+    mcs/class/System.Xml.Linq/System.Xml.Linq/XObjectChange.cs (8af1fc09c4d46a26aab37ae15863e6d114ca6a2d)
+    mcs/class/System.Xml.Linq/System.Xml.Linq/XObjectChangeEventArgs.cs (8af1fc09c4d46a26aab37ae15863e6d114ca6a2d)
+    mcs/class/System.Xml.Linq/System.Xml.Linq/XProcessingInstruction.cs (8af1fc09c4d46a26aab37ae15863e6d114ca6a2d)
+    mcs/class/System.Xml.Linq/System.Xml.Linq/XStreamingElement.cs (8af1fc09c4d46a26aab37ae15863e6d114ca6a2d)
+    mcs/class/System.Xml.Linq/System.Xml.Linq/XText.cs (8af1fc09c4d46a26aab37ae15863e6d114ca6a2d)
+    mcs/class/System.Xml.Linq/System.Xml.Linq/XUtil.cs (8af1fc09c4d46a26aab37ae15863e6d114ca6a2d)

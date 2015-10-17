@@ -1,3 +1,34 @@
 source https://nuget.org/api/v2
 
-nuget FAKE
+nuget nunit
+
+//Unity doesn't contain System.Xml.Linq -> fetching from Mono (branch: master, tag: mono-2.11.4, github: https://github.com/mono/mono/tree/mono-2.11.4/mcs/class/System.Xml.Linq/System.Xml.Linq)
+//Note: XName requires the symbol NET_2_0
+group Mono26XmlLinq
+    github mono/mono:8af1fc09c4d46a26aab37ae15863e6d114ca6a2d mcs/class/System.Xml.Linq/System.Xml.Linq/Extensions.cs
+    github mono/mono:8af1fc09c4d46a26aab37ae15863e6d114ca6a2d mcs/class/System.Xml.Linq/System.Xml.Linq/LoadOptions.cs
+    github mono/mono:8af1fc09c4d46a26aab37ae15863e6d114ca6a2d mcs/class/System.Xml.Linq/System.Xml.Linq/SaveOptions.cs
+    github mono/mono:8af1fc09c4d46a26aab37ae15863e6d114ca6a2d mcs/class/System.Xml.Linq/System.Xml.Linq/XAttribute.cs
+    github mono/mono:8af1fc09c4d46a26aab37ae15863e6d114ca6a2d mcs/class/System.Xml.Linq/System.Xml.Linq/XCData.cs
+    github mono/mono:8af1fc09c4d46a26aab37ae15863e6d114ca6a2d mcs/class/System.Xml.Linq/System.Xml.Linq/XComment.cs
+    github mono/mono:8af1fc09c4d46a26aab37ae15863e6d114ca6a2d mcs/class/System.Xml.Linq/System.Xml.Linq/XContainer.cs
+    github mono/mono:8af1fc09c4d46a26aab37ae15863e6d114ca6a2d mcs/class/System.Xml.Linq/System.Xml.Linq/XDeclaration.cs
+    github mono/mono:8af1fc09c4d46a26aab37ae15863e6d114ca6a2d mcs/class/System.Xml.Linq/System.Xml.Linq/XDocument.cs
+    github mono/mono:8af1fc09c4d46a26aab37ae15863e6d114ca6a2d mcs/class/System.Xml.Linq/System.Xml.Linq/XDocumentType.cs
+    github mono/mono:8af1fc09c4d46a26aab37ae15863e6d114ca6a2d mcs/class/System.Xml.Linq/System.Xml.Linq/XElement.cs
+    github mono/mono:8af1fc09c4d46a26aab37ae15863e6d114ca6a2d mcs/class/System.Xml.Linq/System.Xml.Linq/XIterators.cs
+    github mono/mono:8af1fc09c4d46a26aab37ae15863e6d114ca6a2d mcs/class/System.Xml.Linq/System.Xml.Linq/XName.cs
+    github mono/mono:8af1fc09c4d46a26aab37ae15863e6d114ca6a2d mcs/class/System.Xml.Linq/System.Xml.Linq/XNamespace.cs
+    github mono/mono:8af1fc09c4d46a26aab37ae15863e6d114ca6a2d mcs/class/System.Xml.Linq/System.Xml.Linq/XNode.cs
+    github mono/mono:8af1fc09c4d46a26aab37ae15863e6d114ca6a2d mcs/class/System.Xml.Linq/System.Xml.Linq/XNodeDocumentOrderComparer.cs
+    github mono/mono:8af1fc09c4d46a26aab37ae15863e6d114ca6a2d mcs/class/System.Xml.Linq/System.Xml.Linq/XNodeEqualityComparer.cs
+    github mono/mono:8af1fc09c4d46a26aab37ae15863e6d114ca6a2d mcs/class/System.Xml.Linq/System.Xml.Linq/XNodeNavigator.cs
+    github mono/mono:8af1fc09c4d46a26aab37ae15863e6d114ca6a2d mcs/class/System.Xml.Linq/System.Xml.Linq/XNodeReader.cs
+    github mono/mono:8af1fc09c4d46a26aab37ae15863e6d114ca6a2d mcs/class/System.Xml.Linq/System.Xml.Linq/XNodeWriter.cs
+    github mono/mono:8af1fc09c4d46a26aab37ae15863e6d114ca6a2d mcs/class/System.Xml.Linq/System.Xml.Linq/XObject.cs
+    github mono/mono:8af1fc09c4d46a26aab37ae15863e6d114ca6a2d mcs/class/System.Xml.Linq/System.Xml.Linq/XObjectChange.cs
+    github mono/mono:8af1fc09c4d46a26aab37ae15863e6d114ca6a2d mcs/class/System.Xml.Linq/System.Xml.Linq/XObjectChangeEventArgs.cs
+    github mono/mono:8af1fc09c4d46a26aab37ae15863e6d114ca6a2d mcs/class/System.Xml.Linq/System.Xml.Linq/XProcessingInstruction.cs
+    github mono/mono:8af1fc09c4d46a26aab37ae15863e6d114ca6a2d mcs/class/System.Xml.Linq/System.Xml.Linq/XStreamingElement.cs
+    github mono/mono:8af1fc09c4d46a26aab37ae15863e6d114ca6a2d mcs/class/System.Xml.Linq/System.Xml.Linq/XText.cs
+    github mono/mono:8af1fc09c4d46a26aab37ae15863e6d114ca6a2d mcs/class/System.Xml.Linq/System.Xml.Linq/XUtil.cs

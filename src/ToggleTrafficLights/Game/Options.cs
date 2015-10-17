@@ -8,6 +8,7 @@ using static Craxy.CitiesSkylines.ToggleTrafficLights.Utils.FunctionalHelper;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
 {
+    [Obsolete]
     public static class Options
     {
         #region Enums

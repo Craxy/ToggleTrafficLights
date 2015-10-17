@@ -184,6 +184,11 @@ FakesAssemblies/
 
 #FAKE
 .paket/paket.exe
+paket-files
+packages
 
 #Assets
 src/ToggleTrafficLights/Assets/orig/game/*
+
+#etc
+src/ToggleTrafficLights/Mono
