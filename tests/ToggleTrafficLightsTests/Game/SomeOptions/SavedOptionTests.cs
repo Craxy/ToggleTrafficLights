@@ -1,5 +1,5 @@
 ﻿using System.Xml.Linq;
-using Craxy.CitiesSkylines.ToggleTrafficLights.Game.OptionSettings;
+using Craxy.CitiesSkylines.ToggleTrafficLights.Game.Option;
 using NUnit.Framework;
 
 namespace ToggleTrafficLightsTests.Game.SomeOptions

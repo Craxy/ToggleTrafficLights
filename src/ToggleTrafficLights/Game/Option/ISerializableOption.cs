@@ -1,7 +1,7 @@
 ﻿using System.Xml.Linq;
 using JetBrains.Annotations;
 
-namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.OptionSettings
+namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Option
 {
     public interface ISerializableOption
     {

@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.Design.Serialization;
-using Craxy.CitiesSkylines.ToggleTrafficLights.Game.OptionSettings.Shortcuts;
+using Craxy.CitiesSkylines.ToggleTrafficLights.Game.Option.Shortcuts;
 using NUnit.Framework;
 using UnityEngine;
 

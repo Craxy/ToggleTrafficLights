@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Xml.Linq;
 using ColossalFramework.UI;
 
-namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.OptionSettings
+namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Option
 {
     public interface IOptionsGroup : ISerializableOption
     {
@@ -15,7 +15,12 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.OptionSettings
     }
     public abstract class OptionsGroup : IOptionsGroup
     {
-        public abstract string Name { get; }
+        protected OptionsGroup(string name)
+        {
+            Name = name;
+        }
+
+        public string Name { get; }
 
         public virtual bool IsChanged => IsAnyValueChanged();
 

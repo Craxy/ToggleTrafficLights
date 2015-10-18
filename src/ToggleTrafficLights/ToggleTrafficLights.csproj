@@ -169,14 +169,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Game\Options.cs" />
-    <Compile Include="Game\OptionSettings\IImmutable.cs" />
-    <Compile Include="Game\OptionSettings\ISerializableOption.cs" />
-    <Compile Include="Game\OptionSettings\OptionsGroup.cs" />
-    <Compile Include="Game\OptionSettings\Shortcuts\SavedShortcutOption.cs" />
-    <Compile Include="Game\OptionSettings\Shortcuts\Shortcut.cs" />
-    <Compile Include="Game\OptionSettings\SavedOption.cs" />
-    <Compile Include="Game\OptionSettings\Serializer.cs" />
-    <Compile Include="Game\OptionSettings\ValueChangedEventArgs.cs" />
+    <Compile Include="Game\Option\IImmutable.cs" />
+    <Compile Include="Game\Option\ISerializableOption.cs" />
+    <Compile Include="Game\Option\OptionsGroup.cs" />
+    <Compile Include="Game\Option\Shortcuts\SavedShortcutOption.cs" />
+    <Compile Include="Game\Option\Shortcuts\Shortcut.cs" />
+    <Compile Include="Game\Option\SavedOption.cs" />
+    <Compile Include="Game\Option\Serializer.cs" />
+    <Compile Include="Game\Option\ValueChangedEventArgs.cs" />
     <Compile Include="Game\Serialization.cs" />
     <Compile Include="Game\UI\Menu\Components\GuiControls.cs" />
     <Compile Include="Game\UI\Menu\Components\RadioButtonGroup.cs" />

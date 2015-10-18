@@ -7,7 +7,7 @@ using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions;
 using JetBrains.Annotations;
 using UnityEngine;
 
-namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.OptionSettings.Shortcuts
+namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Option.Shortcuts
 {
     // not SavedInputKey: don't want to save in C:S settings file, but instead in custom XML file
     // SavedInputKey doesn't work without a settings file

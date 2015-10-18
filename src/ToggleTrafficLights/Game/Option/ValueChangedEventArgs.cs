@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.OptionSettings
+namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Option
 {
     public class ValueChangedEventArgs
     {

@@ -3,17 +3,15 @@ using System.Xml.Linq;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using JetBrains.Annotations;
 
-namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.OptionSettings.Shortcuts
+namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Option.Shortcuts
 {
     public class SavedShortcutOption : SavedOption<Shortcut>
     {
         public SavedShortcutOption(string name, 
             Shortcut defaultValue, 
-            Serializer serializeMethod, 
-            Deserializer deserializeMethod, 
             bool enabled = true, 
             bool save = true) 
-            : base(name, defaultValue, serializeMethod, deserializeMethod, enabled, save)
+            : base(name, defaultValue, Serialize, Deserialize, enabled, save)
         {
         }
 
@@ -31,9 +29,9 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.OptionSettings.Shortcuts
             Shortcut sc;
             if (Shortcut.TryParse(value, out sc))
             {
-                return Option.Some(sc);
+                return Utils.Option.Some(sc);
             }
-            return Option.None<Shortcut>();
+            return Utils.Option.None<Shortcut>();
         }
     }
 }

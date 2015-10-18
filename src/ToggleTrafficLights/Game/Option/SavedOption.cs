@@ -4,7 +4,7 @@ using System.Xml.Linq;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using JetBrains.Annotations;
 
-namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.OptionSettings
+namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Option
 {
     public interface ISavedOption : ISerializableOption
     {
@@ -174,6 +174,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.OptionSettings
 
             try
             {
+                //Todo: error handling
                 var res = DeserializeMethod(Name, xml);
                 if (res.IsSome())
                 {
