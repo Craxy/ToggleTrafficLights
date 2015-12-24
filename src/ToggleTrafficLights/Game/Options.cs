@@ -11,8 +11,33 @@ using static Craxy.CitiesSkylines.ToggleTrafficLights.Utils.FunctionalHelper;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
 {
-    public class Options : OptionsGroup
+
+
+    public sealed class Options : OptionsGroup
     {
+        #region Default
+        private static Options _default;
+        private static readonly object Lock = new object();
+        public static Options Default
+        {
+            get
+            {
+                if (_default == null)
+                {
+                    lock (Lock)
+                    {
+                        if (_default == null)
+                        {
+                            _default = new Options(nameof(Options));
+                        }
+                    }
+                }
+
+                return _default;
+            }
+        }
+        #endregion
+
         [Flags]
         public enum GroundMode
         {
@@ -25,7 +50,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
         public Options(string name) : base(name) {}
 
         #region Shortcuts
-        public class ShortcutsGroup : OptionsGroup
+        public sealed class ShortcutsGroup : OptionsGroup
         {
             public ShortcutsGroup(string name) : base(name) { }
 
@@ -82,7 +107,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
         #endregion
 
         #region ToggleTrafficLightsTool
-        public class ToggleIntersectionsGroup : OptionsGroup
+        public sealed class ToggleIntersectionsGroup : OptionsGroup
         {
             public ToggleIntersectionsGroup(string name) : base(name) {}
             /// <summary>
@@ -110,7 +135,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
 
         #region HighlightIntersections
 
-        public class HighlightIntersectionsGroup : OptionsGroup
+        public sealed class HighlightIntersectionsGroup : OptionsGroup
         {
             public HighlightIntersectionsGroup(string name) : base(name) { }
 
@@ -151,99 +176,54 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
         public HighlightIntersectionsGroup HighlightIntersections { get; } = new HighlightIntersectionsGroup(nameof(HighlightIntersections));
 
         #endregion
-    }
 
-    //    [Obsolete]
-    //    public static class Options
-    //    {
-    //        #region Enums
-    //        [Flags]
-    //        public enum GroundMode
-    //        {
-    //            None = 0,
-    //            Overground = 1,
-    //            Underground = 2,
-    //            All = Overground | Underground,
-    //        }
-    //
-    //        #endregion
-    //
-    //        #region Keys
-    //
-    //        public static class InputKeys
-    //        {
-    //            public static readonly SavedInputKey ElevationUp = new SavedInputKey(Settings.buildElevationUp, Settings.gameSettingsFile, DefaultSettings.buildElevationUp, true);
-    //            public static readonly SavedInputKey ElevationDown = new SavedInputKey(Settings.buildElevationDown, Settings.gameSettingsFile, DefaultSettings.buildElevationDown, true);
-    //        }
-    //        #endregion
-    //
-    //        #region Traffic Lights Tool
-    //        public static class ToggleTrafficLightsTool
-    //        {
-    //            public static readonly ChangingValue<GroundMode> GroundMode = ChangingValue.Create(Options.GroundMode.Overground);
-    //
-    //            public static readonly ChangingValue<Color> HasTrafficLightsColor = ChangingValue.Create(new Color(0.2f, 0.749f, 0.988f, 1.0f));
-    //            public static readonly ChangingValue<Color> HasNoTrafficLightsColor = ChangingValue.Create(new Color(0.0f, 0.369f, 0.525f, 1.0f));
-    //        }
-    //        #endregion
-    //
-    //        #region Traffic Lights Highlighting
-    //
-    //        public static class HighlightIntersections
-    //        {
-    //            public static readonly ChangingValue<GroundMode> IntersectionsToHighlight = ChangingValue.Create(GroundMode.Underground);
-    //            // yeah....using a mistake (settings in static class) and add something that shoud neither be in a static class nor in a settings class...
-    //            public static event UnitToUnit RecalculateColorForAllIntersections;
-    //            public static void RequestRecalculateColorForAllIntersections()
-    //            {
-    //                var handler = RecalculateColorForAllIntersections;
-    //	            handler?.Invoke();
-    //            }
-    //
-    //            public static readonly ChangingValue<Color> HasTrafficLightsColor = ChangingValue.Create(new Color(0.56f, 1.0f, 0.56f, 1.0f));
-    //            public static readonly ChangingValue<Color> HasNoTrafficLightsColor = ChangingValue.Create(new Color(0.56f, 0.0f, 0.0f, 1.0f));
-    //
-    //            public static readonly ChangingValue<float> MarkerHeight = ChangingValue.Create(2.0f);
-    //            public static readonly ChangingValue<float> MarkerRadius = ChangingValue.Create(5.0f);
-    //
-    //            public static readonly ChangingValue<int> NumberOfMarkerSides = ChangingValue.Create(13);
-    //
-    //        }
-    //        #endregion
-    //
-    //
-    //
-    //        #region Save Options
-    //
-    //        public static void Serialize(string path)
-    //        {
-    //            throw new NotImplementedException();
-    //
-    ////            try
-    ////            {
-    ////                var xml = new XElement(typeof (Options).Name,
-    ////                    new XElement(typeof(Options.ToggleTrafficLightsTool).Name,
-    ////                            Options.ToggleTrafficLightsTool.GroundMode.ToXml()
-    ////                        )
-    ////                    );
-    ////
-    ////            }
-    ////            catch (Exception e)
-    ////            {
-    ////                Log.Error("Error while saving the options to '{0}': {1}", path, e.ToString());
-    ////            }
-    //        }
-    //
-    //        public static void Deserialzie(string path)
-    //        {
-    //            throw new NotImplementedException();
-    //        }
-    //        #endregion
-    //
-    //        private static XElement ToXml<T>(this ChangingValue<T> v, string name, Func<T,string> toString)
-    //        {
-    //            return new XElement(name, toString(v.Value));
-    //        }
-    //
-    //    }
+        #region Logging
+        //todo: move to logging class/namespace
+        public enum LogLevel : byte
+        {
+            None = 0,
+            Critical = 1,
+            Error = 2,
+            Warning = 3,
+            Information = 4,
+            Verbose = 5,
+        }
+        public sealed class LoggingGroup : OptionsGroup
+        {
+            public LoggingGroup(string name) : base(name) {}
+
+            public SavedOption<LogLevel> LogLevel { get; } = new SavedOption<LogLevel>(nameof(LogLevel),
+                defaultValue:Options.LogLevel.Warning,
+                serializeMethod: (name, value) => new XElement(name, value.ToString()),
+                deserializeMethod: (name, xml) => Utils.Option.Some((LogLevel)Enum.Parse(typeof(LogLevel), xml.Value)),
+                enabled: true, save: true); 
+        }
+        public LoggingGroup Logging { get; } = new LoggingGroup(nameof(Logging));
+        #endregion
+
+        #region Debugging
+        public sealed class DebuggingGroup : OptionsGroup
+        {
+            public DebuggingGroup(string name) : base(name) { }
+
+            //todo: implement:
+            // disable serialization
+            // remove serializied traffic lights (-> remove from savegame) 
+            public SavedOption<bool> SaveTrafficLightsInSavegames { get; } = new SavedOption<bool>(nameof(SaveTrafficLightsInSavegames),
+                defaultValue: true,
+                serializeMethod: (name, value) => new XElement(name, value.ToString()),
+                deserializeMethod: (name, xml) => Utils.Option.Some(bool.Parse(xml.Value)),
+                enabled: true, save: true);
+        }
+        public DebuggingGroup Debugging { get; } = new DebuggingGroup(nameof(Debugging));
+        #endregion
+
+        #region serialization
+        public void SaveToFile(string path)
+        {
+            this.Serialize().Save(path);
+            this.MarkAsSaved();
+        }
+        #endregion
+    }
 }

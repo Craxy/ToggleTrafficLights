@@ -7,7 +7,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights
     {
         public string Name => "Toggle Traffic Lights";
 
-	    public string Description
+        public string Description
         {
             get
             {

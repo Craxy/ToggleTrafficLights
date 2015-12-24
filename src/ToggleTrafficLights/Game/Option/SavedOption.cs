@@ -119,7 +119,11 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Option
         public delegate Option<T> Deserializer(string name, XElement xml);
         public Deserializer DeserializeMethod { get; }
 
-        public XElement Serialize(bool save)
+        public virtual void MarkAsSaved()
+        {
+            SavedValue = Value;
+        }
+        public XElement Serialize()
         {
             if (!Save)
             {
@@ -133,19 +137,11 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Option
 
             try
             {
-                try
-                {
-                    var xml = SerializeMethod(Name, Value);
-                    xml.Add(new XAttribute(nameof(Enabled), Enabled));
-                    return xml;
-                }
-                finally
-                {
-                    if (save)
-                    {
-                        SavedValue = Value;
-                    }
-                }
+
+                var xml = SerializeMethod(Name, Value);
+                xml.Add(new XAttribute(nameof(Enabled), Enabled));
+                return xml;
+
             }
             catch (Exception e)
             {

@@ -1,9 +1,10 @@
 ﻿using System;
+using JetBrains.Annotations;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
 {
     // ReSharper disable once InconsistentNaming
-	// ReSharper disable once UnusedTypeParameter
+    // ReSharper disable once UnusedTypeParameter
     public interface Option<T>
     {
     }
@@ -21,7 +22,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
     }
     public sealed class Some<T> : Option<T>
     {
-        public Some(T value)
+        public Some([NotNull] T value)
         {
             Value = value;
         }
@@ -40,7 +41,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
 
     public static class Option
     {
-        public static Some<T> Some<T>(T value)
+        public static Some<T> Some<T>([NotNull] T value)
         {
             return new Some<T>(value);
         }
@@ -50,15 +51,15 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
             return new None<T>();
         }
 
-        public static bool IsSome<T>(this Option<T> option)
+        public static bool IsSome<T>([NotNull] this Option<T> option)
         {
             return option is Some<T>;
         }
-        public static bool IsNone<T>(this Option<T> option)
+        public static bool IsNone<T>([NotNull] this Option<T> option)
         {
             return option is None<T>;
         }
-        public static T GetValue<T>(this Option<T> option)
+        public static T GetValue<T>([NotNull] this Option<T> option)
         {
             var some = option as Some<T>;
             if (some != null)
@@ -70,6 +71,16 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
                 throw new ArgumentException("Option is not Some", nameof(option));
             }
         }
-        
+
+        public static Option<TResult> Bind<TInput, TResult>(Option<TInput> option, Func<TInput, Option<TResult>> func)
+        {
+            switch (option.IsSome())
+            {
+                case true:
+                    return func(option.GetValue());
+                default:
+                    return None<TResult>();
+            }
+        }
     }
 }

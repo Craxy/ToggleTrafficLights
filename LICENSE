@@ -30,7 +30,6 @@ This mod uses the System.Xml.Linq implementation of Mono
 The licence for the used files is: https://github.com/mono/mono/blob/mono-2.11.4/mcs/class/LICENSE
 
 
-
 The MIT X11 License covers most of the class libraries in the Mono
 project.  Some third party libraries come from different projects, and
 are licensed under their own terms.

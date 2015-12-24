@@ -73,10 +73,14 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Option
         #endregion
 
         #region serialize
-        public virtual XElement Serialize(bool save)
+        public virtual void MarkAsSaved()
+        {
+            GetSerializableOptions().ForEach(o => o.MarkAsSaved());
+        }
+        public virtual XElement Serialize()
         {
             return new XElement(Name,
-                GetSerializableOptions().Select(o => o.Serialize(save))
+                GetSerializableOptions().Select(o => o.Serialize())
                 );
         }
 

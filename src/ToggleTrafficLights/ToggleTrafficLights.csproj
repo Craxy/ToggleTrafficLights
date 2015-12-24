@@ -169,7 +169,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Game\Options.cs" />
-    <Compile Include="Game\Option\IImmutable.cs" />
     <Compile Include="Game\Option\ISerializableOption.cs" />
     <Compile Include="Game\Option\OptionsGroup.cs" />
     <Compile Include="Game\Option\Shortcuts\SavedShortcutOption.cs" />
@@ -240,6 +239,7 @@
     <Compile Include="UI\SideMenu\SideMenu.cs" />
     <Compile Include="Utils\ChangedValue.cs" />
     <Compile Include="Utils\CitiesHelper.cs" />
+    <Compile Include="Utils\Disposable\DisposableExtensions.cs" />
     <Compile Include="Utils\EventArgs.cs" />
     <Compile Include="Utils\Extensions\ArrayExtensions.cs" />
     <Compile Include="Utils\Extensions\AttributeExtensions.cs" />
@@ -252,8 +252,10 @@
     <Compile Include="Utils\Extensions\StringBuilderExtensions.cs" />
     <Compile Include="Utils\Extensions\StringExtensions.cs" />
     <Compile Include="Utils\FunctionalHelper.cs" />
+    <Compile Include="Utils\IImmutable.cs" />
     <Compile Include="Utils\Log.cs" />
     <Compile Include="Utils\MeshHelper.cs" />
+    <Compile Include="Utils\Messaging\Messenger.cs" />
     <Compile Include="Utils\MonoBehaviorHelper.cs" />
     <Compile Include="Utils\Option.cs" />
     <Compile Include="Utils\ChangingValue.cs" />

@@ -11,8 +11,9 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Option
         bool IsChanged { get; }
         bool IsDefault { get; }
 
+        void MarkAsSaved();
         [CanBeNull]
-        XElement Serialize(bool save);
+        XElement Serialize();
         void Deserialize([NotNull] XElement xml);
     }
 }
