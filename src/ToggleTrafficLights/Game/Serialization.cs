@@ -25,7 +25,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
 
             DebugLog.Message("Serialization: Created v.{0} at {1}", Assembly.GetExecutingAssembly().GetName().Version, DateTime.Now);
 
-#if !SERIALIZE
+#if NOSERIALIZATION
             DebugLog.Message("Serialization is disabled");
 #endif
 
