@@ -1,6 +1,5 @@
 ﻿
 using System;
-using System.Xml.Linq;
 using ColossalFramework;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using UnityEngine;
@@ -67,40 +66,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
 
         }
         #endregion
-
-
-
-        #region Save Options
-
-        public static void Serialize(string path)
-        {
-            throw new NotImplementedException();
-
-//            try
-//            {
-//                var xml = new XElement(typeof (Options).Name,
-//                    new XElement(typeof(Options.ToggleTrafficLightsTool).Name,
-//                            Options.ToggleTrafficLightsTool.GroundMode.ToXml()
-//                        )
-//                    );
-//
-//            }
-//            catch (Exception e)
-//            {
-//                Log.Error("Error while saving the options to '{0}': {1}", path, e.ToString());
-//            }
-        }
-
-        public static void Deserialzie(string path)
-        {
-            throw new NotImplementedException();
-        }
-        #endregion
-
-        private static XElement ToXml<T>(this ChangingValue<T> v, string name, Func<T,string> toString)
-        {
-            return new XElement(name, toString(v.Value));
-        }
 
     }
 }

@@ -41,25 +41,24 @@
   <ItemGroup>
     <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>D:\Spiele\Steam\SteamApps\common\Cities_Skylines\Cities_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>D:\Games\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="ColossalManaged, Version=0.3.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>D:\Spiele\Steam\SteamApps\common\Cities_Skylines\Cities_Data\Managed\ColossalManaged.dll</HintPath>
+      <HintPath>D:\Games\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\ColossalManaged.dll</HintPath>
     </Reference>
     <Reference Include="ICities, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>D:\Spiele\Steam\SteamApps\common\Cities_Skylines\Cities_Data\Managed\ICities.dll</HintPath>
+      <HintPath>D:\Games\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\ICities.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>D:\Spiele\Steam\SteamApps\common\Cities_Skylines\Cities_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>D:\Games\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -70,7 +69,6 @@
     <Compile Include="Game\UI\Menu\Components\UICaption.cs" />
     <Compile Include="Game\UI\Menu\Components\UIColorPanel.cs" />
     <Compile Include="Game\UI\Menu\Components\UIWindow.cs" />
-    <Compile Include="Game\UI\Menu\Experimental\HighlightIntersectionsUi.cs" />
     <Compile Include="Game\UI\Menu\OptionsUi.cs" />
     <Compile Include="Game\UI\Menu\SettingsUi.cs" />
     <Compile Include="Game\UI\Menu\Sidemenu.cs" />
