@@ -6,13 +6,8 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("ToggleTrafficLights")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("ToggleTrafficLights")]
-[assembly: AssemblyCopyright("Copyright ©  2015")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
+[assembly: AssemblyCopyright("Copyright © Craxy 2015")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
@@ -34,9 +29,9 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 // breaking.feature.bugfix
 #if DEBUG
-[assembly: AssemblyVersion("0.9.3.*")]
-[assembly: AssemblyFileVersion("0.9.3.*")]
+[assembly: AssemblyVersion("0.9.4.*")]
+[assembly: AssemblyFileVersion("0.9.4.*")]
 #else
-[assembly: AssemblyVersion("0.9.3")]
-[assembly: AssemblyFileVersion("0.9.3")]
+[assembly: AssemblyVersion("0.9.4")]
+[assembly: AssemblyFileVersion("0.9.4")]
 #endif
