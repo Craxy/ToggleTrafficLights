@@ -103,7 +103,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
 
             if (BuiltinTabstrip != null && BuiltinTabstrip.selectedIndex >= 0)
             {
-                BuiltinTabstrip.selectedIndex = -1;
+//                BuiltinTabstrip.selectedIndex = -1;
             }
         }
 
@@ -121,7 +121,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine.States
             {
                 _originalSelectIndex = 0;
             }
-            BuiltinTabstrip.selectedIndex = -1;
+//            BuiltinTabstrip.selectedIndex = -1;
         }
 
         #region Overrides of ButtonStateBase

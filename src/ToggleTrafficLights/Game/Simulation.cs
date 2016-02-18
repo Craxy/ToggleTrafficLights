@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Reflection;
 using ColossalFramework;
 using ColossalFramework.Steamworks;
+using ColossalFramework.UI;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
@@ -73,13 +74,24 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
 
             Simulation.OnUpdate(realTimeDelta, simulationTimeDelta);
 
-//#if DEBUG
-//            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.P))
-//            {
-////                MyHighlightTestTool.ToggleActivated();
-//                HighlightIntersectionsUi.ToggleShow();
-//            }
-//#endif
+#if DEBUG
+            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.P))
+            {
+                //                MyHighlightTestTool.ToggleActivated();
+                //                HighlightIntersectionsUi.ToggleShow();
+                var rp = UiHelper.FindComponent<UIComponent>("RoadsOptionPanel(RoadsPanel)", null, UiHelper.FindOptions.NameContains);
+                var tm = UiHelper.FindComponent<UITabstrip>("ToolMode", rp);
+                tm.selectedIndex = (tm.selectedIndex + 1)%tm.tabCount;
+            }
+            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.O))
+            {
+                //                MyHighlightTestTool.ToggleActivated();
+                //                HighlightIntersectionsUi.ToggleShow();
+                var rp = UiHelper.FindComponent<UIComponent>("RoadsOptionPanel(RoadsPanel)", null, UiHelper.FindOptions.NameContains);
+                var tm = UiHelper.FindComponent<UITabstrip>("ToolMode", rp);
+                tm.selectedIndex = -1;  //throws exception: IndexOutOfRangeException: Array index is out of range.
+            }
+#endif
         }
 
         #endregion
