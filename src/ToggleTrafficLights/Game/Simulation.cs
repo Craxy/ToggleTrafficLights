@@ -77,16 +77,12 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
 #if DEBUG
             if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.P))
             {
-                //                MyHighlightTestTool.ToggleActivated();
-                //                HighlightIntersectionsUi.ToggleShow();
                 var rp = UiHelper.FindComponent<UIComponent>("RoadsOptionPanel(RoadsPanel)", null, UiHelper.FindOptions.NameContains);
                 var tm = UiHelper.FindComponent<UITabstrip>("ToolMode", rp);
                 tm.selectedIndex = (tm.selectedIndex + 1)%tm.tabCount;
             }
             if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.O))
             {
-                //                MyHighlightTestTool.ToggleActivated();
-                //                HighlightIntersectionsUi.ToggleShow();
                 var rp = UiHelper.FindComponent<UIComponent>("RoadsOptionPanel(RoadsPanel)", null, UiHelper.FindOptions.NameContains);
                 var tm = UiHelper.FindComponent<UITabstrip>("ToolMode", rp);
                 tm.selectedIndex = -1;  //throws exception: IndexOutOfRangeException: Array index is out of range.

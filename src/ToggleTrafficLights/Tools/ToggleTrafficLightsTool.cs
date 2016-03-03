@@ -92,14 +92,13 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
                 var hasTrafficLight = CitiesHelper.HasTrafficLights(node.m_flags);
                 var txt = string.Join("\n", new[]
                     {
-                        string.Format("Traffic lights: {0}", hasTrafficLight),
-                        string.Format("      Original: {0}", WantTrafficLights(nodeId)),
-
+                        $"Traffic lights: {hasTrafficLight}",
+                        $"      Original: {WantTrafficLights(nodeId)}",
 #if DEBUG
-                        string.Format("          Node: {0}", m_hoverInstance.NetNode),
-                        string.Format("     Elevation: {0}", node.m_elevation),
-                        string.Format("   Underground: {0}", node.Info.m_netAI.IsUnderground()),
-                        string.Format("      Position: {0}", node.m_position),
+                        $"          Node: {m_hoverInstance.NetNode}",
+                        $"     Elevation: {node.m_elevation}",
+                        $"   Underground: {node.Info.m_netAI.IsUnderground()}",
+                        $"      Position: {node.m_position}",
 #endif
                     });
 
@@ -110,9 +109,9 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
                 ShowToolInfo(false, null, Vector3.zero);
             }
         }
-        protected override void OnToolGUI()
+        protected override void OnToolGUI(Event e)
         {
-            base.OnToolGUI();
+            base.OnToolGUI(e);
 
             var nodeId = GetCurrentNetNodeId();
 

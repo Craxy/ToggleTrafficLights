@@ -29,9 +29,9 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 // breaking.feature.bugfix
 #if DEBUG
-[assembly: AssemblyVersion("0.9.4.*")]
-[assembly: AssemblyFileVersion("0.9.4.*")]
+[assembly: AssemblyVersion("0.9.5.*")]
+[assembly: AssemblyFileVersion("0.9.5.9")]
 #else
-[assembly: AssemblyVersion("0.9.4")]
-[assembly: AssemblyFileVersion("0.9.4")]
+[assembly: AssemblyVersion("0.9.5")]
+[assembly: AssemblyFileVersion("0.9.5")]
 #endif
