@@ -14,23 +14,17 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
       Reset,
     }
 
-    public static NetNode Get(ushort nodeId)
-    {
-      return Singleton<NetManager>.instance.m_nodes.m_buffer[nodeId];
-    }
+    public static NetNode Get(ushort nodeId) 
+      => Singleton<NetManager>.instance.m_nodes.m_buffer[nodeId];
 
     /// <summary>
     /// NetNode is a struct and therefore it's not enough to just change a NetNode in variable but must be written into NodeManager
     /// </summary>
-    public static void UpdateFlags(ushort nodeId, NetNode.Flags flags)
-    {
-      Singleton<NetManager>.instance.m_nodes.m_buffer[nodeId].m_flags = flags;
-    }
+    public static void UpdateFlags(ushort nodeId, NetNode.Flags flags) 
+      => Singleton<NetManager>.instance.m_nodes.m_buffer[nodeId].m_flags = flags;
 
-    public static void UpdateFlags(ushort nodeId, ref NetNode node)
-    {
-      UpdateFlags(nodeId, node.m_flags);
-    }
+    public static void UpdateFlags(ushort nodeId, ref NetNode node) 
+      => UpdateFlags(nodeId, node.m_flags);
 
     public static void UpdateNode(ushort nodeId, NetNode node)
     {
@@ -64,15 +58,10 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
     /// Requires node to be a Junction and have RoadBaseAi.
     /// Test with <see cref="IsValidIntersection"/>
     /// </summary>
-    public static bool IntersectionCanHaveTrafficLights(ushort nodeId, ref NetNode node)
-    {
-      return IntersectionCanHaveTrafficLights((RoadBaseAI) node.Info.m_netAI, nodeId, ref node);
-    }
-
-    public static bool IsValidIntersection(ushort nodeId, ref NetNode node)
-    {
-      return TryGetRoadAiIfValidIntersection(nodeId, ref node, out var _);
-    }
+    public static bool IntersectionCanHaveTrafficLights(ushort nodeId, ref NetNode node) 
+      => IntersectionCanHaveTrafficLights((RoadBaseAI) node.Info.m_netAI, nodeId, ref node);
+    public static bool IsValidIntersection(ushort nodeId, ref NetNode node) 
+      => TryGetRoadAiIfValidIntersection(nodeId, ref node, out var _);
 
     public static bool TryGetRoadAiIfValidIntersection(ushort nodeId, ref NetNode node, out RoadBaseAI ai)
     {
@@ -101,16 +90,12 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
       return ai != null;
     }
 
-    public static bool CanHaveTrafficLights(ushort nodeId, ref NetNode node)
-    {
-      return TryGetRoadAiIfValidIntersection(nodeId, ref node, out var ai)
-             && IntersectionCanHaveTrafficLights(ai, nodeId, ref node);
-    }
+    public static bool CanHaveTrafficLights(ushort nodeId, ref NetNode node) 
+      => TryGetRoadAiIfValidIntersection(nodeId, ref node, out var ai)
+         && IntersectionCanHaveTrafficLights(ai, nodeId, ref node);
 
-    public static bool IsValidTrafficLightsIntersection(ushort nodeId, ref NetNode node)
-    {
-      return CanHaveTrafficLights(nodeId, ref node);
-    }
+    public static bool IsValidTrafficLightsIntersection(ushort nodeId, ref NetNode node) 
+      => CanHaveTrafficLights(nodeId, ref node);
 
     public static bool WantTrafficLights(ushort nodeId, ref NetNode node)
     {
@@ -118,10 +103,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
       return ai != null && ai.WantTrafficLights();
     }
 
-    public static bool HasIntersection(ushort nodeId, ref NetNode node)
-    {
-      return (node.m_flags & NetNode.Flags.TrafficLights) == NetNode.Flags.TrafficLights;
-    }
+    public static bool HasIntersection(ushort nodeId, ref NetNode node) 
+      => (node.m_flags & NetNode.Flags.TrafficLights) == NetNode.Flags.TrafficLights;
 
     #endregion
 
@@ -261,26 +244,14 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
         var node = Node.Get(nodeId);
         Toggle(nodeId, ref node, segmentIndex);
       }
-
-      public static void Toggle(ushort nodeId, ref NetNode node, ushort segmentIndex)
-      {
-        Change(nodeId, ref node, segmentIndex, Mode.Toggle);
-      }
-
-      public static void Add(ushort nodeId, ref NetNode node, ushort segmentIndex)
-      {
-        Change(nodeId, ref node, segmentIndex, Mode.Add);
-      }
-
-      public static void Remove(ushort nodeId, ref NetNode node, ushort segmentIndex)
-      {
-        Change(nodeId, ref node, segmentIndex, Mode.Remove);
-      }
-
-      public static void Reset(ushort nodeId, ref NetNode node, ushort segmentIndex)
-      {
-        Change(nodeId, ref node, segmentIndex, Mode.Reset);
-      }
+      public static void Toggle(ushort nodeId, ref NetNode node, ushort segmentIndex) 
+        => Change(nodeId, ref node, segmentIndex, Mode.Toggle);
+      public static void Add(ushort nodeId, ref NetNode node, ushort segmentIndex) 
+        => Change(nodeId, ref node, segmentIndex, Mode.Add);
+      public static void Remove(ushort nodeId, ref NetNode node, ushort segmentIndex) 
+        => Change(nodeId, ref node, segmentIndex, Mode.Remove);
+      public static void Reset(ushort nodeId, ref NetNode node, ushort segmentIndex) 
+        => Change(nodeId, ref node, segmentIndex, Mode.Reset);
     }
   }
 }

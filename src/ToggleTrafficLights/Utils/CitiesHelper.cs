@@ -2,15 +2,11 @@
 {
   public static class CitiesHelper
   {
-    public static bool HasTrafficLights(NetNode.Flags flags)
-    {
-      return (flags & NetNode.Flags.TrafficLights) == NetNode.Flags.TrafficLights;
-    }
+    public static bool HasTrafficLights(NetNode.Flags flags) 
+      => (flags & NetNode.Flags.TrafficLights) == NetNode.Flags.TrafficLights;
 
-    public static bool IsCustomTrafficLights(NetNode.Flags flags)
-    {
-      return (flags & NetNode.Flags.CustomTrafficLights) == NetNode.Flags.CustomTrafficLights;
-    }
+    public static bool IsCustomTrafficLights(NetNode.Flags flags) 
+      => (flags & NetNode.Flags.CustomTrafficLights) == NetNode.Flags.CustomTrafficLights;
 
     public static void ClickOnRoadsButton()
     {
