@@ -1,13 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{DBCE62E6-905B-47DD-814C-453CC4F28187}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C7773097-D1BB-4231-BBF7-13C1821F3744}"
 	ProjectSection(SolutionItems) = preProject
-		build.fsx = build.fsx
 		README.md = README.md
 	EndProjectSection
 EndProject
@@ -16,14 +15,11 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
-		DebugWithoutSerialization|Any CPU = DebugWithoutSerialization|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{E1DEBC88-68E3-4525-9044-3F102A300D2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E1DEBC88-68E3-4525-9044-3F102A300D2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E1DEBC88-68E3-4525-9044-3F102A300D2B}.DebugWithoutSerialization|Any CPU.ActiveCfg = Debug without Serialize|Any CPU
-		{E1DEBC88-68E3-4525-9044-3F102A300D2B}.DebugWithoutSerialization|Any CPU.Build.0 = Debug without Serialize|Any CPU
 		{E1DEBC88-68E3-4525-9044-3F102A300D2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E1DEBC88-68E3-4525-9044-3F102A300D2B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection

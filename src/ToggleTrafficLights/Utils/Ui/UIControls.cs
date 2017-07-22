@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-using ColossalFramework.Steamworks;
-using ColossalFramework.UI;
+﻿using ColossalFramework.UI;
 using UnityEngine;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Ui

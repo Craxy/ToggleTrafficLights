@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Reflection;
-using ColossalFramework;
-using ColossalFramework.Steamworks;
 using ColossalFramework.UI;
-using Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI.StateMachine;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions;

@@ -515,8 +515,9 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
             return NetNode.Flags.None;
         }
 
-        public override NetSegment.Flags GetSegmentIgnoreFlags()
+        public override NetSegment.Flags GetSegmentIgnoreFlags(out bool nameOnly)
         {
+            nameOnly = false;
             return NetSegment.Flags.All;
         }
 
@@ -537,7 +538,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 
         public override Vehicle.Flags GetVehicleIgnoreFlags()
         {
-            return Vehicle.Flags.All;
+            return Vehicle.AllFlags;
         }
 
         public override VehicleParked.Flags GetParkedVehicleIgnoreFlags()

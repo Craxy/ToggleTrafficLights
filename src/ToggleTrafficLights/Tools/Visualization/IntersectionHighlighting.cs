@@ -142,14 +142,23 @@ Shader ""Underground Intersection Shader""
             {
                 color = HasNoTrafficLightsColor,
             };
-            _hasTrafficLightsUndergroundMaterial = new Material(UndergroundShader)
+            _hasTrafficLightsUndergroundMaterial = new Material(Shader.Find("Diffuse"))
             {
                 color = HasTrafficLightsColor,
             };
-            _hasNoTrafficLightsUndergroundMaterial = new Material(UndergroundShader)
+            _hasNoTrafficLightsUndergroundMaterial = new Material(Shader.Find("Diffuse"))
             {
                 color = HasNoTrafficLightsColor,
             };
+
+//            _hasTrafficLightsUndergroundMaterial = new Material(UndergroundShader)
+//            {
+//                color = HasTrafficLightsColor,
+//            };
+//            _hasNoTrafficLightsUndergroundMaterial = new Material(UndergroundShader)
+//            {
+//                color = HasNoTrafficLightsColor,
+//            };
         }
 
         private void UpdateMaterialColors()
