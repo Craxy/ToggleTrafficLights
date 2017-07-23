@@ -9,7 +9,7 @@
     <RootNamespace>Craxy.CitiesSkylines.ToggleTrafficLights</RootNamespace>
   </PropertyGroup>
   <PropertyGroup>
-    <Version>0.10.0.0</Version>
+    <Version>0.10.1</Version>
     <AssemblyVersion>$(Version)</AssemblyVersion>
     <FileVersion>$(Version)</FileVersion>
     <Product>Toggle Traffic Lights</Product>
