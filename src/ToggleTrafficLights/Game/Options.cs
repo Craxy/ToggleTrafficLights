@@ -1,71 +1,68 @@
-﻿
-using System;
+﻿using System;
 using ColossalFramework;
-using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using UnityEngine;
-using static Craxy.CitiesSkylines.ToggleTrafficLights.Utils.FunctionalHelper;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
 {
-    public static class Options
+  public class Options
+  {
+    public const string SettingsFile = "ToggleTrafficLights";
+
+    static Options()
     {
-        #region Enums
-        [Flags]
-        public enum GroundMode
-        {
-            None = 0,
-            Overground = 1,
-            Underground = 2,
-            All = Overground | Underground,
-        }
-
-        #endregion
-
-        #region Keys
-
-        public static class InputKeys
-        {
-            public static readonly SavedInputKey ElevationUp = new SavedInputKey(Settings.buildElevationUp, Settings.gameSettingsFile, DefaultSettings.buildElevationUp, true);
-            public static readonly SavedInputKey ElevationDown = new SavedInputKey(Settings.buildElevationDown, Settings.gameSettingsFile, DefaultSettings.buildElevationDown, true);
-        }
-        #endregion
-
-        #region Traffic Lights Tool
-        public static class ToggleTrafficLightsTool
-        {
-            public static readonly ChangingValue<GroundMode> GroundMode = ChangingValue.Create(Options.GroundMode.Overground);
-
-            public static readonly ChangingValue<Color> HasTrafficLightsColor = ChangingValue.Create(new Color(0.2f, 0.749f, 0.988f, 1.0f));
-            public static readonly ChangingValue<Color> HasNoTrafficLightsColor = ChangingValue.Create(new Color(0.0f, 0.369f, 0.525f, 1.0f));
-        }
-        #endregion
-
-        #region Traffic Lights Highlighting
-
-        public static class HighlightIntersections
-        {
-            public static readonly ChangingValue<GroundMode> IntersectionsToHighlight = ChangingValue.Create(GroundMode.Underground);
-            // yeah....using a mistake (settings in static class) and add something that shoud neither be in a static class nor in a settings class...
-            public static event UnitToUnit RecalculateColorForAllIntersections;
-            public static void RequestRecalculateColorForAllIntersections()
-            {
-                var handler = RecalculateColorForAllIntersections;
-                if (handler != null)
-                {
-                    handler();
-                }
-            }
-
-            public static readonly ChangingValue<Color> HasTrafficLightsColor = ChangingValue.Create(new Color(0.56f, 1.0f, 0.56f, 1.0f));
-            public static readonly ChangingValue<Color> HasNoTrafficLightsColor = ChangingValue.Create(new Color(0.56f, 0.0f, 0.0f, 1.0f));
-
-            public static readonly ChangingValue<float> MarkerHeight = ChangingValue.Create(2.0f);
-            public static readonly ChangingValue<float> MarkerRadius = ChangingValue.Create(5.0f);
-
-            public static readonly ChangingValue<int> NumberOfMarkerSides = ChangingValue.Create(13);
-
-        }
-        #endregion
-
+      GameSettings.AddSettingsFile(new SettingsFile {fileName = SettingsFile});
     }
+
+    private static readonly InputKey DefaultShortcutActivateTTLWithMenu =
+      SavedInputKey.Encode(KeyCode.T, true, false, false);
+
+    private static readonly InputKey DefaultShortcutActivateTTLWithoutMenu =
+      SavedInputKey.Encode(KeyCode.T, true, true, false);
+
+    private static readonly InputKey DefaultShortcutActivateTrafficRoutesJunctions =
+      SavedInputKey.Encode(KeyCode.T, true, false, true);
+
+    public readonly SavedInputKey ShortcutActivateTTLWithMenu = new SavedInputKey(nameof(ShortcutActivateTTLWithMenu),
+      SettingsFile, DefaultShortcutActivateTTLWithMenu, true);
+
+    public readonly SavedInputKey ShortcutActivateTTLWithoutMenu =
+      new SavedInputKey(nameof(ShortcutActivateTTLWithoutMenu), SettingsFile, DefaultShortcutActivateTTLWithoutMenu,
+        true);
+
+    public readonly SavedInputKey ShortcutActivateTrafficRoutesJunctions = new SavedInputKey(
+      nameof(ShortcutActivateTrafficRoutesJunctions), SettingsFile, DefaultShortcutActivateTrafficRoutesJunctions,
+      true);
+
+    private static readonly bool DefaultKeepInfoMode = true;
+
+    public readonly SavedBool KeepInfoMode =
+      new SavedBool(nameof(KeepInfoMode), SettingsFile, DefaultKeepInfoMode, true);
+
+    public void ResetShortcuts()
+    {
+      ShortcutActivateTTLWithMenu.value = DefaultShortcutActivateTTLWithMenu;
+      ShortcutActivateTTLWithoutMenu.value = DefaultShortcutActivateTTLWithoutMenu;
+      ShortcutActivateTrafficRoutesJunctions.value = DefaultShortcutActivateTrafficRoutesJunctions;
+    }
+
+    internal static string GetShortcutName(string name)
+    {
+      switch (name)
+      {
+        case nameof(ShortcutActivateTTLWithMenu):
+          return "Junction Tool";
+        case nameof(ShortcutActivateTTLWithoutMenu):
+          return "Junction Tool (everywhere)";
+        case nameof(ShortcutActivateTrafficRoutesJunctions):
+          return "Traffic Routes Junctions Info View";
+        default:
+          throw new ArgumentOutOfRangeException();
+      }
+    }
+
+    internal static string GetShortcutDescription(string name)
+    {
+      throw new NotImplementedException();
+    }
+  }
 }
