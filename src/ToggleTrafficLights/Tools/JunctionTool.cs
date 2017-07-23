@@ -52,6 +52,20 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
       HandleElevation(e);
     }
 
+    private Ray _mouseRay;
+    private float _mouseRayLength;
+    private Vector3 _rayRight;
+    private bool _mouseRayValid;
+    protected override void OnToolLateUpdate()
+    {
+      base.OnToolLateUpdate();
+      
+      this._mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+      this._mouseRayLength = Camera.main.farClipPlane;
+      this._rayRight = Camera.main.transform.TransformDirection(Vector3.right);
+      this._mouseRayValid = !m_toolController.IsInsideUI && Cursor.visible;
+    }
+
     public override void SimulationStep()
     {
       base.SimulationStep();
@@ -82,18 +96,22 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
       _hoveredNodeId = 0;
       if (!m_toolController.IsInsideUI && Cursor.visible)
       {
-        var input = new RaycastInput(Camera.main.ScreenPointToRay(Input.mousePosition), Camera.main.farClipPlane)
+        var netService = new RaycastService
+                              {
+                                m_service = ItemClass.Service.None,
+                                m_subService = ItemClass.SubService.None,
+                                m_itemLayers = ItemClass.Layer.Default | ItemClass.Layer.MetroTunnels,
+                              };
+        var input = new RaycastInput(_mouseRay, _mouseRayLength)
         {
-          m_rayRight = Camera.main.transform.TransformDirection(Vector3.right),
+          m_rayRight = _rayRight,
+          m_netService = netService,
+          m_buildingService = netService,
+          m_propService = netService,
+          m_treeService = netService,
+          m_districtNameOnly = true,
           m_ignoreTerrain = true,
-          m_ignoreNodeFlags = NetNode.Flags.None,
-          m_ignoreSegmentFlags =
-            NetSegment.Flags.Untouchable, //provides a MUCH better node recognition -- far mor generous
-          m_netService =
-          {
-            m_itemLayers = ItemClass.Layer.Default | ItemClass.Layer.MetroTunnels,
-            m_service = ItemClass.Service.Road
-          },
+          m_ignoreNodeFlags = IsUndergroundVisible() ? NetNode.Flags.None : (NetNode.Flags.None | NetNode.Flags.Underground),
         };
 
         if (RayCast(input, out var output))
@@ -435,6 +453,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
       OvergroundWithTunnels = 1,
       Underground = 2,
     }
+
+    public bool IsUndergroundVisible() => CurrentElevation != Elevation.Overground;
 
     #endregion Elevation
 
