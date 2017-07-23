@@ -22,13 +22,10 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
 
     public static void Generic(PluginManager.MessageType messageType, string text)
     {
-//            var msg = string.Format("[{0}] {1}", Prefix, text);
       var msg = AppendPrefix(text);
-      DebugOutputPanel.AddMessage(messageType, msg);
+//      DebugOutputPanel.AddMessage(messageType, msg);
 
-#if DEBUG
-      CODebugBase<LogChannel>.Log(LogChannel.Modding, string.Format("{0}: {1}", messageType.ToString("G"), msg));
-#endif
+      CODebugBase<LogChannel>.Log(LogChannel.Modding, $"{messageType:G}: {msg}");
     }
 
     public static void Error(string text)
