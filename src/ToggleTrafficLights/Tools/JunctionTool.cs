@@ -104,7 +104,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
           if (id != 0)
           {
             var node = Singleton<NetManager>.instance.m_nodes.m_buffer[id];
-            if (!Singleton<GameAreaManager>.instance.PointOutOfArea(node.m_position))
+            if (!GameAreaManager.instance.PointOutOfArea(node.m_position))
             {
               _hoveredNodeId = id;
             }

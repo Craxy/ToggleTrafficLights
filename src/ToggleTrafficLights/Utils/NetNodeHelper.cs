@@ -63,6 +63,9 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
     public static bool IsValidIntersection(ushort nodeId, ref NetNode node) 
       => TryGetRoadAiIfValidIntersection(nodeId, ref node, out var _);
 
+    public static bool IsInsideBuildableArea(ushort nodeId, ref NetNode node)
+      => !GameAreaManager.instance.PointOutOfArea(node.m_position);
+    
     public static bool TryGetRoadAiIfValidIntersection(ushort nodeId, ref NetNode node, out RoadBaseAI ai)
     {
       ai = default(RoadBaseAI);

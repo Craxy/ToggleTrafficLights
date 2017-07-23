@@ -95,6 +95,10 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
       {
         return;
       }
+      if (!Node.IsInsideBuildableArea(nodeId, ref node))
+      {
+        return;
+      }
 
       var ai = node.Info.GetAI() as RoadBaseAI;
       if (ai == null)
@@ -228,12 +232,16 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
       {
         return;
       }
+      if (!Node.IsInsideBuildableArea(nodeId, ref node))
+      {
+        return;
+      }
       var ai = node.Info.m_netAI as RoadBaseAI;
       if (ai == null)
       {
         return;
       }
-
+      
       //todo: tests pre set faster than always set?
       switch (mode)
       {
