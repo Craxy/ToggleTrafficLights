@@ -38,8 +38,8 @@ TTL adds an additional button to the Roads Menu. A left click opens the Junction
 
 Additional the tools can be activated (and disabled) via shortcuts:
 - **Ctrl+T**: Activates the Junction Tool. Opens the Roads Menu. If the junction tool is active this shortcut selects the Road Building Tool.
-- **Ctrl+Alt+T**: Activates the Junction Tool. Doesn't open the Roads Menu instead it keeps the current location. Pressing the shortcut again reselects the previous tool.
-- **Ctrl+Shift+T**: Opens the Traffic Routes Junctions Info View. Like the shortcut above it keeps the current location and using the shortcut again reselects the previous tool too.
+- **Ctrl+Shift+T**: Activates the Junction Tool. Doesn't open the Roads Menu instead it keeps the current location. Pressing the shortcut again reselects the previous tool.
+- **Ctrl+Alt+T**: Opens the Traffic Routes Junctions Info View. Like the shortcut above it keeps the current location and using the shortcut again reselects the previous tool too.
 
 The shortcuts can be changed in the settings.
 

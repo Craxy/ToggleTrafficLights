@@ -17,10 +17,10 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
       SavedInputKey.Encode(KeyCode.T, true, false, false);
 
     private static readonly InputKey DefaultShortcutActivateTTLWithoutMenu =
-      SavedInputKey.Encode(KeyCode.T, true, false, true);
+      SavedInputKey.Encode(KeyCode.T, true, true, false);
 
     private static readonly InputKey DefaultShortcutActivateTrafficRoutesJunctions =
-      SavedInputKey.Encode(KeyCode.T, true, true, false);
+      SavedInputKey.Encode(KeyCode.T, true, false, true);
 
     public readonly SavedInputKey ShortcutActivateTTLWithMenu = new SavedInputKey(nameof(ShortcutActivateTTLWithMenu),
       SettingsFile, DefaultShortcutActivateTTLWithMenu, true);
