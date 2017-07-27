@@ -150,16 +150,20 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
 
     public override void OnCreated(ILoading loading)
     {
+      Log.Info("created");
+      
       base.OnCreated(loading);
 
       Simulation.OnCreated(loading);
     }
 
     public override void OnReleased()
-    {
+    {      
       base.OnReleased();
 
       Simulation.OnReleased();
+      
+      Log.Info("released");
     }
 
     public override void OnLevelLoaded(LoadMode mode)
