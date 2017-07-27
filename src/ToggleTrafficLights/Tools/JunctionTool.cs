@@ -56,13 +56,18 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
     private float _mouseRayLength;
     private Vector3 _rayRight;
     private bool _mouseRayValid;
+    private Camera _camera = null;
     protected override void OnToolLateUpdate()
     {
       base.OnToolLateUpdate();
-      
-      this._mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-      this._mouseRayLength = Camera.main.farClipPlane;
-      this._rayRight = Camera.main.transform.TransformDirection(Vector3.right);
+
+      if (_camera == null)
+      {
+        _camera = Camera.main;  // Camera.main searches every call for the main camera -> expensive
+      }
+      this._mouseRay = _camera.ScreenPointToRay(Input.mousePosition);
+      this._mouseRayLength = _camera.farClipPlane;
+      this._rayRight = _camera.transform.TransformDirection(Vector3.right);
       this._mouseRayValid = !m_toolController.IsInsideUI && Cursor.visible;
     }
 
