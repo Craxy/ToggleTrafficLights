@@ -6,56 +6,7 @@ using UnityEngine;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 {
-  public class TrafficLightsTool
-  {
-    public void ChangeAll(TrafficLights.ChangeMode mode, bool showStats = false)
-    {
-      if (showStats)
-      {
-        ChangeAllAndShowStats(mode);
-      }
-      else
-      {
-        ChangeAllWithoutStats(mode);
-      }
-    }
-
-    public void ChangeAllAndShowStats(TrafficLights.ChangeMode mode)
-    {
-      _stats = TrafficLights.ChangeAll(mode);
-    }
-
-    public void ChangeAllWithoutStats(TrafficLights.ChangeMode mode)
-    {
-      TrafficLights.ChangeAllFast(mode);
-    }
-
-    public float ShowStatsForNSeconds { get; set; } = 3.0f;
-    private float _elapsedSeconds = 0.0f;
-    private TrafficLights.ChangedStatistics _stats = null;
-
-    public void DrawStats(float deltaTimeInSeconds)
-    {
-      if (_stats == null)
-      {
-        return;
-      }
-
-      _elapsedSeconds += deltaTimeInSeconds;
-      if (_elapsedSeconds >= ShowStatsForNSeconds)
-      {
-        _stats = null;
-        _elapsedSeconds = 0.0f;
-      }
-      else
-      {
-        // draw stats
-        GUILayout.BeginArea(new Rect());
-      }
-    }
-  }
-
-  public class TrafficLights
+  public static class TrafficLights
   {
     public enum ChangeMode : byte
     {
@@ -241,8 +192,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
       {
         return;
       }
-      
-      //todo: tests pre set faster than always set?
+
       switch (mode)
       {
         case ChangeMode.Remove:
