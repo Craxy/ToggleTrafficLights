@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using ColossalFramework;
 using ColossalFramework.UI;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Tools;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using UnityEngine;
+using ReflectionExtensions = Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions.ReflectionExtensions;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours
 {
@@ -155,7 +158,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours
 
     private void SetupTool()
     {
-      var current = ToolsModifierControl.toolController.CurrentTool;
+      var current = ToolsModifierControl.GetCurrentTool<ToolBase>();  //Assert ToolsModifierControl.CollectTools() is called
       _tool = ToolsModifierControl.toolController.gameObject.GetComponent<JunctionTool>()
               ?? ToolsModifierControl.toolController.gameObject.AddComponent<JunctionTool>();
       ToolsModifierControl.toolController.CurrentTool = current;
@@ -349,23 +352,27 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours
       }
     }
 
-    private bool ActivateTool<T>(bool force = false)
+    private bool ActivateTool<T>()
       where T : ToolBase
     {
-      return ActivateAndReturnTool<T>(force) != null;
+      return ActivateAndReturnTool<T>() != null;
     }
 
-    private T ActivateAndReturnTool<T>(bool force = false)
+    private T ActivateAndReturnTool<T>()
       where T : ToolBase
     {
-      if (force || !(ToolsModifierControl.toolController.CurrentTool is T))
+      var tool = ToolsModifierControl.SetTool<T>();
+      if (tool == null)
       {
-        return ToolsModifierControl.SetTool<T>();
+        var tools = ReflectionExtensions.GetNonPublicStaticField<ToolsModifierControl, Dictionary<System.Type, ToolBase>>("m_Tools")
+                    .Select(t => t.GetType().FullName).ToArray();
+        var components = ToolsModifierControl.toolController.GetComponents<ToolBase>()
+                         .Select(t => t.GetType().FullName).ToArray();
+        var msg = $"SetTool returned null.\nCollected tools: {string.Join(", ", tools)}\nAdded Components: {string.Join(", ", components)}";
+        Utils.Log.Error(msg);
       }
-      else
-      {
-        return null;
-      }
+      
+      return tool;
     }
 
     private void SetInfoMode(InfoManager.InfoMode infoMode, InfoManager.SubInfoMode subInfoMode)
