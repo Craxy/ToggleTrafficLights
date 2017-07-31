@@ -6,6 +6,7 @@ using ColossalFramework;
 using ColossalFramework.UI;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Tools;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
+using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions;
 using UnityEngine;
 using ReflectionExtensions = Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions.ReflectionExtensions;
 
@@ -17,29 +18,29 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours
     Hidden, // IntersectionTool active but keeping current InfoMode and GUI
     Active, // IntersectionTool is active and RoadsMenu-TTL button is selected (-> no InfoMode and custom GUI)
     TrafficRoutes, // IntersectionTool is not active, TrafficRoutes->Junctions is active (Buttons are inserted)
-       }
+  }
      
-       public static class StateExtensions
-       {
-         public static bool Is(this State state, State test)
-         {
-           return state == test;
-         }
-     
-         public static bool IsAnyOf(this State state, State test)
-         {
-           return state == test;
-         }
-     
-         public static bool IsAnyOf(this State state, State test1, State test2)
-         {
-           return state == test1 || state == test2;
-         }
-     
-         public static bool IsAnyOf(this State state, State test1, State test2, State test3)
-         {
-           return state == test1 || state == test2 || state == test3;
-         }
+  public static class StateExtensions
+  {
+    public static bool Is(this State state, State test)
+    {
+      return state == test;
+    }
+    
+    public static bool IsAnyOf(this State state, State test)
+    {
+      return state == test;
+    }
+    
+    public static bool IsAnyOf(this State state, State test1, State test2)
+    {
+      return state == test1 || state == test2;
+    }
+    
+    public static bool IsAnyOf(this State state, State test1, State test2, State test3)
+    {
+      return state == test1 || state == test2 || state == test3;
+    }
   }
 
   public enum Message
@@ -72,8 +73,9 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours
 
     #region MonoBehaviour
 
-    private void Awake()
+    private void Start()
     {
+      //todo: dalay after every mod is loaded -> give tome to load roads
       Setup();
     }
 
@@ -106,7 +108,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours
 
     #region Debug
 
-    [Conditional("Debug")]
+    [Conditional("DEBUG")]
     private void SetupDebug()
     {
 #if DEBUG
@@ -114,7 +116,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours
 #endif
     }
 
-    [Conditional("Debug")]
+    [Conditional("DEBUG")]
     private void DestroyDebug()
     {
 #if DEBUG
@@ -122,16 +124,38 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours
 #endif
     }
 
+    [Conditional("DEBUG")]
+    private void CheckShowDebugGuiKey()
+    {
+    }
+
+    [Conditional("DEBUG")]
     private void DisplayDebugGui()
     {
 #if DEBUG
-      _debugMainMachine.ShowGui(this);
+      // when ShowDebugGuiKey is checked before showing gui:
+      // ArgumentException: Getting control 0's position in a group with only 0 controls when doing KeyDown. Aborting.
+      // That happens when when OnGUI with events EventType.Layout and EventType.Repaint draw different content
+      // Problem: Key.IsPressed(...) isn't registered in Layout, but Repaint -> first OnGUI with Layout isn't drawn, but Repaint is -> different content
+      // solution: check Key after drawing the gui
+      //   that way ShowGUI is drawn one frame later, but starts with Layout and therefore doesn't raise an exception
+      if (_showDebugGui)
+      {
+
+        _debugMainMachine.ShowGui(this);
+      }
+      if (ShowDebugGuiKey.IsPressed(Event.current))
+      {
+        _showDebugGui = !_showDebugGui;
+      }
 #endif
     }
 #if DEBUG
+    private static readonly InputKey ShowDebugGuiKey = SavedInputKey.Encode(KeyCode.Keypad0, true, false, true);
+    private bool _showDebugGui = false;
     private readonly DebugMainMachine _debugMainMachine = new DebugMainMachine();
 #endif
-    [Conditional("Debug")]
+    [Conditional("DEBUG")]
     private void Log(string message)
     {
 #if DEBUG
