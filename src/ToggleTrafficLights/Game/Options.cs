@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using ColossalFramework;
 using UnityEngine;
 
@@ -64,5 +65,16 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
     {
       throw new NotImplementedException();
     }
+    
+    #region settings on savegame basis
+    public enum TrafficLightsHandling : byte
+    {
+      Default,
+      NoTrafficLights,
+      AllTrafficLights
+    }
+    public TrafficLightsHandling TrafficLights { get; set; } = TrafficLightsHandling.Default;
+    
+    #endregion settings on savegame basis
   }
 }

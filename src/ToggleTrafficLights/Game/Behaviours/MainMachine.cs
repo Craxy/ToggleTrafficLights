@@ -191,7 +191,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours
       _junctionSettings = TrafficRoutesInfoViewPanel.instance.Find<UIPanel>("JunctionSettings");
       _junctionSettings.eventVisibilityChanged += OnJunctionSettingsVisibilityChanged;
 
-      _junctionSettingsBehaviour = new JunctionSettingsBehaviour();
+      _junctionSettingsBehaviour = new JunctionSettingsBehaviour(Options);
     }
 
     #endregion Setup

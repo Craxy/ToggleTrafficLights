@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
+using System.Xml.Linq;
 using ColossalFramework.UI;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Tools;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
+using ICities;
 using UnityEngine;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours
 {
   public sealed class JunctionSettingsBehaviour : IDisposable
   {
-    public JunctionSettingsBehaviour()
+    public JunctionSettingsBehaviour(Options options)
     {
+      Options = options;
       Add();
     }
 
@@ -23,10 +27,16 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours
     {
       _junctionSettings = TrafficRoutesInfoViewPanel.instance.Find<UIPanel>("JunctionSettings");
       AddButtons();
+      
+      _changer = new TrafficLightsHandlingChanger();
+      ApplyTrafficLightsHandling(Options.TrafficLights);
     }
 
     private void Remove()
     {
+      _changer.Dispose();
+      _changer = null;
+      
       RemoveButtons();
       _junctionSettings = null;
     }
@@ -34,14 +44,14 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours
     private UIPanel _junctionSettings;
     private Vector2 _originalPanelLightsPosition;
     private Vector2 _originalPanelStopSignsPosition;
-    private const string PanelTtlName = "PanelTTL";
+    private const string PanelChangeAllLights = "PanelChangeAllLights";
+    private const string PanelChangeHandlingLights = "PanelChangeHandlingLights";
+    public readonly Options Options;
 
     private void AddButtons()
     {
       // traffic lights are hooked with add, remove, reset all lights
       // under the traffic lights buttons to add, remove, reset all lights
-      // todo: implement: always remove lights
-
       //move PanelLights slightly up
       // default: 46,42
       _originalPanelLightsPosition =
@@ -55,7 +65,9 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours
       UpdateIcons(_junctionSettings.Find<UIPanel>("PanelLights"), Mode.Add);
 
       // add buttons under PanelLights panel to change all lights (same behaviour as icons)
-      AddToggleTrafficLightsButtons(_junctionSettings, PanelTtlName);
+      AddToggleTrafficLightsButtons(_junctionSettings, PanelChangeAllLights);
+
+      AddTrafficLightsDisabler(_junctionSettings, "SomeChangeLightsName");
     }
 
     private void RemoveButtons()
@@ -70,7 +82,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours
       UpdateIcons(_junctionSettings.Find<UIPanel>("PanelLights"), Mode.Remove);
 
       // remove buttons under PanelLights panel to change all lights (same behaviour as icons)
-      RemoveToggleTrafficLightsButtons(_junctionSettings, PanelTtlName);
+      RemoveToggleTrafficLightsButtons(_junctionSettings, PanelChangeAllLights);
     }
 
     private void RemoveToggleTrafficLightsButtons(UIPanel parent, string name)
@@ -145,18 +157,19 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours
     {
       var pnl = parent.AddUIComponent<UIPanel>();
       pnl.name = name;
-      pnl.relativePosition = new Vector3(46.0f, 55.0f);
+//      pnl.relativePosition = new Vector3(46.0f, 55.0f);
 //      pnl.relativePosition = new Vector3(85.0f, 10.0f);
+      pnl.relativePosition = new Vector3(265.0f, 55.0f);
       pnl.height = 20 * 3 + 2 * 3;
-      pnl.width = 300;
+      pnl.width = 120;
       pnl.autoLayout = true;
       pnl.autoLayoutDirection = LayoutDirection.Vertical;
       pnl.autoLayoutPadding = new RectOffset(0, 0, 1, 1);
-      pnl.autoLayoutStart = LayoutStart.TopRight;
+      pnl.autoLayoutStart = LayoutStart.TopLeft;
 
-      CreateButton(pnl, "ResetAll", "Reset all", "Reset all traffic lights.", ResetAllTrafficLights);
-      CreateButton(pnl, "RemoveAll", "Remove all", "Remove traffic lights from all junctions.", RemoveAllTrafficLights);
       CreateButton(pnl, "AddAll", "Add all", "Add traffic lights to all junctions.", AddAllTrafficLights);
+      CreateButton(pnl, "RemoveAll", "Remove all", "Remove traffic lights from all junctions.", RemoveAllTrafficLights);
+      CreateButton(pnl, "ResetAll", "Reset all", "Reset all traffic lights.", ResetAllTrafficLights);
 
       return pnl;
     }
@@ -189,6 +202,27 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours
       return btn;
     }
 
+    private UICheckBox CreateCheckBox(UIPanel parent, string name, string text, string tooltip, bool defaultValue, OnCheckChanged onCheckChanged)
+    {
+      var helper = new UIHelper(parent);
+
+      var cb = (UICheckBox)helper.AddCheckbox(text, defaultValue, onCheckChanged);
+      cb.name = name;
+      cb.tooltip = tooltip;
+      cb.height = 16.0f;
+
+      var lbl = cb.Find<UILabel>("Label");
+      lbl.textScale = 0.8125f;
+      lbl.anchor = UIAnchorStyle.Top | UIAnchorStyle.Left;
+      var rp = lbl.relativePosition;
+      rp.y = 2.0f;
+      lbl.relativePosition = rp;
+
+      cb.width = lbl.relativePosition.x + lbl.width;
+
+      return cb;
+    }
+
     private static Vector2 UpdateRelativePosition(UIPanel pnl, float? newX = null, float? newY = null)
     {
       var newPos = (Vector2) pnl.relativePosition;
@@ -210,6 +244,70 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours
       return pos;
     }
 
+    private UIPanel AddTrafficLightsDisabler(UIPanel parent, string name)
+    {
+      var pnl = parent.AddUIComponent<UIPanel>();
+      pnl.name = name;
+      pnl.relativePosition = new Vector3(95.0f, 60.0f);
+      pnl.height = 16 + 2;
+      pnl.autoLayout = true;
+      pnl.autoLayoutDirection = LayoutDirection.Vertical;
+      pnl.autoLayoutPadding = new RectOffset(0, 0, 1, 1);
+      pnl.autoLayoutStart = LayoutStart.TopLeft;
+
+      const string tooltip = "When enabled new junctions are always created without traffic lights.\nExisting Traffic Lights aren't touched, neither does it prevent you from manual changing the traffic lights. All it does is ensure all newly created junctions don't have traffic lights.\nNote: This is set on a per savegame basis and is not a global setting!";
+      var cb = CreateCheckBox(pnl, PanelChangeHandlingLights, "Disable Traffic Lights", tooltip, Options.TrafficLights == Options.TrafficLightsHandling.NoTrafficLights, OnChangeHandlingLightsChanged);
+      pnl.width = cb.width;
+      
+      return pnl;
+    }
+
+    #region Traffic Lights Handling
+    private TrafficLightsHandlingChanger _changer = null;
+    private void OnChangeHandlingLightsChanged(bool isChecked)
+    {
+      ChangeTrafficLightsHandling(isChecked ? Options.TrafficLightsHandling.NoTrafficLights : Options.TrafficLightsHandling.Default);
+    }
+    public void ChangeTrafficLightsHandling(Options.TrafficLightsHandling handling)
+    {
+      if (Options.TrafficLights == handling)
+      {
+        return;
+      }
+      
+      Options.TrafficLights = handling;
+      ApplyTrafficLightsHandling(handling);
+    }
+
+    private void ApplyTrafficLightsHandling(Options.TrafficLightsHandling handling)
+    {
+      DebugLog.Info($"Apply Traffic Lights Handling: {handling}");
+      
+      switch (handling)
+      {
+        case Options.TrafficLightsHandling.Default:
+          _changer.ResetAllRemembered(forget: true);
+          break;
+        case Options.TrafficLightsHandling.NoTrafficLights:
+          _changer.ChangeAll(false);
+          break;
+        case Options.TrafficLightsHandling.AllTrafficLights:
+          _changer.ChangeAll(true);
+          break;
+        default:
+          throw new ArgumentOutOfRangeException(nameof(handling), handling, null);
+      }
+    }
+    #endregion Traffic Lights Handling
+    private void DisableLights(UIComponent _, UIMouseEventParameter evt)
+    {
+      ChangeTrafficLightsHandling(Options.TrafficLightsHandling.NoTrafficLights);
+    }
+    private void ResetLights(UIComponent _, UIMouseEventParameter evt)
+    {
+      ChangeTrafficLightsHandling(Options.TrafficLightsHandling.Default);
+    }
+    
     #region Change Lights
 
     private static float _lastChangeTime = 0;
