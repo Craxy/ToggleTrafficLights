@@ -6,7 +6,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours
 {
   public sealed class ToggleTrafficLightsButton : UIButton
   {
-    private MainMachine _mainMachine;
+    private Level _level;
 
     private bool _initialized = false;
 
@@ -20,9 +20,9 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours
         DebugLog.Info($"Start->Initialize with parent: {this.parent.name}");
 
         Setup(this);
-        _mainMachine = GameObject.FindObjectOfType<MainMachine>();
-        UpdateButtonState(_mainMachine.Current);
-        _mainMachine.StateChanged += OnStateChanged;
+        _level = GameObject.FindObjectOfType<Level>();
+        UpdateButtonState(_level.Current);
+        _level.StateChanged += OnStateChanged;
         this.eventClick += OnButtonClick;
       }
     }
@@ -30,10 +30,10 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours
     public override void OnDestroy()
     {
       this.eventClick -= OnButtonClick;
-      if (_mainMachine != null)
+      if (_level != null)
       {
-        _mainMachine.StateChanged -= OnStateChanged;
-        _mainMachine = null;
+        _level.StateChanged -= OnStateChanged;
+        _level = null;
       }
 
       base.OnDestroy();
@@ -84,11 +84,11 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours
 
       if (e.buttons == UIMouseButton.Left)
       {
-        _mainMachine.Send(Message.ButtonLeft);
+        _level.Send(Message.ButtonLeft);
       }
       else if (e.buttons == UIMouseButton.Right)
       {
-        _mainMachine.Send(Message.ButtonRight);
+        _level.Send(Message.ButtonRight);
       }
     }
 

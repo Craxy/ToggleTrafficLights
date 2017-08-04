@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
 {
-  public class Layout : IDisposable
+  public sealed class Layout : IDisposable
   {
     //abusing IDisposable......
     private static readonly Layout _horizontal = new Layout(() => GUILayout.BeginHorizontal(), GUILayout.EndHorizontal);

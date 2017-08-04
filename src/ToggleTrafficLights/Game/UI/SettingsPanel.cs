@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI
 {
-  public class SettingsBuilder
+  public sealed class SettingsBuilder
   {
     public static void MakeSettings(UIHelper helper, Options options)
     {
