@@ -158,12 +158,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours
 
     private void SetupTool()
     {
-      var current = ToolsModifierControl.GetCurrentTool<ToolBase>();  //Assert ToolsModifierControl.CollectTools() is called
-      _tool = ToolsModifierControl.toolController.gameObject.GetComponent<JunctionTool>()
-              ?? ToolsModifierControl.toolController.gameObject.AddComponent<JunctionTool>();
-      ToolsModifierControl.toolController.CurrentTool = current;
-      ToolHelper.AddToToolsModifierControl(_tool);
-
+      _tool = ToolHelper.AddTool<JunctionTool>();
       _tool.Disabled += OnToolDisabled;
     }
 
@@ -189,9 +184,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours
 
       ToggleTrafficLightsButton.DestroyAll();
 
-      ToolHelper.RemoveFromToolsModifierControl<JunctionTool>();
-      _tool.Disabled += OnToolDisabled;
-      GameObject.Destroy(_tool);
+      _tool.Disabled -= OnToolDisabled;
+      ToolHelper.RemoveTool(_tool);
       _tool = null;
 
       ForgetPreviousTool();
@@ -311,7 +305,21 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours
 
     private void ActivateIntersectionTool(bool keepInfoMode, JunctionTool.Elevation elevation)
     {
-      var tool = ActivateAndReturnTool<JunctionTool>();
+//      var tool = ActivateAndReturnTool<JunctionTool>();
+      var tool = ToolHelper.SetTool<JunctionTool>();
+      
+      if (tool == null)
+      {
+        var tools = ReflectionExtensions.GetNonPublicStaticField<ToolsModifierControl, Dictionary<System.Type, ToolBase>>("m_Tools")
+          .Values
+          .Select(t => t.GetType().FullName)
+          .ToArray();
+        var components = ToolsModifierControl.toolController.GetComponents<ToolBase>()
+          .Select(t => t.GetType().FullName).ToArray();
+        var msg = $"ToolHelper.SetTool returned null.\nCollected tools: {string.Join(", ", tools)}\nAdded Components: {string.Join(", ", components)}";
+        Utils.Log.Error(msg);
+      }
+      
       if (keepInfoMode)
       {
         tool.CurrentElevation = elevation;
@@ -365,7 +373,9 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours
       if (tool == null)
       {
         var tools = ReflectionExtensions.GetNonPublicStaticField<ToolsModifierControl, Dictionary<System.Type, ToolBase>>("m_Tools")
-                    .Select(t => t.GetType().FullName).ToArray();
+                    .Values
+                    .Select(t => t.GetType().FullName)
+                    .ToArray();
         var components = ToolsModifierControl.toolController.GetComponents<ToolBase>()
                          .Select(t => t.GetType().FullName).ToArray();
         var msg = $"SetTool returned null.\nCollected tools: {string.Join(", ", tools)}\nAdded Components: {string.Join(", ", components)}";
