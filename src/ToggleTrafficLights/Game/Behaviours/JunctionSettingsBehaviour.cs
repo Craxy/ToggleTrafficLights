@@ -254,14 +254,20 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours
     {
       var pnl = parent.AddUIComponent<UIPanel>();
       pnl.name = name;
-      pnl.relativePosition = new Vector3(95.0f, 60.0f);
+      pnl.relativePosition = new Vector3(80.0f, 67.5f);
       pnl.height = 16 + 2;
       pnl.autoLayout = true;
       pnl.autoLayoutDirection = LayoutDirection.Vertical;
       pnl.autoLayoutPadding = new RectOffset(0, 0, 1, 1);
       pnl.autoLayoutStart = LayoutStart.TopLeft;
 
-      const string tooltip = "When enabled new junctions are always created without traffic lights.\nExisting Traffic Lights aren't touched, neither does it prevent you from manual changing the traffic lights. All it does is ensure all newly created junctions don't have traffic lights.\nNote: This is set on a per savegame basis and is not a global setting!";
+      const string tooltip = "When enabled new junctions are always created without traffic lights.\n" +
+                             "\n" +
+                             "Existing Traffic Lights aren't touched, neither does it prevent you \n" +
+                             "from manual changing the traffic lights.\n" +
+                             "All it does is ensure all newly created junctions don't have traffic lights.\n" +
+                             "\n" +
+                             "Note: This is set on a per savegame basis and is not a global setting!";
       var cb = CreateCheckBox(pnl, PanelChangeHandlingLights, "Disable Traffic Lights", tooltip, Options.TrafficLights == SaveGameOptions.TrafficLightsHandling.NoTrafficLights, OnChangeHandlingLightsChanged);
       pnl.width = cb.width;
       

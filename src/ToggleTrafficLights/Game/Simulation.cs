@@ -189,9 +189,9 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
         var msg = $"Current Tool: {ToolsModifierControl.toolController.CurrentTool?.GetType().Name}";
         msg += $"\nCurrent State: {_currentLevel?.Current}";
         var im = Singleton<InfoManager>.instance;
-        msg +=
-          $"\nInfoManager: CurrentMode={im.CurrentMode}; CurrentSubMode={im.CurrentSubMode}; NextMode={im.NextMode}; NextSubMode={im.NextSubMode}";
-
+        msg += $"\nInfoManager: CurrentMode={im.CurrentMode}; CurrentSubMode={im.CurrentSubMode}; NextMode={im.NextMode}; NextSubMode={im.NextSubMode}";
+        msg += $"\nSaveGameOptions: {_currentSaveGameOptions}";
+        
         DebugLog.Info(msg);
       }
     }

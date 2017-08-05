@@ -82,5 +82,10 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
     {
       TrafficLights = DefaultTrafficLights;
     }
+
+    public override string ToString()
+    {
+      return $"{nameof(TrafficLights)}: {TrafficLights}";
+    }
   }
 }
