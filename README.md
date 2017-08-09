@@ -67,3 +67,7 @@ For release notes see: [GitHub release page](https://github.com/Craxy/ToggleTraf
 &nbsp;
 * Some code is inspired by the mod "Extended Road Upgrade" by viakmaky: https://github.com/viakmaky/Skylines-ExtendedRoadUpgrade (MIT licence)
 * Some code is taken from or inspired by the mod "ModTools" by nlight: https://steamcommunity.com/sharedfiles/filedetails/?id=409520576 (MIT licence)
+* Harmony is used for redirecting method calls: https://github.com/pardeike/Harmony (MIT licence)
+  * A modded Harmony version is used:
+    * with the ability to revert patched: https://github.com/pardeike/Harmony/pull/26 https://github.com/pardeike/Harmony/pull/26/commits/7e923bf2522ec24187f62344e816045ce284051d by [rumkex](https://github.com/rumkex/Harmony/tree/feature-patch-restoration)
+    * a lot of classes/methods not used by TTL removed like everything regarding prefix call: https://github.com/Craxy/Harmony/tree/prefix-only
