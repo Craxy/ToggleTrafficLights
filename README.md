@@ -8,6 +8,7 @@ Tool to **remove or add traffic lights at junctions**. With Cities:Skylines patc
 * Activate and Deactivate the Junction Tool everywhere. Disabling the Intersection Tool restores the previous used tool.
 * Instead of just the white info mode you can use the Junction Tool in the default (colored) view.
 * Remove (or add or reset) all traffic lights at once.
+* Disable creation of traffic lights at new junctions. 
 
 # Description
 TTL provides access to two slightly different tools: The C:S built-in *Traffic Routes - Junctions Info View*, and the Junction Tool.
@@ -28,7 +29,14 @@ Besides the buttons you can also click on the icons while holding *Ctrl*. The co
 
 **Note**: All of these commands are executed immediately after you clicked the corresponding button. There's neither an additional confirmation nor a revert.
 
-**Note** These commands apply to all placed road junctions at the time you clicked on a command. Future created or changed junctions aren't affected by this. You have to execute the command again.
+**Note**: These commands apply to all placed road junctions at the time you clicked on a command. Future created or changed junctions aren't affected by this. You have to execute the command again.
+
+### Disable Traffic Lights
+When the checkbox is checked new junctions are always created without traffic lights.
+Existing Traffic Lights aren't touched by this option. Neither does it prevent manual toggling of traffic lights. All it does is ensure all newly created junctions don't have traffic lights.
+
+**Note**: This is set on a per savegame basis and is not a global setting! That means you can play one map with this option enabled (-> no traffic lights for new junctions), while on another map you use the default C:S behavior.
+
 
 ## Activation
 ![Deactivated button in the Roads Menu](./docs/files/img/Button_Deactivated.png)  
