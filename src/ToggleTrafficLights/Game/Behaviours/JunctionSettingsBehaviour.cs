@@ -298,13 +298,13 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours
       switch (handling)
       {
         case SaveGameOptions.TrafficLightsHandling.Default:
-          _changer.ResetAllRemembered(forget: true);
+          _changer.Reset();
           break;
         case SaveGameOptions.TrafficLightsHandling.NoTrafficLights:
-          _changer.ChangeAll(false);
+          _changer.Change(TrafficLights.ChangeMode.Remove);
           break;
         case SaveGameOptions.TrafficLightsHandling.AllTrafficLights:
-          _changer.ChangeAll(true);
+          _changer.Change(TrafficLights.ChangeMode.Remove);
           break;
         default:
           throw new ArgumentOutOfRangeException(nameof(handling), handling, null);
