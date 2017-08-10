@@ -239,8 +239,6 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI
 
     private bool IsAlreadyBound(SavedInputKey target, InputKey inputKey, out IList<SavedInputKey> currentAssigned)
     {
-      currentAssigned = new List<SavedInputKey>();
-
       // first test Cities Skylines keys
       var bound = IsAlreadyBoundCitiesSkylines(target, inputKey, out var assigned);
       bound = IsAlreadyBoundTtl(target, inputKey, _options, ref assigned) || bound;

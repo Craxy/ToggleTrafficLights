@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 
 namespace Harmony.ILCopying
 {
-	public static class Emitter
+	internal static class Emitter
 	{
 		public static string CodePos(ILGenerator il)
 		{

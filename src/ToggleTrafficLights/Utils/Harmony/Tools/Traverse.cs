@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 
 namespace Harmony
 {
-	public class Traverse
+	internal sealed class Traverse
 	{
 		static AccessCache Cache;
 

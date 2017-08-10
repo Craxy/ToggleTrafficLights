@@ -3,7 +3,7 @@ using System.Reflection.Emit;
 
 namespace Harmony.ILCopying
 {
-	public class ILInstruction
+	internal sealed class ILInstruction
 	{
 		public int offset;
 		public OpCode opcode;

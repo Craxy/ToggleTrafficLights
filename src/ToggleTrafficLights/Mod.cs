@@ -6,7 +6,6 @@ using Craxy.CitiesSkylines.ToggleTrafficLights.Game;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using ICities;
-using UnityEngine;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights
 {
@@ -93,17 +92,13 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights
       Simulation.OnUpdate(realTimeDelta, simulationTimeDelta);
     }
     void IThreadingExtension.OnBeforeSimulationTick()
-    {
-    }
+    {}
     void IThreadingExtension.OnBeforeSimulationFrame()
-    {
-    }
+    {}
     void IThreadingExtension.OnAfterSimulationFrame()
-    {
-    }
+    {}
     void IThreadingExtension.OnAfterSimulationTick()
-    {
-    }
+    {}
     #endif
     #endregion IThreadingExtension
 

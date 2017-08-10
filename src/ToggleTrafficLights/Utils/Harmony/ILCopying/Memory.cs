@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Diagnostics.Eventing.Reader;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 
 namespace Harmony.ILCopying
 {
-	public static class Memory
+	internal static class Memory
 	{
 		public static long WriteJump(long memory, long destination)
 		{

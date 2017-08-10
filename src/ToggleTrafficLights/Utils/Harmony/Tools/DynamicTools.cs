@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace Harmony
 {
-	public static class DynamicTools
+	internal static class DynamicTools
 	{
 		public static DynamicMethod CreateDynamicMethod(MethodBase original, string suffix)
 		{

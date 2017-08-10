@@ -321,19 +321,11 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours
 
     private void ActivateIntersectionTool(bool keepInfoMode, JunctionTool.Elevation elevation)
     {
-//      var tool = ActivateAndReturnTool<JunctionTool>();
       var tool = ToolHelper.SetTool<JunctionTool>();
       
       if (tool == null)
       {
-        var tools = ReflectionExtensions.GetNonPublicStaticField<ToolsModifierControl, Dictionary<System.Type, ToolBase>>("m_Tools")
-          .Values
-          .Select(t => t.GetType().FullName)
-          .ToArray();
-        var components = ToolsModifierControl.toolController.GetComponents<ToolBase>()
-          .Select(t => t.GetType().FullName).ToArray();
-        var msg = $"ToolHelper.SetTool returned null.\nCollected tools: {string.Join(", ", tools)}\nAdded Components: {string.Join(", ", components)}";
-        Utils.Log.Error(msg);
+        Utils.Log.Error($"ToolHelper.SetTool returned null.\n{GetToolLog()}");
       }
       
       if (keepInfoMode)
@@ -388,14 +380,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours
       var tool = ToolsModifierControl.SetTool<T>();
       if (tool == null)
       {
-        var tools = ReflectionExtensions.GetNonPublicStaticField<ToolsModifierControl, Dictionary<System.Type, ToolBase>>("m_Tools")
-                    .Values
-                    .Select(t => t.GetType().FullName)
-                    .ToArray();
-        var components = ToolsModifierControl.toolController.GetComponents<ToolBase>()
-                         .Select(t => t.GetType().FullName).ToArray();
-        var msg = $"SetTool returned null.\nCollected tools: {string.Join(", ", tools)}\nAdded Components: {string.Join(", ", components)}";
-        Utils.Log.Error(msg);
+        Utils.Log.Error($"SetTool returned null.\n{GetToolLog()}");
       }
       
       return tool;
@@ -653,5 +638,18 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours
     }
 
     #endregion
+    
+    private static string GetToolLog()
+    {
+      var tools = ReflectionExtensions
+        .GetNonPublicStaticField<ToolsModifierControl, Dictionary<Type, ToolBase>>("m_Tools")
+        .Values
+        .Select(t => t.GetType().FullName)
+        .ToArray();
+      var components = ToolsModifierControl.toolController.GetComponents<ToolBase>()
+        .Select(t => t.GetType().FullName).ToArray();
+      var msg = $"Collected tools: {string.Join(", ", tools)}\nAdded Components: {string.Join(", ", components)}";
+      return msg;
+    }
   }
 }

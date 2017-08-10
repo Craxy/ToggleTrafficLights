@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace Harmony
 {
-	public static class AccessTools
+	internal static class AccessTools
 	{
 		public static BindingFlags all = BindingFlags.Public
 			| BindingFlags.NonPublic

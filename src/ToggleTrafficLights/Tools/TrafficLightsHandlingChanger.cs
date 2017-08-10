@@ -1,13 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using ColossalFramework;
-using ColossalFramework.Math;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using Harmony;
-using UnityEngine;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 {

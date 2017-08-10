@@ -2,7 +2,7 @@
 
 namespace Harmony.ILCopying
 {
-	public class ByteBuffer
+	internal sealed class ByteBuffer
 	{
 		public byte[] buffer;
 		public int position;

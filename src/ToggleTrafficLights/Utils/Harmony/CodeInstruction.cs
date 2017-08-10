@@ -4,7 +4,7 @@ using System.Reflection.Emit;
 
 namespace Harmony
 {
-	public class CodeInstruction
+	internal sealed class CodeInstruction
 	{
 		public OpCode opcode;
 		public object operand;

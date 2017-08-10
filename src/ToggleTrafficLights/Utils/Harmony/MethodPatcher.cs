@@ -7,7 +7,7 @@ using System.Reflection.Emit;
 
 namespace Harmony
 {
-	public static class MethodPatcher
+	internal static class MethodPatcher
 	{
 		// special parameter names that can be used in prefix and postfix methods
 		//

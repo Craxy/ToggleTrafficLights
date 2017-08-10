@@ -17,7 +17,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
   /// RoadBaseAi always checks for <see cref="InfoManager.CurrentMode"/> and <see cref="InfoManager.CurrentSubMode"/>,
   /// But <see cref="JunctionTool"/> can be used without setting these modes.
   /// </summary>
-  public class JunctionTool : ToolBase
+  public sealed class JunctionTool : ToolBase
   {
     protected override void OnEnable()
     {
@@ -244,7 +244,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
               if (++count >= 32768)
               {
                 CODebugBase<LogChannel>.Error(LogChannel.Core,
-                  "Invalid list detected!\n" + System.Environment.StackTrace);
+                  "Invalid list detected!\n" + Environment.StackTrace);
                 break;
               }
               nodeId = netManager.m_nodes.m_buffer[nodeId].m_nextGridNode;
@@ -467,14 +467,14 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 
     public event Action Disabled;
 
-    protected virtual void OnDisabled()
+    private void OnDisabled()
     {
       Disabled?.Invoke();
     }
 
     public event Action Enabled;
 
-    protected virtual void OnEnabled()
+    private void OnEnabled()
     {
       Enabled?.Invoke();
     }

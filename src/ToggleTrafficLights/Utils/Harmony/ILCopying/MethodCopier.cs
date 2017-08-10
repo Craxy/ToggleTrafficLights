@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace Harmony.ILCopying
 {
-	public class MethodCopier
+	internal sealed class MethodCopier
 	{
 		readonly MethodBodyReader reader;
 
@@ -26,7 +26,7 @@ namespace Harmony.ILCopying
 		}
 	}
 
-	public class MethodBodyReader
+	internal sealed class MethodBodyReader
 	{
 		readonly ILGenerator generator;
 

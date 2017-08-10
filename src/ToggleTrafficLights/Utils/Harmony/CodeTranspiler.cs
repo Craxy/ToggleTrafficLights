@@ -8,7 +8,7 @@ using System.Collections;
 
 namespace Harmony
 {
-	public class CodeTranspiler
+	internal sealed class CodeTranspiler
 	{
 		private IEnumerable<CodeInstruction> codeInstructions;
 
