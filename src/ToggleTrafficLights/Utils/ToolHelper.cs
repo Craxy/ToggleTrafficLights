@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions;
 using UnityEngine;

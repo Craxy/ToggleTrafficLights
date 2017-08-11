@@ -1,4 +1,4 @@
-﻿using System.Text.RegularExpressions;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions

@@ -1,4 +1,4 @@
-﻿using ICities;
+using ICities;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions
 {

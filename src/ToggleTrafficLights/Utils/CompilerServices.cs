@@ -1,4 +1,4 @@
-﻿// ReSharper disable once CheckNamespace
+// ReSharper disable once CheckNamespace
 namespace System.Runtime.CompilerServices
 {
   // Old .net hasn't CallerMemberNameAttribute, CallerFilePathAttribute and CallerLineNumberAttribute

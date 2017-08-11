@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Ui
 {

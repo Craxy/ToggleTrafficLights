@@ -1,4 +1,4 @@
-﻿using ColossalFramework;
+using ColossalFramework;
 using UnityEngine;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions

@@ -1,4 +1,4 @@
-﻿namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
+namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
 {
   public static class CitiesHelper
   {
