@@ -4,19 +4,36 @@ using System.Diagnostics;
 using System.Linq;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using ICities;
+using JetBrains.Annotations;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Serializer
 {
   internal sealed class Serializer
   {
-    public readonly Func<IEnumerable<byte>> SerializeData;
-    public readonly Action<IEnumerable<byte>> DeserializeData;
+    public delegate bool ShouldDelete();
+    [CanBeNull]
+    public delegate IEnumerable<byte> Serialize();
+    /// <summary>
+    /// <c>null</c> indicates: no data gets serialized == delete existing data
+    /// </summary>
+    public delegate void Deserialize([NotNull]byte[] data);
 
-    public Serializer(Func<IEnumerable<byte>> serializeData, Action<IEnumerable<byte>> deserializeData)
+    public static readonly ShouldDelete Delete = () => true;
+    public static readonly ShouldDelete DontDelete = () => false;
+    
+    public readonly ShouldDelete ShouldDeleteData;
+    public readonly Serialize SerializeData;
+    public readonly Deserialize DeserializeData;
+
+    public Serializer(Serialize serializeData, Deserialize deserializeData, ShouldDelete shouldDeleteData)
     {
       SerializeData = serializeData;
       DeserializeData = deserializeData;
+      ShouldDeleteData = shouldDeleteData;
     }
+    public Serializer(Serialize serializeData, Deserialize deserializeData)
+      : this(serializeData, deserializeData, DontDelete)
+    {}
   }
 
   internal sealed class SerializerManager
@@ -32,9 +49,13 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Serializer
       Serializers = new Dictionary<uint, Serializer>();
     }
 
+    private static bool Contains(string id, ISerializableData serializableDataManager)
+      => serializableDataManager.EnumerateData().Contains(id);
+
     public static void DeleteAllData(ISerializableData serializableDataManager)
     {
-      if (serializableDataManager.EnumerateData().Contains(Id))
+      // test for contains is unnecessary
+      if (Contains(Id, serializableDataManager))
       {
         Log.Info($"Removing data with ID {Id}");
         serializableDataManager.EraseData(Id);
@@ -43,33 +64,42 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Serializer
 
     public void Deserialize(ISerializableData serializableDataManager)
     {
-      if (!serializableDataManager.EnumerateData().Contains(Id))
+      if (!Contains(Id, serializableDataManager))
       {
         DebugLog.Message("Save does not contain data with id {0}", Id);
         return;
       }
 
       var data = serializableDataManager.LoadData(Id);
-
       DebugLog.Message("Read {0} bytes for Id {1}", data.Length, Id);
-
+      
       const int versionLength = 4;
       Debug.Assert(data.Length > versionLength);
-
+      if (data.Length < versionLength)
+      {
+        throw new InvalidOperationException($"Data with id {Id} should be at least {versionLength} bytes long, but is only {data.Length}B");
+      }
+      
       var version = BitConverter.ToUInt32(data.Take(versionLength).ToArray(), 0);
       DebugLog.Message("Deserializer version {0}", version);
-
-      Serializer s;
-      if (!Serializers.TryGetValue(version, out s))
+      
+      Serializer serializer;
+      if (!Serializers.TryGetValue(version, out serializer))
       {
-        //TODO: Fehlerbehandlung
         throw new InvalidOperationException($"No Serializer with version {version} found!");
       }
 
-      //TODO: Fehlerhandlung?
-      s.DeserializeData(data.Skip(versionLength));
-
-      DebugLog.Message("Deserialized {0} bytes", data.Length - 4);
+      if (serializer.ShouldDeleteData())
+      {
+        Log.Info($"Deleting saved data because serializer version {version} requested deletion.");
+        serializableDataManager.EraseData(Id);
+      }
+      else
+      {
+        var rData = data.Skip(versionLength).ToArray();
+        serializer.DeserializeData(rData);
+        DebugLog.Message("Deserialized {0} bytes", rData.Length);
+      }
     }
 
     public void Serialize(ISerializableData serializableDataManager)
@@ -81,23 +111,37 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Serializer
 
     public void Serialize(ISerializableData serializableDataManager, uint version)
     {
-      Serializer s;
-      if (!Serializers.TryGetValue(version, out s))
+      Serializer serializer;
+      if (!Serializers.TryGetValue(version, out serializer))
       {
-        //TODO: Fehlerbehandlung
         throw new InvalidOperationException($"No Serializer with version {version} found!");
       }
-
+      
       DebugLog.Message("Serialize version {0}", version);
 
-      var data = s.SerializeData();
+      if (serializer.ShouldDeleteData())
+      {
+        DebugLog.Info($"Deleting saved data because serializer version {version} requested deletion.");
+        serializableDataManager.EraseData(Id);
+      }
+      else
+      {
+        var data = serializer.SerializeData();
+        if (data == null)
+        {
+          DebugLog.Info($"No data to serialize (-> delete data if present)");
+          serializableDataManager.EraseData(Id);
+        }
+        else
+        {
+          var bytesVersion = BitConverter.GetBytes(version);
+          var dataWithVersion = bytesVersion.Concat(data).ToArray();
 
-      var bytesVersion = BitConverter.GetBytes(version);
-      var dataWithVersion = bytesVersion.Concat(data).ToArray();
+          serializableDataManager.SaveData(Id, dataWithVersion);
 
-      serializableDataManager.SaveData(Id, dataWithVersion);
-
-      DebugLog.Message("Serialized {0} bytes", dataWithVersion.Length - 4);
+          DebugLog.Message("Serialized {0} bytes", dataWithVersion.Length - 4);
+        }
+      }
     }
   }
 }

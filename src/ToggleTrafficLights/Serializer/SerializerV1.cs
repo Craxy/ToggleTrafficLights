@@ -15,7 +15,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Serializer
         .Select(Convert.ToByte);
     }
 
-    public static void DeserializeData(IEnumerable<byte> data)
+    public static void DeserializeData(byte[] data)
     {
       var nm = Singleton<NetManager>.instance;
       var nodes = nm.m_nodes;

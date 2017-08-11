@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
 {
-  public class Options
+  public sealed class Options
   {
     public const string SettingsFile = "ToggleTrafficLights";
 
@@ -63,6 +63,28 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
     internal static string GetShortcutDescription(string name)
     {
       throw new NotImplementedException();
+    }
+  }
+
+  public sealed class SaveGameOptions
+  {
+    public enum TrafficLightsHandling : byte
+    {
+      Default,
+      NoTrafficLights,
+      AllTrafficLights
+    }
+    private static readonly TrafficLightsHandling DefaultTrafficLights = TrafficLightsHandling.Default;
+    public TrafficLightsHandling TrafficLights { get; set; } = DefaultTrafficLights;
+
+    public void Reset()
+    {
+      TrafficLights = DefaultTrafficLights;
+    }
+
+    public override string ToString()
+    {
+      return $"{nameof(TrafficLights)}: {TrafficLights}";
     }
   }
 }

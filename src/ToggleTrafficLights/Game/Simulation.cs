@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Reflection;
 using ColossalFramework;
-using Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours;
+using Craxy.CitiesSkylines.ToggleTrafficLights.Serializer;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils.Extensions;
 using ICities;
 using UnityEngine;
+using Debug = System.Diagnostics.Debug;
+using Level = Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours.Level;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
 {
@@ -18,166 +19,182 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
 
   public sealed class Simulation
   {
-    public static readonly Simulation Instance = new Simulation();
+    private static Simulation _instance = null;
 
-    public ILoading LoadingManager { get; private set; }
-    public IManagers Managers => LoadingManager.managers;
+    public static Simulation Instance
+    {
+      get
+      {
+        if (_instance == null)
+        {
+          _instance = new Simulation();
+        }
+        return _instance;
+      }
+    }
+    
+    
+    public IManagers Managers => SimulationManager.instance.m_ManagersWrapper;
+    public bool IsGameMode => Managers.IsGameMode();
     public Options Options { get; } = new Options();
-    public MainMachine MainMachine { get; private set; }
 
+
+    public enum Step
+    {
+      LoadData,
+      LevelLoaded,
+      LevelUnloaded,
+      SaveData,
+    }
+    public void Process(Step step)
+    {
+      if (!IsGameMode)
+      {
+        return;
+      }
+      
+      //Problem: 
+      //  OnLevelLoaded happens after OnLoadData
+      //  OnLevelUnloading happens before OnSaveData
+      // but: OnLoadData is called even for new maps
+      
+      // Order:
+      // LoadData (always)
+      // LevelLoaded (always)
+      // 
+      // LevelUnloaded (always)
+      // SaveData (when saving)
+      
+      DebugLog.Info($"{nameof(Process)}({step}): CurrentLevel={_currentLevel}, CurrentLevelOptions={_currentSaveGameOptions}");
+      
+      // in order
+      switch (step)
+      {
+        case Step.LoadData:        //(always)
+          Debug.Assert(_currentLevel == null);
+          InitializeLevel();
+          Debug.Assert(_currentLevel == null);
+          Debug.Assert(_currentSaveGameOptions != null);
+          LoadLevel(Managers.serializableData);
+          break;
+        case Step.LevelLoaded:     // (always)
+          Debug.Assert(_currentLevel == null);
+          Debug.Assert(_currentSaveGameOptions != null);
+          StartLevel();
+          Debug.Assert(_currentLevel != null);
+          break;
+        case Step.LevelUnloaded:   // (always)
+          Debug.Assert(_currentLevel != null);
+          Debug.Assert(_currentSaveGameOptions != null);
+          EndLevel();
+          Debug.Assert(_currentLevel == null);
+          Debug.Assert(_currentSaveGameOptions != null);
+          break;
+        case Step.SaveData:        // (when saving)
+          Debug.Assert(_currentSaveGameOptions != null);
+          SaveLevel(Managers.serializableData);
+          break;
+        default:
+          throw new ArgumentOutOfRangeException(nameof(step), step, null);
+      }
+    }
+    
+    #region Level
+    private Level _currentLevel = null;
+    private SaveGameOptions _currentSaveGameOptions = null;
+    public SaveGameOptions CurrentSaveGameOptions => _currentSaveGameOptions;
+
+    private void InitializeLevel()
+    {
+      _currentSaveGameOptions = new SaveGameOptions();
+    }
+    private void StartLevel()
+    {
+      var go = new GameObject("TTLLevel");
+      _currentLevel = go.AddComponent<Level>();
+      Debug.Assert(_currentLevel != null);
+      _currentLevel.Options = Options;
+      _currentLevel.GameOptions = _currentSaveGameOptions;
+    }
+
+    private void EndLevel()
+    {
+      if (_currentLevel != null)
+      {
+        _currentLevel.enabled = false;
+        _currentLevel.Options = null;
+        _currentLevel.GameOptions = null;
+        GameObject.Destroy(_currentLevel.gameObject);
+        _currentLevel = null;
+      }
+    }
+    #endregion Level
+    
+    #region Save/Load
+    private static readonly SerializerManager SerializerManager = new SerializerManager
+      {
+        Serializers =
+        {
+          //dammit....c# does not have proper tuples...
+          {1, new Serializer.Serializer(SerializerV1.SerializeData, SerializerV1.DeserializeData, Serializer.Serializer.Delete)},
+          {2, new Serializer.Serializer(SerializerV2.SerializeData, SerializerV2.DeserializeData, Serializer.Serializer.DontDelete)},
+        }
+      };
+
+    private void LoadLevel(ISerializableData serializeData)
+    {
+      // Is called even for new maps
+      // Is called before LoadGame
+      // serializeData == Managers.serializableData
+      
+      try
+      {
+        SerializerManager.Deserialize(serializeData);
+      }
+      catch (Exception e)
+      {
+        Log.Error($"Error while loading data: {e.Message}");
+      }
+    }
+    private void SaveLevel(ISerializableData serializeData)
+    {
+      try
+      {
+        SerializerManager.Serialize(serializeData);
+      }
+      catch (Exception e)
+      {
+        Log.Error($"Error while saving data: {e.Message}");
+      }
+    }
+    #endregion Save/Load
+    
+    #region Implementation of IThreadingExtension
+    [Conditional("DEBUG")]
+    public void OnUpdate(float realTimeDelta, float simulationTimeDelta)
+    {
+      if (IsGameMode)
+      {
+          DebugShortcuts();
+      }
+    }
+    #endregion IThreadingExtension
+    
+    #region Debug
     [Conditional("DEBUG")]
     private void DebugShortcuts()
     {
-      if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.P))
-      {
-      }
-      else if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.I))
+      if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.I))
       {
         var msg = $"Current Tool: {ToolsModifierControl.toolController.CurrentTool?.GetType().Name}";
-        msg += $"\nCurrent State: {MainMachine.Current}";
+        msg += $"\nCurrent State: {_currentLevel?.Current}";
         var im = Singleton<InfoManager>.instance;
-        msg +=
-          $"\nInfoManager: CurrentMode={im.CurrentMode}; CurrentSubMode={im.CurrentSubMode}; NextMode={im.NextMode}; NextSubMode={im.NextSubMode}";
-
+        msg += $"\nInfoManager: CurrentMode={im.CurrentMode}; CurrentSubMode={im.CurrentSubMode}; NextMode={im.NextMode}; NextSubMode={im.NextSubMode}";
+        msg += $"\nSaveGameOptions: {_currentSaveGameOptions}";
+        
         DebugLog.Info(msg);
       }
-      else if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.O))
-      {
-      }
     }
-
-    #region Implementation of IThreadingExtension
-
-    public void OnUpdate(float realTimeDelta, float simulationTimeDelta)
-    {
-      DebugShortcuts();
-    }
-
-    #endregion IThreadingExtension
-
-    #region Implementation of LoadingExtensionBase
-
-    public void OnCreated(ILoading loading)
-    {
-      LoadingManager = loading;
-
-      DebugLog.Message("Created v.{0} at {1}", Assembly.GetExecutingAssembly().GetName().Version, DateTime.Now);
-    }
-
-    public void OnReleased()
-    {
-      LoadingManager = null;
-      DebugLog.Message("Released v.{0} at {1}", Assembly.GetExecutingAssembly().GetName().Version, DateTime.Now);
-    }
-
-    public void OnLevelLoaded(LoadMode mode)
-    {
-      if (IsGameMode())
-      {
-        Log.Info("Level loading");
-        OnGameLevelLoaded();
-        Log.Info("Level loaded");
-      }
-      else
-      {
-        Log.Info("In Editor->mod is disabled");
-      }
-    }
-
-    public void OnLevelUnloading()
-    {
-      if (IsGameMode())
-      {
-        Log.Message("Level unloading");
-        OnGameLevelUnloading();
-        Log.Info("Level unloaded");
-      }
-    }
-
-    #endregion LoadingExtensionBase
-
-    #region helpers
-
-    private bool IsGameMode()
-    {
-      if (LoadingManager != null)
-      {
-        return LoadingManager.IsGameMode();
-      }
-      //don't know -> go on
-      DebugLog.Warning("IsGameMode: unknown -- default to true");
-      var st = new StackTrace();
-      DebugLog.Warning(st.ToString());
-      return true;
-    }
-
-    #endregion
-
-    public void OnGameLevelLoaded()
-    {
-      var go = new GameObject("TTLMachine");
-      MainMachine = go.AddComponent<MainMachine>();
-      MainMachine.Options = Options;
-    }
-
-    public void OnGameLevelUnloading()
-    {
-      if (MainMachine != null)
-      {
-        MainMachine.enabled = false;
-        MainMachine.Options = null;
-        GameObject.Destroy(MainMachine.gameObject);
-        MainMachine = null;
-      }
-    }
-  }
-
-  public sealed class Threading : ThreadingExtensionBase
-  {
-    public Simulation Simulation => Simulation.Instance;
-
-    public override void OnUpdate(float realTimeDelta, float simulationTimeDelta)
-    {
-      base.OnUpdate(realTimeDelta, simulationTimeDelta);
-
-      Simulation.OnUpdate(realTimeDelta, simulationTimeDelta);
-    }
-  }
-
-  public sealed class Loading : LoadingExtensionBase
-  {
-    public Simulation Simulation => Simulation.Instance;
-
-    public override void OnCreated(ILoading loading)
-    {
-      Log.Info("created");
-      
-      base.OnCreated(loading);
-
-      Simulation.OnCreated(loading);
-    }
-
-    public override void OnReleased()
-    {      
-      base.OnReleased();
-
-      Simulation.OnReleased();
-      
-      Log.Info("released");
-    }
-
-    public override void OnLevelLoaded(LoadMode mode)
-    {
-      base.OnLevelLoaded(mode);
-
-      Simulation.OnLevelLoaded(mode);
-    }
-
-    public override void OnLevelUnloading()
-    {
-      base.OnLevelUnloading();
-
-      Simulation.OnLevelUnloading();
-    }
+    #endregion Debug
   }
 }
