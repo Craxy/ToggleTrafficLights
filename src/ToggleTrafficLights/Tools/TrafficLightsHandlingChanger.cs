@@ -1,8 +1,10 @@
 using System;
+using System.Linq;
 using System.Reflection;
 using ColossalFramework;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using Harmony;
+using UnityEngine.Networking.Types;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
 {
@@ -18,21 +20,21 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
     {
       if (_patch != null)
       {
-        DebugLog.Warning($"{nameof(UndoPatch)}: Already patched with {ChangeMode}");
+        DebugLog.Info($"{nameof(Patch)}: Already patched with {ChangeMode}");
         
         if (ChangeMode != changeMode)
         {
-          DebugLog.Warning($"{nameof(UndoPatch)}: Update mode to {changeMode}");
+          DebugLog.Info($"{nameof(Patch)}: Update mode to {changeMode}");
           _changeMode = changeMode;
         }
         
         return;
       }
 
-      var src = typeof(RoadBaseAI).GetMethod("UpdateNodeFlags", BindingFlags.Public | BindingFlags.Instance);
-      var prefix = typeof(TrafficLightsHandlingChanger).GetMethod(nameof(AfterUpdateNodeFlags), BindingFlags.Public | BindingFlags.Static);
+     var src = typeof(RoadBaseAI).GetMethod(nameof(RoadBaseAI.UpdateNode), BindingFlags.Public | BindingFlags.Instance);
+     var prefix = typeof(TrafficLightsHandlingChanger).GetMethod(nameof(AfterRoadBaseAiUpdateNode), BindingFlags.Public | BindingFlags.Static);
 
-      DebugLog.Warning($"{nameof(UndoPatch)}: Patch to {changeMode}");
+      DebugLog.Info($"{nameof(Patch)}: Patch to {changeMode}; src={src}; prefix={prefix}");
       _changeMode = changeMode;
       _patch = Harmony.Patch.Apply(src, prefix);
     }
@@ -40,30 +42,30 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Tools
     {
       if (_patch == null)
       {
-        DebugLog.Warning($"{nameof(UndoPatch)}: Not patched");
+        DebugLog.Info($"{nameof(UndoPatch)}: Not patched");
         return;
       }
       
-      DebugLog.Warning($"{nameof(UndoPatch)}: Restore patch");
+      DebugLog.Info($"{nameof(UndoPatch)}: Restore patch");
       _patch.Restore();
       _patch = null;
       _changeMode = TrafficLights.ChangeMode.Reset;
     }
 
     private static TrafficLights.ChangeMode _changeMode = TrafficLights.ChangeMode.Reset;
-    public static void AfterUpdateNodeFlags(ushort nodeID, ref NetNode data)
+    public static void AfterRoadBaseAiUpdateNode(ushort nodeID, ref NetNode data)
     {
-      // must be static for Harmony
-      
       if (Node.IsValidTrafficLightsIntersection(nodeID, ref data))
       {
+        //todo: is this called at loading of map? -> might change existing behaviour
         if (!data.m_flags.IsFlagSet(NetNode.Flags.CustomTrafficLights))
         {
-          DebugLog.Warning($"{nameof(AfterUpdateNodeFlags)}: Change traffic light at junction {nodeID} to {_changeMode}");
+          DebugLog.Info($"{nameof(AfterRoadBaseAiUpdateNode)}: Change traffic light at junction {nodeID} to {_changeMode}");
           TrafficLights.ChangeFast(nodeID, ref data, _changeMode);
         }
       }
     }
+
     #endregion Patch
     
     public void Change(TrafficLights.ChangeMode changeMode)
