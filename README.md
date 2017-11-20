@@ -25,7 +25,8 @@ TTL adds three buttons to the *Traffic Routes - Junctions* window:
 * *Remove all*: Remove Traffic Lights from all junctions.
 * *Reset all*: Reset all junctions to their default Traffic Lights states (see [this table](https://www.reddit.com/r/CitiesSkylines/comments/2zp61z/i_made_a_table_chart_of_which_intersections/) for the default statuses).
 
-Besides the buttons you can also click on the icons while holding *Ctrl*. The colored traffic light adds lights to all intersection, the grayed out light removed lights from all intersections, and clicking on the text "Toggle Traffic Lights" resets all junctions to their default states.  
+Besides the buttons you can also click on the icons while holding *Ctrl*. The colored traffic light adds lights to all intersection, the grayed-out light removed lights from all intersections, and clicking on the text "Toggle Traffic Lights" resets all junctions to their default states.  
+There's also a hidden function to remove all stop signs: While holding *Ctrl* click on the grayed-out stop sign.
 
 **Note**: All of these commands are executed immediately after you clicked the corresponding button. There's neither an additional confirmation nor a revert.
 
