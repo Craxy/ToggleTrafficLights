@@ -230,10 +230,10 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Utils
               break;
             case Mode.Reset: // default is no sign
             case Mode.Remove:
-              Singleton<NetManager>.instance.m_segments.m_buffer[segment].m_flags &= ~yieldDirection;
+              nm.m_segments.m_buffer[segment].m_flags &= ~yieldDirection;
               break;
             case Mode.Toggle:
-              Singleton<NetManager>.instance.m_segments.m_buffer[segment].m_flags ^= yieldDirection;
+              nm.m_segments.m_buffer[segment].m_flags ^= yieldDirection;
               break;
             default:
               throw new ArgumentOutOfRangeException(nameof(mode), mode, null);

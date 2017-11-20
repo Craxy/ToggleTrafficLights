@@ -30,7 +30,11 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights
       => Log.Info($"Loaded: {Assembly.GetExecutingAssembly().GetName()})");
 
     public string Name 
-      => "Toggle Traffic Lights";
+      => "Toggle Traffic Lights"
+#if DEBUG
+         + " (DEBUG)"
+#endif
+          ;
     public string Description 
       => "Remove or add traffic lights at junctions.";
     

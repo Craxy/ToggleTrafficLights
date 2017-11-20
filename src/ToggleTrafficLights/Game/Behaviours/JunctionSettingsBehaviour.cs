@@ -66,6 +66,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours
 
       // register click events for Traffic Lights icons
       UpdateIcons(_junctionSettings.Find<UIPanel>("PanelLights"), Mode.Add);
+      // register click events for Stop Sign icons
+      UpdateIcons(_junctionSettings.Find<UIPanel>("PanelStopSigns"), Mode.Add);
 
       // add buttons under PanelLights panel to change all lights (same behaviour as icons)
       AddToggleTrafficLightsButtons(_junctionSettings, PanelChangeAllLights);
@@ -83,6 +85,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours
       
       // unregister click events for Traffic Lights icons
       UpdateIcons(_junctionSettings.Find<UIPanel>("PanelLights"), Mode.Remove);
+      // unregister click events for Stop Signs icons
+      UpdateIcons(_junctionSettings.Find<UIPanel>("PanelStopSigns"), Mode.Remove);
       
       //move PanelLights to original position
       UpdateRelativePosition(_junctionSettings.Find<UIPanel>("PanelLights"), _originalPanelLightsPosition);
@@ -137,6 +141,10 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours
               case "IconJunctionNoTrafficLights":
                 sprite.tooltip = GetTooltip("Ctrl + Left Click: Remove traffic lights from all junctions.");
                 UpdateClick(sprite, RemoveAllTrafficLightsOnControlPressed);
+                break;
+              case "IconJunctionNoStopSign":
+                sprite.tooltip = GetTooltip("Ctrl + Left Click: Remove all stop signs.");
+                UpdateClick(sprite, RemoveAllStopSignsOnControlPressed);
                 break;
               default:
                 break;
@@ -326,18 +334,18 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours
     private const float MinTimeBetweenChanges = 0.5f; // in seconds
 
     private static void AddAllTrafficLightsOnControlPressed(UIComponent _, UIMouseEventParameter evt) 
-      => HandleClick(evt, TrafficLights.ChangeMode.Add, true);
+      => HandleChangeTrafficLightsClick(evt, TrafficLights.ChangeMode.Add, true);
     private static void RemoveAllTrafficLightsOnControlPressed(UIComponent _, UIMouseEventParameter evt) 
-      => HandleClick(evt, TrafficLights.ChangeMode.Remove, true);
+      => HandleChangeTrafficLightsClick(evt, TrafficLights.ChangeMode.Remove, true);
     private static void ResetAllTrafficLightsOnControlPressed(UIComponent _, UIMouseEventParameter evt) 
-      => HandleClick(evt, TrafficLights.ChangeMode.Reset, true);
+      => HandleChangeTrafficLightsClick(evt, TrafficLights.ChangeMode.Reset, true);
     private static void AddAllTrafficLights(UIComponent _, UIMouseEventParameter evt) 
-      => HandleClick(evt, TrafficLights.ChangeMode.Add, false);
+      => HandleChangeTrafficLightsClick(evt, TrafficLights.ChangeMode.Add, false);
     private static void RemoveAllTrafficLights(UIComponent _, UIMouseEventParameter evt) 
-      => HandleClick(evt, TrafficLights.ChangeMode.Remove, false);
+      => HandleChangeTrafficLightsClick(evt, TrafficLights.ChangeMode.Remove, false);
     private static void ResetAllTrafficLights(UIComponent _, UIMouseEventParameter evt) 
-      => HandleClick(evt, TrafficLights.ChangeMode.Reset, false);
-    private static void HandleClick(UIMouseEventParameter evt, TrafficLights.ChangeMode mode, bool requiresControl)
+      => HandleChangeTrafficLightsClick(evt, TrafficLights.ChangeMode.Reset, false);
+    private static void HandleChangeTrafficLightsClick(UIMouseEventParameter evt, TrafficLights.ChangeMode mode, bool requiresControl)
     {
       if (evt.buttons != UIMouseButton.Left)
       {
@@ -364,6 +372,34 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours
       TrafficLights.ChangeAllFast(mode);
 //      var stats = TrafficLights.ChangeAll(mode);
       //todo: handle stats?
+    }
+    private static void RemoveAllStopSignsOnControlPressed(UIComponent _, UIMouseEventParameter evt) 
+      => HandleChangeStopSignsClick(evt, StopSigns.ChangeMode.Remove, true);
+    private static void HandleChangeStopSignsClick(UIMouseEventParameter evt, StopSigns.ChangeMode mode, bool requiresControl)
+    {
+      if (evt.buttons != UIMouseButton.Left)
+      {
+        return;
+      }
+      if (requiresControl && !(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)))
+      {
+        return;
+      }
+
+      var currentTime = Time.time;
+      if (currentTime - _lastChangeTime >= MinTimeBetweenChanges)
+      {
+        _lastChangeTime = currentTime;
+      }
+      else
+      {
+        //not enough time passed
+        DebugLog.Info("Not enough time passed for another update");
+        return;
+      }
+
+      DebugLog.Info($"Change all intersections: {mode} all");
+      StopSigns.ChangeAllFast(mode);
     }
 
     private static void TimeChange(TrafficLights.ChangeMode mode)
