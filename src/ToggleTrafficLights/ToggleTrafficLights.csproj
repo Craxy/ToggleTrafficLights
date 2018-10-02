@@ -20,13 +20,22 @@
     <Authors>Craxy</Authors>
     <Copyright>Copyright © Craxy 2015 - 2017</Copyright>
     <RepositoryUrl>https://github.com/Craxy/ToggleTrafficLights/</RepositoryUrl>
+
     <!-- If true: execute Cities.exe after build. For single build: dotnet build /p:StartCS=true -->
     <StartCS>false</StartCS>
+    <!-- Starts CS via steam. $(SteamExe) must be specified! -->
+    <!-- Launching CS without steam is a bit clunky: Cities.exe starts, exits and starts again with steam. So for CS there's no reason to not use $(UseSteam). -->
+    <UseSteam>true</UseSteam>
   </PropertyGroup>
 
   <PropertyGroup>
     <!-- Different on each system -->
     <CitiesSkylinesPath>D:\Games\Steam\steamapps\common\Cities_Skylines</CitiesSkylinesPath>
+    <SteamExe>D:\Games\Steam\Steam.exe</SteamExe>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <CitiesSkylinesSteamId>255710</CitiesSkylinesSteamId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -66,6 +75,7 @@
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ModDir)\$(ProjectName)" />
   </Target>
   <Target Name="StartCitiesSkylines" AfterTargets="PostBuild" Condition="'$(StartCS)' == 'true'">
-    <Exec Command='"$(CitiesSkylinesPath)/Cities"' />
+    <Exec Condition="'$(UseSteam)' != 'true'" Command='"$(CitiesSkylinesPath)/Cities"' />
+    <Exec Condition="'$(UseSteam)' == 'true'" Command='"$(SteamExe)" -applaunch $(CitiesSkylinesSteamId)' />
   </Target>
 </Project>
