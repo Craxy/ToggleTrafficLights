@@ -1,48 +1,71 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFramework>net35</TargetFramework>
     <!-- dotnet cli msbuild can't compile to net35 and lower -> use separately installed net35 components -->
     <!-- https://github.com/Microsoft/msbuild/issues/1333#issuecomment-296346352 -->
     <FrameworkPathOverride Condition="'$(TargetFramework)' == 'net35'">C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v3.5\Profile\Client</FrameworkPathOverride>
-    <LangVersion>7</LangVersion>
+    <LangVersion>latest</LangVersion>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <RootNamespace>Craxy.CitiesSkylines.ToggleTrafficLights</RootNamespace>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+
   <PropertyGroup>
     <Version>0.12.0</Version>
     <AssemblyVersion>$(Version)</AssemblyVersion>
     <FileVersion>$(Version)</FileVersion>
-    <Product>Toggle Traffic Lights</Product>
+    <Name>Toggle Traffic Lights</Name>
     <Description>Mod for Cities:Skylines. Tool to remove or add traffic lights at intersections.</Description>
     <Authors>Craxy</Authors>
     <Copyright>Copyright © Craxy 2015 - 2017</Copyright>
     <RepositoryUrl>https://github.com/Craxy/ToggleTrafficLights/</RepositoryUrl>
+    <!-- If true: execute Cities.exe after build. For single build: dotnet build /p:StartCS=true -->
+    <StartCS>false</StartCS>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Different on each system -->
+    <CitiesSkylinesPath>D:\Games\Steam\steamapps\common\Cities_Skylines</CitiesSkylinesPath>
+  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\libs\Assembly-CSharp.dll</HintPath>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>$(CitiesSkylinesPath)\Cities_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
-    <Reference Include="ColossalManaged, Version=0.3.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\libs\ColossalManaged.dll</HintPath>
+    <Reference Include="ColossalManaged">
+      <HintPath>$(CitiesSkylinesPath)\Cities_Data\Managed\ColossalManaged.dll</HintPath>
     </Reference>
-    <Reference Include="ICities, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\libs\ICities.dll</HintPath>
+    <Reference Include="ICities">
+      <HintPath>$(CitiesSkylinesPath)\Cities_Data\Managed\ICities.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\libs\UnityEngine.dll</HintPath>
+    <Reference Include="UnityEngine">
+      <HintPath>$(CitiesSkylinesPath)\Cities_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\libs\UnityEngine.UI.dll</HintPath>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>$(CitiesSkylinesPath)\Cities_Data\Managed\UnityEngine.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
+
   <ItemGroup>
     <EmbeddedResource Include="Assets\icons.png" />
     <None Include="Assets\orig\*" />
   </ItemGroup>
+
+  <PropertyGroup>
+    <!-- $(ProjectName) isn't available when $(ModDir) is set -> add $(ProjectName) in Target -->
+    <ModDir>$(LOCALAPPDATA)\Colossal Order\Cities_Skylines\Addons\Mods</ModDir>
+    <AssemblyTitle>$(Name)</AssemblyTitle>
+    <Title>$(Name)</Title>
+    <Product>$(Name)</Product>
+  </PropertyGroup>
+
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <RemoveDir Directories="$(LOCALAPPDATA)\Colossal Order\Cities_Skylines\Addons\Mods\$(ProjectName)" />
-    <MakeDir Directories="$(LOCALAPPDATA)\Colossal Order\Cities_Skylines\Addons\Mods\$(ProjectName)" />
-    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(LOCALAPPDATA)\Colossal Order\Cities_Skylines\Addons\Mods\$(ProjectName)" />
+    <RemoveDir Directories="$(ModDir)\$(ProjectName)" />
+    <MakeDir Directories="$(ModDir)\$(ProjectName)" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ModDir)\$(ProjectName)" />
+  </Target>
+  <Target Name="StartCitiesSkylines" AfterTargets="PostBuild" Condition="'$(StartCS)' == 'true'">
+    <Exec Command='"$(CitiesSkylinesPath)/Cities"' />
   </Target>
 </Project>
