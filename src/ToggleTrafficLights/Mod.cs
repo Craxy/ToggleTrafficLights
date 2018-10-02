@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Game;
@@ -12,8 +13,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights
   // Strange behaviour of IUserMod with other interfaces:
   // For every class with C:S mod interface a new instance is created, even if same class implements multiple interfaces.
   //   Except: for IUserMod: if class with IUserMod implements other C:S mod interfaces, IUserMod instance is reused
-   
-  public sealed class Mod 
+
+  public sealed class Mod
     : IUserMod
       , ISerializableDataExtension, ILoadingExtension
 #if DEBUG
@@ -21,39 +22,46 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights
 #endif
   {
     public Simulation Simulation => Simulation.Instance;
-    
-    #region IUserMod
-    private static Version Version 
-      => Assembly.GetExecutingAssembly().GetName().Version;
-    
-    static Mod() 
-      => Log.Info($"Loaded: {Assembly.GetExecutingAssembly().GetName()})");
 
-    public string Name 
-      => "Toggle Traffic Lights"
-#if DEBUG
-         + " (DEBUG)"
-#endif
-          ;
-    public string Description 
-      => "Remove or add traffic lights at junctions.";
-    
-    public void OnEnabled() 
+    #region IUserMod
+    public static readonly Version Version;
+    private static string _name, _description;
+    static Mod()
+    {
+      var assembly = Assembly.GetExecutingAssembly();
+
+      Version = assembly.GetName().Version;
+
+      T GetAssemblyAttribute<T>() where T : Attribute => (T) assembly.GetCustomAttributes(typeof(T), false).Single();
+
+      _name = GetAssemblyAttribute<AssemblyTitleAttribute>().Title;
+      #if DEBUG
+        _name += " (DEBUG)";
+      #endif
+      _description = GetAssemblyAttribute<AssemblyDescriptionAttribute>().Description;
+
+      Log.Info($"Loaded: {Assembly.GetExecutingAssembly().GetName()}) at {DateTime.Now}");
+    }
+
+    public string Name => _name;
+    public string Description => _description;
+
+    public void OnEnabled()
       => Log.Message($"Mod {Name} v.{Version} enabled at {DateTime.Now}");
-    public void OnDisabled() 
+    public void OnDisabled()
       => Log.Message($"Mod {Name} v.{Version} disabled at {DateTime.Now}");
 
-    public void OnSettingsUI(UIHelperBase helper) 
+    public void OnSettingsUI(UIHelperBase helper)
       => SettingsBuilder.MakeSettings((UIHelper) helper, Simulation.Options);
 
     #endregion IUserMode
-    
+
     #region ISerializableDataExtension
-    void ISerializableDataExtension.OnCreated(ISerializableData serializedData) 
+    void ISerializableDataExtension.OnCreated(ISerializableData serializedData)
       => Trace(nameof(ISerializableDataExtension));
-    void ILoadingExtension.OnReleased() 
+    void ILoadingExtension.OnReleased()
       => Trace(nameof(ILoadingExtension));
-    
+
     void ILoadingExtension.OnLevelLoaded(LoadMode mode)
     {
       Trace(nameof(ILoadingExtension));
@@ -65,13 +73,13 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights
       Simulation.Process(Simulation.Step.LevelUnloaded);
     }
     #endregion ISerializableDataExtension
-    
+
     #region ILoadingExtension
-    void ILoadingExtension.OnCreated(ILoading loading) 
+    void ILoadingExtension.OnCreated(ILoading loading)
       => Trace(nameof(ILoadingExtension));
-    void ISerializableDataExtension.OnReleased() 
+    void ISerializableDataExtension.OnReleased()
       => Trace(nameof(ISerializableDataExtension));
-    
+
     void ISerializableDataExtension.OnLoadData()
     {
       Trace(nameof(ISerializableDataExtension));
@@ -83,14 +91,14 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights
       Simulation.Process(Simulation.Step.SaveData);
     }
     #endregion ILoadingExtension
-    
+
     #region IThreadingExtension
     #if DEBUG
-    void IThreadingExtension.OnCreated(IThreading threading) 
+    void IThreadingExtension.OnCreated(IThreading threading)
       => Trace(nameof(IThreadingExtension));
-    void IThreadingExtension.OnReleased() 
+    void IThreadingExtension.OnReleased()
       => Trace(nameof(IThreadingExtension));
-    
+
     void IThreadingExtension.OnUpdate(float realTimeDelta, float simulationTimeDelta)
     {
       Simulation.OnUpdate(realTimeDelta, simulationTimeDelta);
