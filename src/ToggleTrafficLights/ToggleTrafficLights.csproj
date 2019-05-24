@@ -12,13 +12,13 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>0.12.1</Version>
+    <Version>0.12.2</Version>
     <AssemblyVersion>$(Version)</AssemblyVersion>
     <FileVersion>$(Version)</FileVersion>
     <Name>Toggle Traffic Lights</Name>
     <Description>Mod for Cities:Skylines. Tool to remove or add traffic lights at intersections.</Description>
     <Authors>Craxy</Authors>
-    <Copyright>Copyright © Craxy 2015 - 2017</Copyright>
+    <Copyright>Copyright © Craxy 2015 - 2019</Copyright>
     <RepositoryUrl>https://github.com/Craxy/ToggleTrafficLights/</RepositoryUrl>
 
     <!-- If true: execute Cities.exe after build. For single build: dotnet build /p:StartCS=true -->
