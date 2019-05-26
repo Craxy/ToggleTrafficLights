@@ -119,7 +119,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours
           "OptionBaseFocusedRed",
         });
       button.playAudioEvents = true;
-      button.relativePosition = new Vector3(131, 38);
+      // set by UpdateOffset
+      // button.relativePosition = new Vector3(DefaultButtonPositionX, DefaultButtonPositionY);
 
       SetDeactivatedStateSprites(button);
     }
@@ -168,6 +169,13 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours
       }
 
       return atlas;
+    }
+
+    private const float DefaultButtonPositionX = 131.0f;
+    private const float DefaultButtonPositionY = 38.0f;
+    public void UpdateOffset(float horizontal, float vertical)
+    {
+      this.relativePosition = new Vector3(DefaultButtonPositionX + horizontal, DefaultButtonPositionY + vertical);
     }
 
     #endregion Button
@@ -251,10 +259,11 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours
       return GetRoadsOptionPanelInRoadsPanel() ?? GetRoadsOptionPanel();
     }
 
-    public static void InitialAdd()
+    public static void InitialAdd(Options options)
     {
       var pnl = GetCurrentRoadsOptionPanel();
-      pnl.AddUIComponent<ToggleTrafficLightsButton>();
+      var btn = pnl.AddUIComponent<ToggleTrafficLightsButton>();
+      btn.UpdateOffset(options.TTLButtonHorizontalOffset.value, options.TTLButtonVerticalOffset.value);
     }
 
     public static void DestroyAll()

@@ -165,7 +165,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours
 
     private void SetupTtlButton()
     {
-      ToggleTrafficLightsButton.InitialAdd();
+      ToggleTrafficLightsButton.InitialAdd(Options);
     }
 
     private void SetupTool()

@@ -1,48 +1,122 @@
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using ColossalFramework;
 using ColossalFramework.Globalization;
 using ColossalFramework.UI;
+using Craxy.CitiesSkylines.ToggleTrafficLights.Game.Behaviours;
 using Craxy.CitiesSkylines.ToggleTrafficLights.Utils;
 using ICities;
 using UnityEngine;
 
 namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI
 {
-  public sealed class SettingsBuilder
+  public static class SettingsBuilder
   {
     public static void MakeSettings(UIHelper helper, Options options)
     {
       {
         var group = helper.AddGroup("Settings");
         {
-          var cb = (UICheckBox) group.AddCheckbox("Keep Info Mode", options.KeepInfoMode.value, c => options.KeepInfoMode.value = c);
+          var cb = (UICheckBox)group.AddCheckbox("Keep Info Mode", options.KeepInfoMode.value, c => options.KeepInfoMode.value = c);
           cb.tooltip = "If enabled, activating the junction tool keeps the current view (underground or overground). Otherwise the last used view is used.";
         }
       }
       {
         var group = helper.AddGroup("Keymapping");
-        var pnl = UISettingsPanel.AddTo((UIComponent) ((UIHelper) group).self, options);
+        var pnl = UIShortcutSettingsPanel.AddTo((UIComponent)((UIHelper)group).self, options);
       }
+      {
+        var group = helper.AddGroup("Advanced Settings");
+        {
+          var groupBtn = group.AddGroup("Displace TTL Button");
+          {
+            {
+              var c = (UIComponent)(((UIHelper)groupBtn).self);
+              var lbl = c.parent.Find<UILabel>("Label");
+              if (lbl != null)
+              {
+                lbl.tooltip =
+                "To see the button moving:\n" +
+                "* Ingame, open the Roads Building Menu\n" +
+                "* open the Pause Menu by clicking on the gear icon in the upper right corner\n" +
+                "* Open options and move into the TTL section\n" +
+                "* The TTL button is visible (although blured) in the background and changing its offset is directly reflected";
+              }
+            }
+
+            var horizontalOffset = AddSlider((UIHelper)groupBtn, "Horizontal offset", -210.0f, +180.0f, 1.0f, options.TTLButtonHorizontalOffset.value, o => OnOffsetChanged(o, null, options));
+            var verticalOffset = AddSlider((UIHelper)groupBtn, "Vertical offset", -80.0f, +35.0f, 1.0f, options.TTLButtonVerticalOffset.value, o => OnOffsetChanged(null, o, options));
+
+            void OnOffsetReset()
+            {
+              horizontalOffset.value = 0.0f;
+              verticalOffset.value = 0.0f;
+            }
+            groupBtn.AddButton("Reset", OnOffsetReset);
+          }
+        }
+      }
+    }
+
+    public static void OnOffsetChanged(float? horizontal, float? vertical, Options options)
+    {
+      if (horizontal.HasValue)
+      {
+        options.TTLButtonHorizontalOffset.value = horizontal.Value;
+      }
+      if (vertical.HasValue)
+      {
+        options.TTLButtonVerticalOffset.value = vertical.Value;
+      }
+
+      // try update button
+      var btn = GameObject.FindObjectOfType<ToggleTrafficLightsButton>();
+      if (btn != null)
+      {
+        btn.UpdateOffset(options.TTLButtonHorizontalOffset.value, options.TTLButtonVerticalOffset.value);
+      }
+    }
+
+    private static UISlider AddSlider(UIHelper parent, string text, float min, float max, float step, float defaultValue, OnValueChanged onValueChanged)
+    {
+      string FormatText(float value)
+        => $"{text}: {(int)value}";
+
+      var uiPanel = ((UIComponent)parent.self).AttachUIComponent(UITemplateManager.GetAsGameObject("OptionsSliderTemplate")) as UIPanel;
+      var uiLabel = uiPanel.Find<UILabel>("Label");
+      uiLabel.text = FormatText(defaultValue);
+      var uiSlider = uiPanel.Find<UISlider>("Slider");
+      uiSlider.minValue = min;
+      uiSlider.maxValue = max;
+      uiSlider.stepSize = step;
+      uiSlider.value = defaultValue;
+      uiSlider.eventValueChanged += (_, v) =>
+      {
+        uiLabel.text = FormatText(v);
+        onValueChanged?.Invoke(v);
+      };
+
+      return uiSlider;
     }
   }
 
-  public class UISettingsPanel : UIPanel
+  public sealed class UIShortcutSettingsPanel : UIPanel
   {
     public LocaleManager LocaleManager = LocaleManager.instance;
 
-    public static UISettingsPanel AddTo(UIComponent parent, Options options)
+    public static UIShortcutSettingsPanel AddTo(UIComponent parent, Options options)
     {
-      return parent.AddUIComponent<UISettingsPanel>().Setup(options);
+      return parent.AddUIComponent<UIShortcutSettingsPanel>().Setup(options);
     }
 
     private Options _options;
 
-    private UISettingsPanel Setup(Options options)
+    private UIShortcutSettingsPanel Setup(Options options)
     {
       _options = options;
 
-      var pnt = (UIPanel) parent;
+      var pnt = (UIPanel)parent;
       this.width = parent.width - pnt.padding.left - pnt.padding.right;
 
       this.autoLayout = true;
@@ -95,7 +169,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI
       pnl.autoLayoutStart = LayoutStart.TopRight;
       pnl.width = this.width - this.padding.left - this.padding.right - 50.0f;
 
-      UIButton btn = (UIButton) pnl.AttachUIComponent(UITemplateManager.GetAsGameObject("OptionsButtonTemplate"));
+      UIButton btn = (UIButton)pnl.AttachUIComponent(UITemplateManager.GetAsGameObject("OptionsButtonTemplate"));
       btn.text = text;
       btn.tooltip = tooltip;
       btn.eventClick += onClick;
@@ -106,7 +180,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI
     {
       //Source: OptionsKeymappingPanel.CreateBindableInputs
       const string keyBindingTemplate = "KeyBindingTemplate";
-      var pnl = (UIPanel) this.AttachUIComponent(UITemplateManager.GetAsGameObject(keyBindingTemplate));
+      var pnl = (UIPanel)this.AttachUIComponent(UITemplateManager.GetAsGameObject(keyBindingTemplate));
       if (i % 2 == 0)
       {
         pnl.backgroundSprite = string.Empty;
@@ -124,7 +198,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI
     private void AddShortcutDisplay(int i, string name, SavedInputKey shortcut)
     {
       const string keyBindingTemplate = "KeyBindingTemplate";
-      var pnl = (UIPanel) this.AttachUIComponent(UITemplateManager.GetAsGameObject(keyBindingTemplate));
+      var pnl = (UIPanel)this.AttachUIComponent(UITemplateManager.GetAsGameObject(keyBindingTemplate));
       if (i % 2 == 0)
       {
         pnl.backgroundSprite = string.Empty;
@@ -150,8 +224,8 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI
     {
       if (_editingBinding == null)
       {
-        var btn = (UIButton) comp;
-        _editingBinding = (SavedInputKey) btn.objectUserData;
+        var btn = (UIButton)comp;
+        _editingBinding = (SavedInputKey)btn.objectUserData;
         btn.buttonsMask = UIMouseButton.Left | UIMouseButton.Right | UIMouseButton.Middle | UIMouseButton.Special0 |
                           UIMouseButton.Special1 | UIMouseButton.Special2 | UIMouseButton.Special3;
         btn.text = Locale.Get("KEYMAPPING_PRESSANYKEY");
@@ -200,7 +274,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI
 
         ConfirmPanel.ShowModal(Locale.Get("CONFIRM_REBINDKEY", "Title"), message, (c, ret) =>
         {
-          var btn = (UIButton) comp;
+          var btn = (UIButton)comp;
           if (ret == 1)
           {
             _editingBinding.value = newKey;
@@ -212,12 +286,12 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI
             RefreshKeyMapping();
           }
           _editingBinding = null;
-          btn.text = ((SavedInputKey) btn.objectUserData).ToLocalizedString("KEYNAME");
+          btn.text = ((SavedInputKey)btn.objectUserData).ToLocalizedString("KEYNAME");
         });
       }
       else
       {
-        UpdateKeyBinding(newKey, (UIButton) comp, false);
+        UpdateKeyBinding(newKey, (UIButton)comp, false);
       }
     }
 
@@ -261,7 +335,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI
       foreach (var field in typeof(Settings).GetFields(BindingFlags.Static | BindingFlags.Public))
       {
         var customAttributes =
-          (RebindableKeyAttribute[]) field.GetCustomAttributes(typeof(RebindableKeyAttribute), false);
+          (RebindableKeyAttribute[])field.GetCustomAttributes(typeof(RebindableKeyAttribute), false);
         if (customAttributes.Length > 0 && (category == customAttributes[0].category ||
                                             string.IsNullOrEmpty(customAttributes[0].category)))
         {
@@ -286,7 +360,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI
       var obj = field.GetValue(null);
       if (obj is InputKey)
       {
-        return (InputKey) obj;
+        return (InputKey)obj;
       }
       return 0;
     }
@@ -304,7 +378,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI
       {
         if (field.FieldType == typeof(SavedInputKey))
         {
-          var savedInputKey = (SavedInputKey) field.GetValue(options);
+          var savedInputKey = (SavedInputKey)field.GetValue(options);
           if (target != savedInputKey && inputKey == savedInputKey.value)
           {
             DebugLog.Info($"Already assigned: \n" +
@@ -337,7 +411,7 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game.UI
         var btn = components[i].Find<UITextComponent>("Binding");
         if (btn != null && btn.objectUserData is SavedInputKey)
         {
-          var shortcut = (SavedInputKey) btn.objectUserData;
+          var shortcut = (SavedInputKey)btn.objectUserData;
           btn.text = shortcut.ToLocalizedString("KEYNAME");
         }
       }

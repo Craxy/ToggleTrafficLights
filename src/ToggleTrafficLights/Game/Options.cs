@@ -38,12 +38,18 @@ namespace Craxy.CitiesSkylines.ToggleTrafficLights.Game
     public readonly SavedBool KeepInfoMode =
       new SavedBool(nameof(KeepInfoMode), SettingsFile, DefaultKeepInfoMode, true);
 
+    public readonly SavedFloat TTLButtonHorizontalOffset = 
+      new SavedFloat(nameof(TTLButtonHorizontalOffset), SettingsFile, 0.0f, true);
+    public readonly SavedFloat TTLButtonVerticalOffset = 
+      new SavedFloat(nameof(TTLButtonVerticalOffset), SettingsFile, 0.0f, true);
+
     public void ResetShortcuts()
     {
       ShortcutActivateTTLWithMenu.value = DefaultShortcutActivateTTLWithMenu;
       ShortcutActivateTTLWithoutMenu.value = DefaultShortcutActivateTTLWithoutMenu;
       ShortcutActivateTrafficRoutesJunctions.value = DefaultShortcutActivateTrafficRoutesJunctions;
     }
+
 
     internal static string GetShortcutName(string name)
     {
