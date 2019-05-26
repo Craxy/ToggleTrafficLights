@@ -12,7 +12,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>0.12.2</Version>
+    <Version>0.13.0</Version>
     <AssemblyVersion>$(Version)</AssemblyVersion>
     <FileVersion>$(Version)</FileVersion>
     <Name>Toggle Traffic Lights</Name>
